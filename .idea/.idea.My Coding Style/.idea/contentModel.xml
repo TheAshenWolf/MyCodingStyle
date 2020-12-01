@@ -386,8 +386,11 @@
             <e p="FlockManager.cs" t="Include" />
           </e>
           <e p="VoxelWorld" t="Include">
+            <e p="Block.cs" t="Include" />
+            <e p="BlockUVs.cs" t="Include" />
             <e p="CameraController.cs" t="Include" />
-            <e p="QuadGenerator.cs" t="Include" />
+            <e p="Chunk.cs" t="Include" />
+            <e p="Enums.cs" t="Include" />
           </e>
         </e>
       </e>

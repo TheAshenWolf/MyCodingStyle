@@ -4,23 +4,19 @@ using UnityEngine;
 
 namespace VoxelWorld
 {
-    public class QuadGenerator : MonoBehaviour
+    public class Block
     {
-        public Material cubeMaterial;
+        public Material material;
+        public BlockType blockType;
+        public GameObject parent;
+        public Vector3 position;
 
-        public enum CubeSide
+        public Block(BlockType blockType, Vector3 position, GameObject parent, Material material)
         {
-            Top,
-            Bottom,
-            Left,
-            Right,
-            Front,
-            Back
-        }
-
-        private void Start()
-        {
-            GenerateCube();
+            this.blockType = blockType;
+            this.parent = parent;
+            this.position = position;
+            this.material = material;
         }
 
         private void CreateQuad(CubeSide side)
@@ -32,13 +28,45 @@ namespace VoxelWorld
             {
                 name = "DynamicQuadMesh"
             };
-
-            // UVs - Thinking in binary, the 0s and 1s are going up from 0 to 3
-            Vector2 uv00 = new Vector2(0, 0);
-            Vector2 uv01 = new Vector2(0, 1);
-            Vector2 uv10 = new Vector2(1, 0);
-            Vector2 uv11 = new Vector2(1, 1);
-
+            
+            Vector2[] uvs;
+            switch (blockType)
+            {
+                case BlockType.Grass:
+                    switch (side)
+                    {
+                        case CubeSide.Top:
+                            uvs = BlockUVs.GrassTop;
+                            break;
+                        case CubeSide.Bottom:
+                            uvs = BlockUVs.Dirt;
+                            break;
+                        default:
+                            uvs = BlockUVs.GrassSide;
+                            break;
+                    }
+                    break;
+                case BlockType.Dirt:
+                    uvs = BlockUVs.Dirt;
+                    break;
+                case BlockType.Stone:
+                    uvs = BlockUVs.Stone;
+                    break;
+                case BlockType.Planks:
+                    uvs = BlockUVs.Planks;
+                    break;
+                case BlockType.Brick:
+                    uvs = BlockUVs.Brick;
+                    break;
+                case BlockType.Wood:
+                    uvs = (side == CubeSide.Top || side == CubeSide.Bottom)
+                        ? BlockUVs.WoodVertical
+                        : BlockUVs.WoodHorizontal;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             // Vertices - If we consider -0.5f a 0 and 0.5f a 1, we have the same behaviour as above
             Vector3 v0 = new Vector3(-0.5f, -0.5f, -0.5f); // p3
             Vector3 v1 = new Vector3(-0.5f, -0.5f, 0.5f); // p0
@@ -132,8 +160,6 @@ namespace VoxelWorld
                 default:
                     throw new ArgumentOutOfRangeException(nameof(side), side, null);
             }
-
-            Vector2[] uvs = {uv11, uv01, uv00, uv10};
             int[] triangles = {3, 1, 0, 3, 2, 1};
 
             mesh.vertices = vertices;
@@ -144,42 +170,17 @@ namespace VoxelWorld
             mesh.RecalculateBounds();
 
             GameObject quad = new GameObject("Quad");
-            quad.transform.parent = gameObject.transform;
+            quad.transform.position = position;
+            quad.transform.parent = parent.transform;
+            
             MeshFilter meshFilter = quad.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
+            
             MeshRenderer quadRenderer = quad.AddComponent<MeshRenderer>();
-            quadRenderer.material = cubeMaterial;
+            quadRenderer.material = material;
         }
-
-        private void CombineQuads()
-        {
-            // Combining
-            MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-            CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-            int i = 0;
-            while (i < meshFilters.Length)
-            {
-                combine[i].mesh = meshFilters[i].sharedMesh;
-                combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-                i++;
-            }
-            
-            // Creating new mesh
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.mesh = new Mesh();
-            
-            // Assign mesh
-            meshFilter.mesh.CombineMeshes(combine);
-            
-            // Add renderer
-            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = cubeMaterial;
-            
-            // Delete all children (the quads)
-            transform.DestroyAllChildren();
-        }
-
-        private void GenerateCube()
+        
+        public void Draw()
         {
             CreateQuad(CubeSide.Back);
             CreateQuad(CubeSide.Front);
@@ -187,8 +188,6 @@ namespace VoxelWorld
             CreateQuad(CubeSide.Top);
             CreateQuad(CubeSide.Left);
             CreateQuad(CubeSide.Right);
-            
-            CombineQuads();
         }
     }
 }
