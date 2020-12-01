@@ -385,6 +385,10 @@
             <e p="Fish.cs" t="Include" />
             <e p="FlockManager.cs" t="Include" />
           </e>
+          <e p="VoxelWorld" t="Include">
+            <e p="CameraController.cs" t="Include" />
+            <e p="QuadGenerator.cs" t="Include" />
+          </e>
         </e>
       </e>
       <e p="My Coding Style.sln" t="IncludeFlat" />
