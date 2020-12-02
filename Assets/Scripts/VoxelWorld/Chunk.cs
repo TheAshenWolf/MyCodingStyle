@@ -3,31 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 using TheAshenWolf;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace VoxelWorld
 {
-    public class Chunk : MonoBehaviour
+    public class Chunk
     {
         public Material material;
+        public Block[,,] chunkData;
+        public GameObject chunk;
 
-        private void Start()
+
+        public Chunk(Vector3 position, Material material)
         {
-            StartCoroutine(BuildChunk(4, 4, 4));
+            chunk = new GameObject(World.BuildChunkName(position));
+            chunk.transform.position = position;
+            this.material = material;
+            BuildChunk();
         }
-
-
-        IEnumerator BuildChunk(int sizeX, int sizeY, int sizeZ)
+        
+        
+        public void BuildChunk()
         {
-            for (int z = 0; z < sizeZ; z++)
+            chunkData = new Block[World.chunkSize, World.chunkSize, World.chunkSize];
+            
+            for (int z = 0; z < World.chunkSize; z++)
             {
-                for (int y = 0; y < sizeY; y++)
+                for (int y = 0; y < World.chunkSize; y++)
                 {
-                    for (int x = 0; x < sizeX; x++)
+                    for (int x = 0; x < World.chunkSize; x++)
                     {
                         Vector3 position = new Vector3(x, y, z);
-                        Block block = new Block(BlockType.Dirt, position, gameObject, material);
-                        block.Draw();
-                        yield return null;
+                        chunkData[x,y,z] = new Block(Random.Range(0 , 100) > 50  ? BlockType.Stone : BlockType.Air, position, chunk, this);
+                    }
+                }
+            }
+        }
+
+        public void DrawChunk()
+        {
+            // Rendering
+            for (int z = 0; z < World.chunkSize; z++)
+            {
+                for (int y = 0; y < World.chunkSize; y++)
+                {
+                    for (int x = 0; x < World.chunkSize; x++)
+                    {
+                        chunkData[x,y,z].Draw();
                     }
                 }
             }
@@ -38,7 +60,7 @@ namespace VoxelWorld
         private void CombineQuads()
         {
             // Combining
-            MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+            MeshFilter[] meshFilters = chunk.GetComponentsInChildren<MeshFilter>();
             CombineInstance[] combine = new CombineInstance[meshFilters.Length];
             int i = 0;
             while (i < meshFilters.Length)
@@ -49,18 +71,18 @@ namespace VoxelWorld
             }
             
             // Creating new mesh
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = chunk.AddComponent<MeshFilter>();
             meshFilter.mesh = new Mesh();
             
             // Assign mesh
             meshFilter.mesh.CombineMeshes(combine);
             
             // Add renderer
-            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = chunk.AddComponent<MeshRenderer>();
             meshRenderer.material = material;
             
             // Delete all children (the quads)
-            transform.DestroyAllChildren();
+            chunk.transform.DestroyAllChildren();
         }
     }
 }

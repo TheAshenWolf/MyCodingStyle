@@ -1,6 +1,7 @@
 ﻿using System;
 using TheAshenWolf;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace VoxelWorld
 {
@@ -10,13 +11,17 @@ namespace VoxelWorld
         public BlockType blockType;
         public GameObject parent;
         public Vector3 position;
+        public Chunk owner;
 
-        public Block(BlockType blockType, Vector3 position, GameObject parent, Material material)
+        public bool isSolid;
+
+        public Block(BlockType blockType, Vector3 position, GameObject parent, Chunk chunk)
         {
             this.blockType = blockType;
             this.parent = parent;
             this.position = position;
-            this.material = material;
+            this.owner = chunk;
+            isSolid = blockType != BlockType.Air;
         }
 
         private void CreateQuad(CubeSide side)
@@ -28,7 +33,7 @@ namespace VoxelWorld
             {
                 name = "DynamicQuadMesh"
             };
-            
+
             Vector2[] uvs;
             switch (blockType)
             {
@@ -45,6 +50,7 @@ namespace VoxelWorld
                             uvs = BlockUVs.GrassSide;
                             break;
                     }
+
                     break;
                 case BlockType.Dirt:
                     uvs = BlockUVs.Dirt;
@@ -66,7 +72,7 @@ namespace VoxelWorld
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
             // Vertices - If we consider -0.5f a 0 and 0.5f a 1, we have the same behaviour as above
             Vector3 v0 = new Vector3(-0.5f, -0.5f, -0.5f); // p3
             Vector3 v1 = new Vector3(-0.5f, -0.5f, 0.5f); // p0
@@ -160,34 +166,89 @@ namespace VoxelWorld
                 default:
                     throw new ArgumentOutOfRangeException(nameof(side), side, null);
             }
+
             int[] triangles = {3, 1, 0, 3, 2, 1};
 
             mesh.vertices = vertices;
             mesh.normals = normals;
             mesh.uv = uvs;
             mesh.triangles = triangles;
-
             mesh.RecalculateBounds();
 
             GameObject quad = new GameObject("Quad");
             quad.transform.position = position;
             quad.transform.parent = parent.transform;
-            
+
             MeshFilter meshFilter = quad.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
-            
-            MeshRenderer quadRenderer = quad.AddComponent<MeshRenderer>();
-            quadRenderer.material = material;
         }
-        
+
+        private int ConvertBlockIndexToLocal(int index)
+        {
+            if (index == -1) index = World.chunkSize - 1;
+            else if (index == World.chunkSize) index = 0;
+
+            return index;
+        }
+
+        private bool HasSolidNeighbour(int x, int y, int z)
+        {
+            Block[,,] chunkData;
+
+            if (x < 0 || x >= World.chunkSize ||
+                y < 0 || y >= World.chunkSize ||
+                z < 0 || z >= World.chunkSize)
+            {
+                Vector3 neighbourChunkPos = parent.transform.position +
+                                            new Vector3((x - (int) position.x) * World.chunkSize,
+                                                (y - (int) position.y) * World.chunkSize,
+                                                (z - (int) position.z) * World.chunkSize);
+
+                string neighbourName = World.BuildChunkName(neighbourChunkPos);
+
+                x = ConvertBlockIndexToLocal(x);
+                y = ConvertBlockIndexToLocal(y);
+                z = ConvertBlockIndexToLocal(z);
+
+                if (World.chunks.TryGetValue(neighbourName, out Chunk neighbourChunk))
+                {
+                    chunkData = neighbourChunk.chunkData;
+                }
+                else return false;
+            }
+            else chunkData = owner.chunkData;
+
+            try
+            {
+                return chunkData[x, y, z].isSolid;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public void Draw()
         {
-            CreateQuad(CubeSide.Back);
-            CreateQuad(CubeSide.Front);
-            CreateQuad(CubeSide.Bottom);
-            CreateQuad(CubeSide.Top);
-            CreateQuad(CubeSide.Left);
-            CreateQuad(CubeSide.Right);
+            if (blockType == BlockType.Air) return;
+
+            if (!HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z - 1)) 
+                CreateQuad(CubeSide.Back);
+            
+            if (!HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z + 1))
+                CreateQuad(CubeSide.Front);
+            
+            if (!HasSolidNeighbour((int) position.x, (int) position.y - 1, (int) position.z))
+                CreateQuad(CubeSide.Bottom);
+            
+            if (!HasSolidNeighbour((int) position.x, (int) position.y + 1, (int) position.z)) 
+                CreateQuad(CubeSide.Top);
+            
+            if (!HasSolidNeighbour((int) position.x - 1, (int) position.y, (int) position.z)) 
+                CreateQuad(CubeSide.Left);
+            
+            if (!HasSolidNeighbour((int) position.x + 1, (int) position.y, (int) position.z))
+                CreateQuad(CubeSide.Right);
         }
     }
 }

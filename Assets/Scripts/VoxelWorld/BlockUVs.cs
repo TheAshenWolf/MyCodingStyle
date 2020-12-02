@@ -21,7 +21,7 @@ namespace VoxelWorld
             return uvs;
         }
 
-        public static Vector2[] GrassTop => GetUvsFromTexturePosition(2, 9); // Actually a green wool, but it looks better than the white grass
+        public static Vector2[] GrassTop => GetUvsFromTexturePosition(2, 9); // Actually a light green wool, but it looks better than the white grass, I need to figure out how to color it though
         public static Vector2[] Stone => GetUvsFromTexturePosition(1, 0);
         public static Vector2[] Dirt => GetUvsFromTexturePosition(2, 0);
         public static Vector2[] GrassSide => GetUvsFromTexturePosition(3, 0);
