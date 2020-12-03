@@ -34,7 +34,47 @@ namespace VoxelWorld
                     for (int x = 0; x < World.chunkSize; x++)
                     {
                         Vector3 position = new Vector3(x, y, z);
-                        chunkData[x,y,z] = new Block(Random.Range(0 , 100) > 50  ? BlockType.Stone : BlockType.Air, position, chunk, this);
+                        int worldX = (int)(x + chunk.transform.position.x);
+                        int worldY = (int)(y + chunk.transform.position.y);
+                        int worldZ = (int)(z + chunk.transform.position.z);
+                        
+                        BlockType blockType;
+
+                        // Default "chunk" of materials grass - dirt - stone - bedrock
+                        if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ,  pers: 0.04f) < .4f) blockType = BlockType.Air;
+                        else if (worldY == Utils.GenerateHeight(worldX, worldZ)) blockType = BlockType.Grass;
+                        else if (worldY < Utils.GenerateHeight(worldX, worldZ) && worldY > Utils.GenerateStoneHeight(worldX, worldZ)) blockType = BlockType.Dirt;
+                        else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ) && worldY > 1)
+                        {
+                            if (worldY < Utils.maxHeight / 4 * 3 &&
+                                Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.3f, 2, .15f) < .376f)
+                            {
+                                Debug.Log("Coal!");
+                                blockType = BlockType.CoalOre;
+                            }
+                            else if (worldY < Utils.maxHeight / 8 * 2.5f &&
+                                Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.25f, 3, .29f) < .37f)
+                            {
+                                Debug.Log("Iron!");
+                                blockType = BlockType.IronOre;
+                            }
+                            else if (worldY < Utils.maxHeight / 16 * 1.75f &&
+                                     Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.2f, 2, .22f) < .35f)
+                            {
+                                Debug.Log("Gold!");
+                                blockType = BlockType.GoldOre;
+                            }
+                            
+                                
+                            else blockType = BlockType.Stone;
+                        }
+                        else blockType = BlockType.Air;
+                        
+                        if ((worldY <= 1) && (worldY > 0)) blockType = BlockType.Bedrock;
+                        
+                        
+                        
+                        chunkData[x,y,z] = new Block(blockType, position, chunk, this);
                     }
                 }
             }

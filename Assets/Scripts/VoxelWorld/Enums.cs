@@ -18,6 +18,10 @@ namespace VoxelWorld
         Stone,
         Planks,
         Brick,
-        Wood
+        Wood,
+        Bedrock,
+        CoalOre,
+        IronOre,
+        GoldOre
     }
 }

@@ -391,6 +391,7 @@
             <e p="CameraController.cs" t="Include" />
             <e p="Chunk.cs" t="Include" />
             <e p="Enums.cs" t="Include" />
+            <e p="Utils.cs" t="Include" />
             <e p="World.cs" t="Include" />
           </e>
         </e>

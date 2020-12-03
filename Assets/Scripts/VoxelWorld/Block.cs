@@ -12,6 +12,7 @@ namespace VoxelWorld
         public GameObject parent;
         public Vector3 position;
         public Chunk owner;
+        public Color[] colors = new Color[0];
 
         public bool isSolid;
 
@@ -33,6 +34,14 @@ namespace VoxelWorld
             {
                 name = "DynamicQuadMesh"
             };
+            
+            colors = new[]
+            {
+                Color.white, 
+                Color.white, 
+                Color.white, 
+                Color.white
+            };
 
             Vector2[] uvs;
             switch (blockType)
@@ -42,6 +51,13 @@ namespace VoxelWorld
                     {
                         case CubeSide.Top:
                             uvs = BlockUVs.GrassTop;
+                            colors = new[]
+                            {
+                                new Color(.7f, 1f, .2f, .1f), 
+                                new Color(.7f, 1f, .2f, .1f), 
+                                new Color(.7f, 1f, .2f, .1f), 
+                                new Color(.7f, 1f, .2f, .1f), 
+                            };
                             break;
                         case CubeSide.Bottom:
                             uvs = BlockUVs.Dirt;
@@ -69,6 +85,21 @@ namespace VoxelWorld
                         ? BlockUVs.WoodVertical
                         : BlockUVs.WoodHorizontal;
                     break;
+                case BlockType.Bedrock:
+                    uvs = BlockUVs.Bedrock;
+                    break;
+                case BlockType.CoalOre:
+                    uvs = BlockUVs.CoalOre;
+                    break;
+                case BlockType.IronOre:
+                    uvs = BlockUVs.IronOre;
+                    break;
+                case BlockType.GoldOre:
+                    uvs = BlockUVs.GoldOre;
+                    break;
+                
+                
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -173,6 +204,12 @@ namespace VoxelWorld
             mesh.normals = normals;
             mesh.uv = uvs;
             mesh.triangles = triangles;
+
+            if (colors.Length == mesh.vertices.Length)
+            {
+                mesh.colors = colors;
+            }
+            
             mesh.RecalculateBounds();
 
             GameObject quad = new GameObject("Quad");
