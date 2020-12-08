@@ -2,24 +2,39 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VoxelWorld
 {
     public class World : MonoBehaviour
     {
+        public GameObject player;
         public Material textureAtlas;
         public static int chunkSize = 16;
         public static int columnHeight = 16;
         public static int worldSize = 4;
+        public static int radius = 1;
         public static Dictionary<string, Chunk> chunks;
+
+        [SerializeField] private Slider slider;
+        [SerializeField] private Camera loadingCamera;
+        [SerializeField] private TextMeshProUGUI statusText;
 
 
         private void Start()
         {
+            player.SetActive(false);
             chunks = new Dictionary<string, Chunk>();
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
+        }
+
+        public void StartLoading()
+        {
+            slider.gameObject.SetActive(true);
+            statusText.gameObject.SetActive(true);
             StartCoroutine(BuildWorld());
         }
 
@@ -48,25 +63,45 @@ namespace VoxelWorld
 
         public IEnumerator BuildWorld()
         {
-            for (int z = 0; z < World.worldSize; z++)
+            statusText.text = "Building World";
+            
+            int playerPositionX = (int) Mathf.Floor(player.transform.position.x / chunkSize);
+            int playerPositionZ = (int) Mathf.Floor(player.transform.position.z / chunkSize);
+
+            float totalChunks = (Mathf.Pow(radius * 2 + 1, 2) * columnHeight) * 2;
+            int processCount = 0;
+            
+            for (int z = -radius; z <= radius; z++)
             {
-                for (int x = 0; x < World.worldSize; x++)
+                for (int x = -radius; x < radius; x++)
                 {
-                    for (int y = 0; y < World.columnHeight; y++)
+                    for (int y = 0; y < columnHeight; y++)
                     {
-                        Vector3 chunkPosition = new Vector3(x * chunkSize, y * chunkSize, z * chunkSize);
+                        Vector3 chunkPosition = new Vector3((x + playerPositionX) * chunkSize, y * chunkSize, (z + playerPositionZ)  * chunkSize);
                         Chunk chunk = new Chunk(chunkPosition, textureAtlas);
                         chunk.chunk.transform.parent = this.transform;
                         chunks.Add(chunk.chunk.name, chunk);
+                        processCount++;
+                        slider.value = processCount / totalChunks * 100;
+                        yield return null;
                     }
                 }
             }
+
+            statusText.text = "Rendering";
             
             foreach (KeyValuePair<string, Chunk> chunk in chunks)
             {
                 chunk.Value.DrawChunk();
+                processCount++;
+                slider.value = processCount / totalChunks * 100;
                 yield return null;
             }
+            
+            slider.gameObject.SetActive(false);
+            statusText.gameObject.SetActive(false);
+            loadingCamera.gameObject.SetActive(false);
+            player.SetActive(true);
         }
     }
 }

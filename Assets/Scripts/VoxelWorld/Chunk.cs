@@ -64,6 +64,12 @@ namespace VoxelWorld
                                 Debug.Log("Gold!");
                                 blockType = BlockType.GoldOre;
                             }
+                            else if (worldY < 20 &&
+                                     Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.19f, 3, .16f) < .35f)
+                            {
+                                Debug.Log("Redstone!");
+                                blockType = BlockType.RedstoneOre;
+                            }
                             
                                 
                             else blockType = BlockType.Stone;
@@ -95,6 +101,9 @@ namespace VoxelWorld
             }
 
             CombineQuads();
+
+            MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = chunk.GetComponent<MeshFilter>().mesh;
         }
         
         private void CombineQuads()

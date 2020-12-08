@@ -22,6 +22,7 @@ namespace VoxelWorld
         Bedrock,
         CoalOre,
         IronOre,
-        GoldOre
+        GoldOre,
+        RedstoneOre
     }
 }

@@ -97,9 +97,11 @@ namespace VoxelWorld
                 case BlockType.GoldOre:
                     uvs = BlockUVs.GoldOre;
                     break;
-                
-                
-                
+                case BlockType.RedstoneOre:
+                    uvs = BlockUVs.RedstoneOre;
+                    break;
+
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
