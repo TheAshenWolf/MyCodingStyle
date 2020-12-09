@@ -6,8 +6,7 @@
 // TheAshenWolf: This script was written by Penny de Byl and should be ignored in case of "code examination". It is just used to make my life easier within the game.
 
 using UnityEngine;
-using System.Collections;
- 
+
 public class CameraController : MonoBehaviour
 {
     public Transform target;

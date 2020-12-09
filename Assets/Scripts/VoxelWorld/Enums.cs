@@ -25,4 +25,12 @@ namespace VoxelWorld
         GoldOre,
         RedstoneOre
     }
+
+    public enum ChunkState
+    {
+        Idle,
+        Keep,
+        Draw
+    }
+    
 }

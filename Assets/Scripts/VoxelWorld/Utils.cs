@@ -1,11 +1,10 @@
-using System.Net.Mail;
 using UnityEngine;
 
 namespace VoxelWorld
 {
     public class Utils
     {
-        public static int maxHeight = 240;
+        public static int maxHeight = 128;
         private static float smooth = 0.01f;
         private static int octaves = 4;
         private static float persistance = 0.5f;

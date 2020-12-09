@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TheAshenWolf;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace VoxelWorld
 {
@@ -12,6 +8,7 @@ namespace VoxelWorld
         public Material material;
         public Block[,,] chunkData;
         public GameObject chunk;
+        public ChunkState chunkState;
 
 
         public Chunk(Vector3 position, Material material)
@@ -49,25 +46,21 @@ namespace VoxelWorld
                             if (worldY < Utils.maxHeight / 4 * 3 &&
                                 Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.3f, 2, .15f) < .376f)
                             {
-                                Debug.Log("Coal!");
                                 blockType = BlockType.CoalOre;
                             }
-                            else if (worldY < Utils.maxHeight / 8 * 2.5f &&
+                            else if (worldY < Utils.maxHeight / 8f * 2.5f &&
                                 Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.25f, 3, .29f) < .37f)
                             {
-                                Debug.Log("Iron!");
                                 blockType = BlockType.IronOre;
                             }
-                            else if (worldY < Utils.maxHeight / 16 * 1.75f &&
+                            else if (worldY < Utils.maxHeight / 16f * 1.75f &&
                                      Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.2f, 2, .22f) < .35f)
                             {
-                                Debug.Log("Gold!");
                                 blockType = BlockType.GoldOre;
                             }
                             else if (worldY < 20 &&
                                      Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.19f, 3, .16f) < .35f)
                             {
-                                Debug.Log("Redstone!");
                                 blockType = BlockType.RedstoneOre;
                             }
                             
@@ -84,6 +77,8 @@ namespace VoxelWorld
                     }
                 }
             }
+
+            chunkState = ChunkState.Draw;
         }
 
         public void DrawChunk()
@@ -104,6 +99,7 @@ namespace VoxelWorld
 
             MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = chunk.GetComponent<MeshFilter>().mesh;
+            chunkState = ChunkState.Idle;
         }
         
         private void CombineQuads()

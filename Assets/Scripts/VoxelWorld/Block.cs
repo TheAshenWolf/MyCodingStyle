@@ -1,7 +1,5 @@
 ﻿using System;
-using TheAshenWolf;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace VoxelWorld
 {
