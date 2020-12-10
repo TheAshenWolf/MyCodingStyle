@@ -178,6 +178,7 @@ namespace VoxelWorld
                 if (chunks.TryGetValue(chunkName, out Chunk chunk))
                 {
                     Destroy(chunk.chunk);
+                    chunk.Save();
                     chunks.TryRemove(chunkName, out chunk);
                     yield return null;
                 }

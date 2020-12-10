@@ -1,5 +1,9 @@
+using System;
+using UnityEngine;
+
 namespace VoxelWorld
 {
+    [Serializable]
     public enum CubeSide
     {
         Top,
@@ -10,6 +14,7 @@ namespace VoxelWorld
         Back
     }
 
+    [Serializable]
     public enum BlockType
     {
         Air,
@@ -26,6 +31,7 @@ namespace VoxelWorld
         RedstoneOre
     }
 
+    [Serializable]
     public enum ChunkState
     {
         Idle,
