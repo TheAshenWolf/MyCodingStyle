@@ -24,7 +24,6 @@ namespace VoxelWorld
             string chunkFile = BuildChunkFileName(chunk.transform.position);
             if (File.Exists(chunkFile))
             {
-                Debug.Log(chunkFile);
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 FileStream file = File.Open(chunkFile, FileMode.Open);
                 blockData = new BlockData();
@@ -47,7 +46,7 @@ namespace VoxelWorld
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream file = File.Open(chunkFile, FileMode.OpenOrCreate);
-            blockData = new BlockData();
+            blockData = new BlockData(chunkData);
             binaryFormatter.Serialize(file, blockData);
             file.Close();
         }

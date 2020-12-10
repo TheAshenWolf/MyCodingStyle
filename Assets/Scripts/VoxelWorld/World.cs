@@ -30,11 +30,11 @@ namespace VoxelWorld
 
         private void Start()
         {
+            player.SetActive(false);
             Vector3 playerPosition = player.transform.position;
             player.transform.position = new Vector3(playerPosition.x,
-                Utils.GenerateHeight(playerPosition.x, playerPosition.z) + 5, playerPosition.z);
+                Utils.GenerateHeight(playerPosition.x, playerPosition.z) + 15, playerPosition.z);
             lastBuildPosition = playerPosition;
-            player.SetActive(false);
 
             initialBuild = true;
             chunks = new ConcurrentDictionary<string, Chunk>();
@@ -60,7 +60,6 @@ namespace VoxelWorld
         {
             slider.gameObject.SetActive(true);
             statusText.gameObject.SetActive(true);
-            // coroutineQueue.Run(BuildWorld());
         }
 
         private void Update()
@@ -74,7 +73,7 @@ namespace VoxelWorld
             }
 
 
-            if (!player.activeSelf)
+            if (!player.activeSelf && initialBuild)
             {
                 player.SetActive(true);
                 initialBuild = false;
@@ -82,35 +81,13 @@ namespace VoxelWorld
 
             coroutineQueue.Run(DrawChunks());
             coroutineQueue.Run(RemoveOldChunksOutsideRadius());
-
-            /*if (!buildingInProgress && !initialBuild)
-            {
-                coroutineQueue.Run(BuildWorld());
-            }*/
         }
 
         public static string BuildChunkName(Vector3 position)
         {
             return (int) position.x + "_" + (int) position.y + "_" + (int) position.z;
         }
-
-        /*public IEnumerator BuildChunkColumn()
-        {
-            for (int i = 0; i < columnHeight; i++)
-            {
-                Vector3 chunkPosition = new Vector3(transform.position.x, i * chunkSize, transform.position.z);
-
-                Chunk chunk = new Chunk(chunkPosition, textureAtlas);
-                chunk.chunk.transform.parent = transform;
-                chunks.TryAdd(chunk.chunk.name, chunk);
-            }
-
-            foreach (KeyValuePair<string, Chunk> chunk in chunks)
-            {
-                chunk.Value.DrawChunk();
-                yield return null;
-            }
-        }*/
+        
 
         public void BuildChunkAt(int x, int y, int z)
         {
@@ -184,86 +161,6 @@ namespace VoxelWorld
                 }
             }
         }
-
-        /*public IEnumerator BuildWorld()
-        {
-            if (initialBuild) statusText.text = "Building World";
-
-            buildingInProgress = true;
-            int playerPositionX = (int) Mathf.Floor(player.transform.position.x / chunkSize);
-            int playerPositionZ = (int) Mathf.Floor(player.transform.position.z / chunkSize);
-
-            float totalChunks = (Mathf.Pow(radius * 2 + 1, 2) * columnHeight) * 2;
-            int processCount = 0;
-
-            for (int z = -radius; z <= radius; z++)
-            {
-                for (int x = -radius; x < radius; x++)
-                {
-                    for (int y = 0; y < columnHeight; y++)
-                    {
-                        Vector3 chunkPosition = new Vector3((x + playerPositionX) * chunkSize, y * chunkSize,
-                            (z + playerPositionZ) * chunkSize);
-                        Chunk chunk;
-                        string chunkName = BuildChunkName(chunkPosition);
-
-                        if (chunks.TryGetValue(chunkName, out chunk))
-                        {
-                            chunk.chunkState = ChunkState.Keep;
-                            break;
-                        }
-                        else
-                        {
-                            chunk = new Chunk(chunkPosition, textureAtlas);
-                            chunk.chunk.transform.parent = this.transform;
-                            chunks.TryAdd(chunk.chunk.name, chunk);
-                        }
-
-                        if (initialBuild)
-                        {
-                            processCount++;
-                            slider.value = processCount / totalChunks * 100;
-                        }
-
-                        yield return null;
-                    }
-                }
-            }
-
-            if (initialBuild) statusText.text = "Rendering";
-
-            foreach (KeyValuePair<string, Chunk> chunk in chunks)
-            {
-                if (chunk.Value.chunkState == ChunkState.Draw)
-                {
-                    chunk.Value.DrawChunk();
-                    chunk.Value.chunkState = ChunkState.Keep;
-                }
-
-                // delete old chunks outside radius
-
-                chunk.Value.chunkState = ChunkState.Idle;
-
-                if (initialBuild)
-                {
-                    processCount++;
-                    slider.value = processCount / totalChunks * 100;
-                }
-
-                yield return null;
-            }
-
-            if (initialBuild)
-            {
-                slider.gameObject.SetActive(false);
-                statusText.gameObject.SetActive(false);
-                loadingCamera.gameObject.SetActive(false);
-                player.SetActive(true);
-                initialBuild = false;
-            }
-
-            buildingInProgress = false;
-        }*/
 
         public void BuildNearPlayer()
         {

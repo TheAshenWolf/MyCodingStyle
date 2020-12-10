@@ -398,6 +398,7 @@
           <e p="VoxelWorld" t="Include">
             <e p="Block.cs" t="Include" />
             <e p="BlockData.cs" t="Include" />
+            <e p="BlockInteraction.cs" t="Include" />
             <e p="BlockUVs.cs" t="Include" />
             <e p="CameraController.cs" t="Include" />
             <e p="Chunk.cs" t="Include" />

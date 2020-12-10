@@ -23,6 +23,12 @@ namespace VoxelWorld
             isSolid = blockType != BlockType.Air;
         }
 
+        public void SetType(BlockType blockType)
+        {
+            this.blockType = blockType;
+            isSolid = blockType != BlockType.Air;
+        }
+
         private void CreateQuad(CubeSide side)
         {
             Vector3[] normals;
