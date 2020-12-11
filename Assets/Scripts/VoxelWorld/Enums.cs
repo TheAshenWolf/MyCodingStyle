@@ -38,5 +38,21 @@ namespace VoxelWorld
         Keep,
         Draw
     }
+
+    [Serializable]
+    public enum Crack
+    {
+        Crack0,
+        Crack10,
+        Crack20,
+        Crack30,
+        Crack40,
+        Crack50,
+        Crack60,
+        Crack70,
+        Crack80,
+        Crack90,
+        Crack100
+}
     
 }

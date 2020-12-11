@@ -132,6 +132,14 @@ namespace VoxelWorld
             chunkState = ChunkState.Draw;
         }
 
+        public void Redraw()
+        {
+            GameObject.DestroyImmediate(chunk.GetComponent<MeshFilter>());
+            GameObject.DestroyImmediate(chunk.GetComponent<MeshRenderer>());
+            GameObject.DestroyImmediate(chunk.GetComponent<Collider>());
+            DrawChunk();
+        }
+
         public void DrawChunk()
         {
             // Rendering

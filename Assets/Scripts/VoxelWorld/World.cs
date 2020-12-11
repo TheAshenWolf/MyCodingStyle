@@ -106,7 +106,7 @@ namespace VoxelWorld
         public IEnumerator BuildWorldRecursively(int x, int y, int z, int radius)
         {
             radius -= 1;
-            if (radius <= 0) yield break;
+            if (radius <= 0 || y < 0 || y >= 16) yield break;
 
             BuildChunkAt(x, y, z - 1);
             coroutineQueue.Run(BuildWorldRecursively(x, y, z - 1, radius));

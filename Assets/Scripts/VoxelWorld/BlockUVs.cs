@@ -57,5 +57,14 @@ namespace VoxelWorld
         public static Vector2[] BookshelfSide => GetUvsFromTexturePosition(3, 2);
         public static Vector2[] MossyCobble => GetUvsFromTexturePosition(4, 2);
         public static Vector2[] Obsidian => GetUvsFromTexturePosition(5, 2);
+        
+        
+        
+        // CRACKS
+        
+        public static Vector2[] GetCrack(Crack crack)
+        {
+            return crack == Crack.Crack0 ? GetUvsFromTexturePosition(13, 15) : GetUvsFromTexturePosition((int)crack - 1, 15);
+        }
     }
 }

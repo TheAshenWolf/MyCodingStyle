@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace VoxelWorld
@@ -13,6 +16,11 @@ namespace VoxelWorld
         public Color[] colors = new Color[0];
 
         public bool isSolid;
+        public int toughness = 1;
+        public int health = 5;
+        private int _actualHealth;
+        public Crack crackTexture = Crack.Crack0;
+
 
         public Block(BlockType blockType, Vector3 position, GameObject parent, Chunk chunk)
         {
@@ -21,18 +29,41 @@ namespace VoxelWorld
             this.position = position;
             this.owner = chunk;
             isSolid = blockType != BlockType.Air;
+            _actualHealth = health * toughness;
+        }
+
+        public bool HitBlock()
+        {
+            _actualHealth--;
+            crackTexture += (int)(10 / health);
+
+            if (_actualHealth <= 0)
+            {
+                blockType = BlockType.Air;
+                isSolid = false;
+                crackTexture = Crack.Crack0;
+                owner.Redraw();
+                return true;
+            }
+
+            owner.Redraw();
+            return false;
         }
 
         public void SetType(BlockType blockType)
         {
             this.blockType = blockType;
             isSolid = blockType != BlockType.Air;
+            crackTexture = Crack.Crack0;
+            _actualHealth = health * toughness;
         }
 
         private void CreateQuad(CubeSide side)
         {
             Vector3[] normals;
             Vector3[] vertices;
+            
+            List<Vector2> secondaryUVs = new List<Vector2>();
 
             Mesh mesh = new Mesh
             {
@@ -109,6 +140,8 @@ namespace VoxelWorld
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            secondaryUVs = BlockUVs.GetCrack(crackTexture).ToList();
 
             // Vertices - If we consider -0.5f a 0 and 0.5f a 1, we have the same behaviour as above
             Vector3 v0 = new Vector3(-0.5f, -0.5f, -0.5f); // p3
@@ -209,6 +242,7 @@ namespace VoxelWorld
             mesh.vertices = vertices;
             mesh.normals = normals;
             mesh.uv = uvs;
+            mesh.SetUVs(1, secondaryUVs);
             mesh.triangles = triangles;
 
             if (colors.Length == mesh.vertices.Length)
