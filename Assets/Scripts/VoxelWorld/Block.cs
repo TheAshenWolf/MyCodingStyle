@@ -327,5 +327,12 @@ namespace VoxelWorld
             if (!HasSolidNeighbour((int) position.x + 1, (int) position.y, (int) position.z))
                 CreateQuad(CubeSide.Right);
         }
+
+        public void Reset()
+        {
+            crackTexture = Crack.Crack0;
+            _actualHealth = health;
+            owner.Redraw();
+        }
     }
 }

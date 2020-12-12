@@ -64,7 +64,7 @@ namespace VoxelWorld
         
         public static Vector2[] GetCrack(Crack crack)
         {
-            return crack == Crack.Crack0 ? GetUvsFromTexturePosition(13, 15) : GetUvsFromTexturePosition((int)crack - 1, 15);
+            return crack == Crack.Crack0 ? GetUvsFromTexturePosition(5, 11) : GetUvsFromTexturePosition((int)crack - 1, 15);
         }
     }
 }
