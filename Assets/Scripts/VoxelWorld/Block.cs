@@ -262,8 +262,8 @@ namespace VoxelWorld
 
         private int ConvertBlockIndexToLocal(int index)
         {
-            if (index == -1) index = World.chunkSize - 1;
-            else if (index == World.chunkSize) index = 0;
+            if (index == -1) index = Settings.CHUNK_SIZE - 1;
+            else if (index == Settings.CHUNK_SIZE) index = 0;
 
             return index;
         }
@@ -272,14 +272,14 @@ namespace VoxelWorld
         {
             Block[,,] chunkData;
 
-            if (x < 0 || x >= World.chunkSize ||
-                y < 0 || y >= World.chunkSize ||
-                z < 0 || z >= World.chunkSize)
+            if (x < 0 || x >= Settings.CHUNK_SIZE ||
+                y < 0 || y >= Settings.CHUNK_SIZE ||
+                z < 0 || z >= Settings.CHUNK_SIZE)
             {
                 Vector3 neighbourChunkPos = parent.transform.position +
-                                            new Vector3((x - (int) position.x) * World.chunkSize,
-                                                (y - (int) position.y) * World.chunkSize,
-                                                (z - (int) position.z) * World.chunkSize);
+                                            new Vector3((x - (int) position.x) * Settings.CHUNK_SIZE,
+                                                (y - (int) position.y) * Settings.CHUNK_SIZE,
+                                                (z - (int) position.z) * Settings.CHUNK_SIZE);
 
                 string neighbourName = World.BuildChunkName(neighbourChunkPos);
 

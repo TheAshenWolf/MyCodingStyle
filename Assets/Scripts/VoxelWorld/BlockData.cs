@@ -13,12 +13,12 @@ namespace VoxelWorld
 
         public BlockData(Block[,,] blocks)
         {
-            blockMatrix = new BlockType[World.chunkSize, World.chunkSize, World.chunkSize];
-            for (int z = 0; z < World.chunkSize; z++)
+            blockMatrix = new BlockType[Settings.CHUNK_SIZE, Settings.CHUNK_SIZE, Settings.CHUNK_SIZE];
+            for (int z = 0; z < Settings.CHUNK_SIZE; z++)
             {
-                for (int y = 0; y < World.chunkSize; y++)
+                for (int y = 0; y < Settings.CHUNK_SIZE; y++)
                 {
-                    for (int x = 0; x < World.chunkSize; x++)
+                    for (int x = 0; x < Settings.CHUNK_SIZE; x++)
                     {
                         blockMatrix[x, y, z] = blocks[x, y, z].blockType;
                     }

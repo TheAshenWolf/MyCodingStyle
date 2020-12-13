@@ -13,11 +13,12 @@ namespace VoxelWorld
         public ChunkState chunkState;
         public BlockData blockData;
         public string chunkName;
+        public bool changed;
 
         private string BuildChunkFileName(Vector3 position)
         {
             return Application.persistentDataPath + "/saveData/Chunk_" + (int) position.x + "_" + (int) position.y +
-                   "_" + (int) position.z + "_" + World.chunkSize + "_" + World.radius + ".dat";
+                   "_" + (int) position.z + "_" + Settings.CHUNK_SIZE + "_" + Settings.RENDER_DISTANCE + ".dat";
         }
 
         private bool Load()
@@ -50,6 +51,8 @@ namespace VoxelWorld
             blockData = new BlockData(chunkData);
             binaryFormatter.Serialize(file, blockData);
             file.Close();
+
+            changed = false;
         }
 
         public Chunk(Vector3 position, Material material)
@@ -67,13 +70,13 @@ namespace VoxelWorld
             bool loadingFromFile = false;
             loadingFromFile = Load();
 
-            chunkData = new Block[World.chunkSize, World.chunkSize, World.chunkSize];
+            chunkData = new Block[Settings.CHUNK_SIZE, Settings.CHUNK_SIZE, Settings.CHUNK_SIZE];
 
-            for (int z = 0; z < World.chunkSize; z++)
+            for (int z = 0; z < Settings.CHUNK_SIZE; z++)
             {
-                for (int y = 0; y < World.chunkSize; y++)
+                for (int y = 0; y < Settings.CHUNK_SIZE; y++)
                 {
-                    for (int x = 0; x < World.chunkSize; x++)
+                    for (int x = 0; x < Settings.CHUNK_SIZE; x++)
                     {
                         Vector3 position = new Vector3(x, y, z);
                         int worldX = (int) (x + chunk.transform.position.x);
@@ -145,11 +148,11 @@ namespace VoxelWorld
         public void DrawChunk()
         {
             // Rendering
-            for (int z = 0; z < World.chunkSize; z++)
+            for (int z = 0; z < Settings.CHUNK_SIZE; z++)
             {
-                for (int y = 0; y < World.chunkSize; y++)
+                for (int y = 0; y < Settings.CHUNK_SIZE; y++)
                 {
-                    for (int x = 0; x < World.chunkSize; x++)
+                    for (int x = 0; x < Settings.CHUNK_SIZE; x++)
                     {
                         chunkData[x, y, z].Draw();
                     }

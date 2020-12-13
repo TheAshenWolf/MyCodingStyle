@@ -70,37 +70,38 @@ namespace VoxelWorld
 
                     if (updateNeighbours)
                     {
+                        hitChunk.changed = true;
                         _hasLastBlock = false;
                         List<string> updates = new List<string>();
 
                         if ((int) block.position.x == 0)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(World.chunkSize, 0, 0)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(Settings.CHUNK_SIZE, 0, 0)));
                         }
 
                         if ((int) block.position.y == 0)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, World.chunkSize, 0)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, Settings.CHUNK_SIZE, 0)));
                         }
 
                         if ((int) block.position.z == 0)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, 0, World.chunkSize)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, 0, Settings.CHUNK_SIZE)));
                         }
 
-                        if ((int) block.position.x == World.chunkSize - 1)
+                        if ((int) block.position.x == Settings.CHUNK_SIZE - 1)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(World.chunkSize, 0, 0)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(Settings.CHUNK_SIZE, 0, 0)));
                         }
 
-                        if ((int) block.position.y == World.chunkSize - 1)
+                        if ((int) block.position.y == Settings.CHUNK_SIZE - 1)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, World.chunkSize, 0)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, Settings.CHUNK_SIZE, 0)));
                         }
 
-                        if ((int) block.position.z == World.chunkSize - 1)
+                        if ((int) block.position.z == Settings.CHUNK_SIZE - 1)
                         {
-                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, 0, World.chunkSize)));
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, 0, Settings.CHUNK_SIZE)));
                         }
 
                         foreach (string chunkName in updates)

@@ -12,12 +12,8 @@ namespace VoxelWorld
     {
         public GameObject player;
         public Material textureAtlas;
-        public static int chunkSize = 16;
-        public static int columnHeight = 16;
-        public static int radius = 5;
         public static ConcurrentDictionary<string, Chunk> chunks;
         public bool initialBuild = true;
-        public static bool buildingInProgress = false;
         public static List<string> chunksToRemove = new List<string>();
         public Vector3 lastBuildPosition;
 
@@ -45,16 +41,19 @@ namespace VoxelWorld
 
             coroutineQueue = new CoroutineQueue(maxCoroutines, StartCoroutine);
 
-            BuildChunkAt((int) (playerPosition.x / chunkSize), (int) (playerPosition.y / chunkSize),
-                (int) (playerPosition.z / chunkSize));
+            BuildChunkAt((int) (playerPosition.x / Settings.CHUNK_SIZE), (int) (playerPosition.y / Settings.CHUNK_SIZE),
+                (int) (playerPosition.z / Settings.CHUNK_SIZE));
 
             coroutineQueue.Run(DrawChunks());
 
             coroutineQueue.Run(BuildWorldRecursively(
-                (int) (playerPosition.x / chunkSize),
-                (int) (playerPosition.y / chunkSize),
-                (int) (playerPosition.z / chunkSize),
-                radius));
+                (int) (playerPosition.x / Settings.CHUNK_SIZE),
+                (int) (playerPosition.y / Settings.CHUNK_SIZE),
+                (int) (playerPosition.z / Settings.CHUNK_SIZE),
+                Settings.RENDER_DISTANCE));
+            
+            
+            InvokeRepeating(nameof(SaveChangedChunks), Settings.AUTOSAVE_DELAY, Settings.AUTOSAVE_DELAY);
         }
 
         public void StartLoading()
@@ -67,7 +66,7 @@ namespace VoxelWorld
         {
             Vector3 movement = lastBuildPosition - player.transform.position;
 
-            if (movement.magnitude > chunkSize)
+            if (movement.magnitude > Settings.CHUNK_SIZE)
             {
                 lastBuildPosition = player.transform.position;
                 BuildNearPlayer();
@@ -92,7 +91,7 @@ namespace VoxelWorld
 
         public void BuildChunkAt(int x, int y, int z)
         {
-            Vector3 chunkPosition = new Vector3(x * chunkSize, y * chunkSize, z * chunkSize);
+            Vector3 chunkPosition = new Vector3(x * Settings.CHUNK_SIZE, y * Settings.CHUNK_SIZE, z * Settings.CHUNK_SIZE);
             string chunkName = BuildChunkName(chunkPosition);
             Chunk chunk;
 
@@ -140,7 +139,7 @@ namespace VoxelWorld
 
                 if (chunk.Value.chunk &&
                     Vector3.Distance(player.transform.position, chunk.Value.chunk.transform.position) >
-                    radius * chunkSize)
+                    Settings.RENDER_DISTANCE * Settings.CHUNK_SIZE)
                 {
                     chunksToRemove.Add(chunk.Key);
                 }
@@ -170,24 +169,24 @@ namespace VoxelWorld
 
             StopCoroutine(nameof(BuildWorldRecursively));
             coroutineQueue.Run(BuildWorldRecursively(
-                (int) (playerPosition.x / chunkSize),
-                (int) (playerPosition.y / chunkSize),
-                (int) (playerPosition.z / chunkSize),
-                radius));
+                (int) (playerPosition.x / Settings.CHUNK_SIZE),
+                (int) (playerPosition.y / Settings.CHUNK_SIZE),
+                (int) (playerPosition.z / Settings.CHUNK_SIZE),
+                Settings.RENDER_DISTANCE));
         }
 
         public static Block GetWorldBlock(Vector3 position, Chunk hitChunk)
         {
             Debug.Log("Position: " + position);
-            int modX = (int) (position.x % chunkSize);
-            int modY = (int) (position.y % chunkSize);
-            int modZ = (int) (position.z % chunkSize);
+            int modX = (int) (position.x % Settings.CHUNK_SIZE);
+            int modY = (int) (position.y % Settings.CHUNK_SIZE);
+            int modZ = (int) (position.z % Settings.CHUNK_SIZE);
 
             Debug.Log("Mods: " + modX + " " + modY + " " + modZ);
 
-            int blockX = (int) (Mathf.Floor(position.x) % chunkSize) - (position.x < 0 ? 1 : 0);
-            int blockY = (int) (Mathf.Floor(position.y) % chunkSize) - (position.y < 0 ? 1 : 0);
-            int blockZ = (int) (Mathf.Floor(position.z) % chunkSize) - (position.z < 0 ? 1 : 0);
+            int blockX = (int) (Mathf.Floor(position.x) % Settings.CHUNK_SIZE) - (position.x < 0 ? 1 : 0);
+            int blockY = (int) (Mathf.Floor(position.y) % Settings.CHUNK_SIZE) - (position.y < 0 ? 1 : 0);
+            int blockZ = (int) (Mathf.Floor(position.z) % Settings.CHUNK_SIZE) - (position.z < 0 ? 1 : 0);
 
             Debug.Log("Blocks: " + blockX + " " + blockY + " " + blockZ);
 
@@ -197,14 +196,14 @@ namespace VoxelWorld
 
             if (blockX < 0)
             {
-                blockX += chunkSize + 1;
-                chunkX -= chunkSize;
+                blockX += Settings.CHUNK_SIZE + 1;
+                chunkX -= Settings.CHUNK_SIZE;
             }
             
             if (blockZ < 0)
             {
-                blockZ += chunkSize + 1;
-                chunkZ -= chunkSize;
+                blockZ += Settings.CHUNK_SIZE + 1;
+                chunkZ -= Settings.CHUNK_SIZE;
             }
 
             
@@ -236,6 +235,16 @@ namespace VoxelWorld
                 return chunk.chunkData[blockX, blockY, blockZ];
             } 
             return null;*/
+        }
+
+        public IEnumerator SaveChangedChunks()
+        {
+            foreach (KeyValuePair<string, Chunk> chunkPair in chunks)
+            {
+                if (chunkPair.Value.changed) chunkPair.Value.Save();
+            }
+
+            yield return null;
         }
     }
 }
