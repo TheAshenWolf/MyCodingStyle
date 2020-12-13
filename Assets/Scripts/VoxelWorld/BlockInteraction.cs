@@ -24,6 +24,9 @@ namespace VoxelWorld
                 _time = 0;
                 if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 10))
                 {
+                    
+                    Debug.DrawRay(hit.point, hit.normal / 2, Color.magenta, 10f);
+                    
                     if (!World.chunks.TryGetValue(hit.collider.gameObject.name, out Chunk hitChunk)) return;
 
                     Vector3 hitBlockPosition;
@@ -31,10 +34,8 @@ namespace VoxelWorld
                     if (Input.GetMouseButton(0))
                         hitBlockPosition = hit.point - hit.normal / 2f;
                     else hitBlockPosition = hit.point + hit.normal / 2f;
-                    
-                    Debug.Log(hit.point - hit.normal / 2f);
 
-                    Block block = World.GetWorldBlock(hitBlockPosition);
+                    Block block = World.GetWorldBlock(hitBlockPosition ,hitChunk);
                     hitChunk = block.owner;
 
                     Vector3 hitChunkPosition = hit.collider.gameObject.transform.position;

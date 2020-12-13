@@ -176,9 +176,52 @@ namespace VoxelWorld
                 radius));
         }
 
-        public static Block GetWorldBlock(Vector3 position)
+        public static Block GetWorldBlock(Vector3 position, Chunk hitChunk)
         {
-            int chunkX = (int) ((float)Mathf.Round(position.x - (position.x < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
+            Debug.Log("Position: " + position);
+            int modX = (int) (position.x % chunkSize);
+            int modY = (int) (position.y % chunkSize);
+            int modZ = (int) (position.z % chunkSize);
+
+            Debug.Log("Mods: " + modX + " " + modY + " " + modZ);
+
+            int blockX = (int) (Mathf.Floor(position.x) % chunkSize) - (position.x < 0 ? 1 : 0);
+            int blockY = (int) (Mathf.Floor(position.y) % chunkSize) - (position.y < 0 ? 1 : 0);
+            int blockZ = (int) (Mathf.Floor(position.z) % chunkSize) - (position.z < 0 ? 1 : 0);
+
+            Debug.Log("Blocks: " + blockX + " " + blockY + " " + blockZ);
+
+            int chunkX = (int) Mathf.Floor((int) position.x - modX);
+            int chunkY = (int) Mathf.Floor((int) position.y - modY);
+            int chunkZ = (int) Mathf.Floor((int) position.z - modZ);
+
+            if (blockX < 0)
+            {
+                blockX += chunkSize + 1;
+                chunkX -= chunkSize;
+            }
+            
+            if (blockZ < 0)
+            {
+                blockZ += chunkSize + 1;
+                chunkZ -= chunkSize;
+            }
+
+            
+            
+            
+            Vector3 chunkPosition = new Vector3(chunkX, chunkY, chunkZ);
+
+            string chunkName = BuildChunkName(chunkPosition);
+            Debug.Log("Name: " + chunkName);
+            Debug.Log("Hit: " + hitChunk.chunkName);
+            if (chunks.TryGetValue(chunkName, out Chunk chunk))
+            {
+                return chunk.chunkData[blockX, blockY, blockZ];
+            }
+            else return null;
+
+            /*int chunkX = (int) ((float)Mathf.Round(position.x - (position.x < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
             int chunkY = (int) ((float)Mathf.Round(position.y - (position.y < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
             int chunkZ = (int) ((float)Mathf.Round(position.z - (position.z < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
 
@@ -192,7 +235,7 @@ namespace VoxelWorld
             {
                 return chunk.chunkData[blockX, blockY, blockZ];
             } 
-            return null;
+            return null;*/
         }
     }
 }

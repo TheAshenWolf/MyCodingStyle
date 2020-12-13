@@ -12,6 +12,7 @@ namespace VoxelWorld
         public GameObject chunk;
         public ChunkState chunkState;
         public BlockData blockData;
+        public string chunkName;
 
         private string BuildChunkFileName(Vector3 position)
         {
@@ -53,8 +54,9 @@ namespace VoxelWorld
 
         public Chunk(Vector3 position, Material material)
         {
-            chunk = new GameObject(World.BuildChunkName(position));
-            chunk.transform.position = position;
+            chunkName = World.BuildChunkName(position);
+            chunk = new GameObject(chunkName);
+            chunk.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
             this.material = material;
             BuildChunk();
         }
