@@ -177,18 +177,13 @@ namespace VoxelWorld
 
         public static Block GetWorldBlock(Vector3 position, Chunk hitChunk)
         {
-            Debug.Log("Position: " + position);
             int modX = (int) (position.x % Settings.CHUNK_SIZE);
             int modY = (int) (position.y % Settings.CHUNK_SIZE);
             int modZ = (int) (position.z % Settings.CHUNK_SIZE);
 
-            Debug.Log("Mods: " + modX + " " + modY + " " + modZ);
-
             int blockX = (int) (Mathf.Floor(position.x) % Settings.CHUNK_SIZE) - (position.x < 0 ? 1 : 0);
             int blockY = (int) (Mathf.Floor(position.y) % Settings.CHUNK_SIZE) - (position.y < 0 ? 1 : 0);
             int blockZ = (int) (Mathf.Floor(position.z) % Settings.CHUNK_SIZE) - (position.z < 0 ? 1 : 0);
-
-            Debug.Log("Blocks: " + blockX + " " + blockY + " " + blockZ);
 
             int chunkX = (int) Mathf.Floor((int) position.x - modX);
             int chunkY = (int) Mathf.Floor((int) position.y - modY);
@@ -205,46 +200,29 @@ namespace VoxelWorld
                 blockZ += Settings.CHUNK_SIZE + 1;
                 chunkZ -= Settings.CHUNK_SIZE;
             }
-
-            
             
             
             Vector3 chunkPosition = new Vector3(chunkX, chunkY, chunkZ);
 
             string chunkName = BuildChunkName(chunkPosition);
-            Debug.Log("Name: " + chunkName);
-            Debug.Log("Hit: " + hitChunk.chunkName);
-            if (chunks.TryGetValue(chunkName, out Chunk chunk))
-            {
-                return chunk.chunkData[blockX, blockY, blockZ];
-            }
-            else return null;
-
-            /*int chunkX = (int) ((float)Mathf.Round(position.x - (position.x < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
-            int chunkY = (int) ((float)Mathf.Round(position.y - (position.y < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
-            int chunkZ = (int) ((float)Mathf.Round(position.z - (position.z < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
-
-            int blockX = (int) Mathf.Abs(Mathf.Round(position.x) - chunkX);
-            int blockY = (int) Mathf.Abs(Mathf.Round(position.y) - chunkY);
-            int blockZ = (int) Mathf.Abs(Mathf.Round(position.z) - chunkZ);
-
-            string chunkName = BuildChunkName(new Vector3(chunkX, chunkY, chunkZ));
-
-            if (chunks.TryGetValue(chunkName, out Chunk chunk))
-            {
-                return chunk.chunkData[blockX, blockY, blockZ];
-            } 
-            return null;*/
+            return chunks.TryGetValue(chunkName, out Chunk chunk) ? chunk.chunkData[blockX, blockY, blockZ] : null;
         }
 
-        public IEnumerator SaveChangedChunks()
+        private static IEnumerator SaveChangedChunks()
         {
+            Debug.Log("World Saving In Progress...");
             foreach (KeyValuePair<string, Chunk> chunkPair in chunks)
             {
                 if (chunkPair.Value.changed) chunkPair.Value.Save();
             }
 
+            Debug.Log("World Saved.");
             yield return null;
+        }
+
+        private void OnApplicationQuit()
+        {
+            StartCoroutine(SaveChangedChunks());
         }
     }
 }

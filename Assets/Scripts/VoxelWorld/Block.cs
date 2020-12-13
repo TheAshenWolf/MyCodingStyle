@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnityEditor;
 using UnityEngine;
 
 namespace VoxelWorld
@@ -32,6 +33,15 @@ namespace VoxelWorld
             _actualHealth = health * toughness;
         }
 
+        public Block(BlockType blockType, Vector3 position, GameObject parent, Material material)
+        {
+            this.blockType = blockType;
+            this.position = position;
+            this.parent = parent;
+            this.material = material;
+            Draw(true);
+        }
+
         public bool HitBlock()
         {
             _actualHealth--;
@@ -58,7 +68,7 @@ namespace VoxelWorld
             _actualHealth = health * toughness;
         }
 
-        private void CreateQuad(CubeSide side)
+        private void CreateQuad(CubeSide side, bool handBlock = false)
         {
             Vector3[] normals;
             Vector3[] vertices;
@@ -135,8 +145,21 @@ namespace VoxelWorld
                 case BlockType.RedstoneOre:
                     uvs = BlockUVs.RedstoneOre;
                     break;
-
-
+                case BlockType.Cobblestone:
+                    uvs = BlockUVs.Cobblestone;
+                    break;
+                case BlockType.BookShelf:
+                    uvs = (side == CubeSide.Top || side == CubeSide.Bottom)
+                        ? BlockUVs.Planks
+                        : BlockUVs.BookshelfSide;
+                    break;
+                case BlockType.Sand:
+                    uvs = BlockUVs.Sand;
+                    break;
+                case BlockType.Gravel:
+                    uvs = BlockUVs.Gravel;
+                    break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -253,11 +276,23 @@ namespace VoxelWorld
             mesh.RecalculateBounds();
 
             GameObject quad = new GameObject("Quad");
-            quad.transform.position = position;
+            if (!handBlock) quad.transform.position = position;
             quad.transform.parent = parent.transform;
+            if (handBlock)
+            {
+                quad.transform.localPosition = position;
+                quad.transform.localScale = Vector3.one;
+                quad.transform.localRotation = Quaternion.identity;
+            }
 
             MeshFilter meshFilter = quad.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
+
+            if (handBlock)
+            {
+                MeshRenderer meshRenderer = quad.AddComponent<MeshRenderer>();
+                meshRenderer.material = material;
+            }
         }
 
         private int ConvertBlockIndexToLocal(int index)
@@ -305,27 +340,27 @@ namespace VoxelWorld
             }
         }
 
-        public void Draw()
+        public void Draw(bool handBlock = false)
         {
             if (blockType == BlockType.Air) return;
 
-            if (!HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z - 1)) 
-                CreateQuad(CubeSide.Back);
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z - 1)) 
+                CreateQuad(CubeSide.Back, handBlock);
             
-            if (!HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z + 1))
-                CreateQuad(CubeSide.Front);
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z + 1))
+                CreateQuad(CubeSide.Front, handBlock);
             
-            if (!HasSolidNeighbour((int) position.x, (int) position.y - 1, (int) position.z))
-                CreateQuad(CubeSide.Bottom);
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y - 1, (int) position.z))
+                CreateQuad(CubeSide.Bottom, handBlock);
             
-            if (!HasSolidNeighbour((int) position.x, (int) position.y + 1, (int) position.z)) 
-                CreateQuad(CubeSide.Top);
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y + 1, (int) position.z)) 
+                CreateQuad(CubeSide.Top, handBlock);
             
-            if (!HasSolidNeighbour((int) position.x - 1, (int) position.y, (int) position.z)) 
-                CreateQuad(CubeSide.Left);
+            if (handBlock || !HasSolidNeighbour((int) position.x - 1, (int) position.y, (int) position.z)) 
+                CreateQuad(CubeSide.Left, handBlock);
             
-            if (!HasSolidNeighbour((int) position.x + 1, (int) position.y, (int) position.z))
-                CreateQuad(CubeSide.Right);
+            if (handBlock || !HasSolidNeighbour((int) position.x + 1, (int) position.y, (int) position.z))
+                CreateQuad(CubeSide.Right, handBlock);
         }
 
         public void Reset()

@@ -28,7 +28,11 @@ namespace VoxelWorld
         CoalOre,
         IronOre,
         GoldOre,
-        RedstoneOre
+        RedstoneOre,
+        Gravel,
+        Sand,
+        BookShelf,
+        Cobblestone
     }
 
     [Serializable]
