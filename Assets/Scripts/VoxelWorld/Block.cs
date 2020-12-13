@@ -334,5 +334,12 @@ namespace VoxelWorld
             _actualHealth = health;
             owner.Redraw();
         }
+
+        public bool BuildBlock(BlockType blockType)
+        {
+            SetType(blockType);
+            owner.Redraw();
+            return true;
+        }
     }
 }

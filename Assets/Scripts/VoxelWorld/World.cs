@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -40,8 +41,8 @@ namespace VoxelWorld
             chunks = new ConcurrentDictionary<string, Chunk>();
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
-            
-            
+
+
             coroutineQueue = new CoroutineQueue(maxCoroutines, StartCoroutine);
 
             BuildChunkAt((int) (playerPosition.x / chunkSize), (int) (playerPosition.y / chunkSize),
@@ -87,7 +88,7 @@ namespace VoxelWorld
         {
             return (int) position.x + "_" + (int) position.y + "_" + (int) position.z;
         }
-        
+
 
         public void BuildChunkAt(int x, int y, int z)
         {
@@ -137,7 +138,8 @@ namespace VoxelWorld
                     chunk.Value.DrawChunk();
                 }
 
-                if (chunk.Value.chunk && Vector3.Distance(player.transform.position, chunk.Value.chunk.transform.position) >
+                if (chunk.Value.chunk &&
+                    Vector3.Distance(player.transform.position, chunk.Value.chunk.transform.position) >
                     radius * chunkSize)
                 {
                     chunksToRemove.Add(chunk.Key);
@@ -165,13 +167,32 @@ namespace VoxelWorld
         public void BuildNearPlayer()
         {
             Vector3 playerPosition = player.transform.position;
-            
+
             StopCoroutine(nameof(BuildWorldRecursively));
             coroutineQueue.Run(BuildWorldRecursively(
                 (int) (playerPosition.x / chunkSize),
                 (int) (playerPosition.y / chunkSize),
                 (int) (playerPosition.z / chunkSize),
                 radius));
+        }
+
+        public static Block GetWorldBlock(Vector3 position)
+        {
+            int chunkX = (int) ((float)Mathf.Round(position.x - (position.x < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
+            int chunkY = (int) ((float)Mathf.Round(position.y - (position.y < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
+            int chunkZ = (int) ((float)Mathf.Round(position.z - (position.z < 0 ? chunkSize : 0)) / (float)chunkSize) * chunkSize;
+
+            int blockX = (int) Mathf.Abs(Mathf.Round(position.x) - chunkX);
+            int blockY = (int) Mathf.Abs(Mathf.Round(position.y) - chunkY);
+            int blockZ = (int) Mathf.Abs(Mathf.Round(position.z) - chunkZ);
+
+            string chunkName = BuildChunkName(new Vector3(chunkX, chunkY, chunkZ));
+
+            if (chunks.TryGetValue(chunkName, out Chunk chunk))
+            {
+                return chunk.chunkData[blockX, blockY, blockZ];
+            } 
+            return null;
         }
     }
 }

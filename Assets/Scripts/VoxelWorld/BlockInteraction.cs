@@ -6,8 +6,8 @@ namespace VoxelWorld
 {
     public class BlockInteraction : MonoBehaviour
     {
-        private const float BREAK_DELAY = .25f;
-        
+        private const float INTERACTION_DELAY = .25f;
+
         [SerializeField] private GameObject cam;
         private float _time = 0;
         private Chunk _lastHitChunk;
@@ -19,76 +19,97 @@ namespace VoxelWorld
             _time += Time.deltaTime;
 
 
-            if (Input.GetMouseButton(0) && _time > BREAK_DELAY)
+            if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && _time > INTERACTION_DELAY)
             {
                 _time = 0;
                 if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 10))
                 {
-                    Vector3 hitBlock = hit.point - hit.normal / 2f;
+                    if (!World.chunks.TryGetValue(hit.collider.gameObject.name, out Chunk hitChunk)) return;
 
-                    Vector3 hitPosition = hit.collider.gameObject.transform.position;
+                    Vector3 hitBlockPosition;
 
-                    int x = (int) Mathf.Round(hitBlock.x - hitPosition.x);
-                    int y = (int) Mathf.Round(hitBlock.y - hitPosition.y);
-                    int z = (int) Mathf.Round(hitBlock.z - hitPosition.z);
+                    if (Input.GetMouseButton(0))
+                        hitBlockPosition = hit.point - hit.normal / 2f;
+                    else hitBlockPosition = hit.point + hit.normal / 2f;
+                    
+                    Debug.Log(hit.point - hit.normal / 2f);
 
-                    if (World.chunks.TryGetValue(hit.collider.gameObject.name, out Chunk hitChunk))
+                    Block block = World.GetWorldBlock(hitBlockPosition);
+                    hitChunk = block.owner;
+
+                    Vector3 hitChunkPosition = hit.collider.gameObject.transform.position;
+
+                    // Vector3 hitColliderPosition = hit.collider.transform.position;
+                    int x = (int) block.position.x; // (Mathf.Round(hitBlockPosition.x) - hitColliderPosition.x);
+                    int y = (int) block.position.y; // (Mathf.Round(hitBlockPosition.y) - hitColliderPosition.y);
+                    int z = (int) block.position.z; // (Mathf.Round(hitBlockPosition.z) - hitColliderPosition.z);
+
+                    bool updateNeighbours;
+
+                    if (Input.GetMouseButton(0))
                     {
+                        updateNeighbours = hitChunk.chunkData[x, y, z].HitBlock();
                         if (_hasLastBlock && _lastHitPosition != new Vector3(x, y, z))
                         {
-                            _lastHitChunk.chunkData[(int) _lastHitPosition.x, (int) _lastHitPosition.y, (int) _lastHitPosition.z]
+                            _lastHitChunk.chunkData[(int) _lastHitPosition.x, (int) _lastHitPosition.y,
+                                    (int) _lastHitPosition.z]
                                 ?.Reset();
                         }
+                        
+                        if (updateNeighbours) _time += INTERACTION_DELAY;
                         
                         _lastHitChunk = hitChunk;
                         _lastHitPosition = new Vector3(x, y, z);
                         _hasLastBlock = true;
-                        
-                        if (hitChunk.chunkData[x, y, z].HitBlock())
+                    }
+                    else
+                    {
+                        updateNeighbours = block.BuildBlock(BlockType.Stone);
+                    }
+
+                    if (updateNeighbours)
+                    {
+                        _hasLastBlock = false;
+                        List<string> updates = new List<string>();
+
+                        if ((int) block.position.x == 0)
                         {
-                            _hasLastBlock = false;
-                            _time += BREAK_DELAY;
-                            List<string> updates = new List<string>();
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(World.chunkSize, 0, 0)));
+                        }
 
-                            if (x == 0)
-                            {
-                                updates.Add(World.BuildChunkName(hitPosition - new Vector3(World.chunkSize, 0, 0)));
-                            }
+                        if ((int) block.position.y == 0)
+                        {
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, World.chunkSize, 0)));
+                        }
 
-                            if (y == 0)
-                            {
-                                updates.Add(World.BuildChunkName(hitPosition - new Vector3(0, World.chunkSize, 0)));
-                            }
+                        if ((int) block.position.z == 0)
+                        {
+                            updates.Add(World.BuildChunkName(hitChunkPosition - new Vector3(0, 0, World.chunkSize)));
+                        }
 
-                            if (z == 0)
-                            {
-                                updates.Add(World.BuildChunkName(hitPosition - new Vector3(0, 0, World.chunkSize)));
-                            }
+                        if ((int) block.position.x == World.chunkSize - 1)
+                        {
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(World.chunkSize, 0, 0)));
+                        }
 
-                            if (x == World.chunkSize - 1)
-                            {
-                                updates.Add(World.BuildChunkName(hitPosition + new Vector3(World.chunkSize, 0, 0)));
-                            }
+                        if ((int) block.position.y == World.chunkSize - 1)
+                        {
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, World.chunkSize, 0)));
+                        }
 
-                            if (y == World.chunkSize - 1)
-                            {
-                                updates.Add(World.BuildChunkName(hitPosition + new Vector3(0, World.chunkSize, 0)));
-                            }
+                        if ((int) block.position.z == World.chunkSize - 1)
+                        {
+                            updates.Add(World.BuildChunkName(hitChunkPosition + new Vector3(0, 0, World.chunkSize)));
+                        }
 
-                            if (z == World.chunkSize - 1)
+                        foreach (string chunkName in updates)
+                        {
+                            if (World.chunks.TryGetValue(chunkName, out Chunk chunk))
                             {
-                                updates.Add(World.BuildChunkName(hitPosition + new Vector3(0, 0, World.chunkSize)));
-                            }
-
-                            foreach (string chunkName in updates)
-                            {
-                                if (World.chunks.TryGetValue(chunkName, out Chunk chunk))
+                                // todo: recalculate the components instead
+                                if (chunk.chunkData[x, y, z].blockType != BlockType.Bedrock)
                                 {
-                                    // todo: recalculate the components instead
-                                    if (chunk.chunkData[x, y, z].blockType != BlockType.Bedrock)
-                                    {
-                                        chunk.Redraw();
-                                    }
+                                    chunk.Redraw();
                                 }
                             }
                         }
