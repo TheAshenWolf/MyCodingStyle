@@ -32,7 +32,8 @@ namespace VoxelWorld
         Gravel,
         Sand,
         BookShelf,
-        Cobblestone
+        Cobblestone,
+        Water
     }
 
     [Serializable]
@@ -57,6 +58,13 @@ namespace VoxelWorld
         Crack80,
         Crack90,
         Crack100
-}
-    
+    }
+
+    [Serializable]
+    public enum BlockOpacity
+    {
+        Solid,
+        Liquid,
+        Transparent
+    }
 }

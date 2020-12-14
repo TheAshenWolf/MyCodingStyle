@@ -676,6 +676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 897159059}
   textureAtlas: {fileID: 2100000, guid: af170449a9991782db959aa1bda5a1cd, type: 2}
+  fluidTextureAtlas: {fileID: 2100000, guid: 2bac21e5188d9a39086527531f9a4b27, type: 2}
   initialBuild: 1
   lastBuildPosition: {x: 0, y: 0, z: 0}
   slider: {fileID: 0}

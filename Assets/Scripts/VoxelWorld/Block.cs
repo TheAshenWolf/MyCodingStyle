@@ -9,48 +9,47 @@ namespace VoxelWorld
 {
     public class Block
     {
-        public Material material;
-        public BlockType blockType;
-        public GameObject parent;
+        public readonly Chunk owner;
+
+
+        private readonly Material _material;
+
+        private readonly GameObject _parent;
         public Vector3 position;
-        public Chunk owner;
-        public Color[] colors = new Color[0];
 
-        public bool isSolid;
-        public int toughness = 1;
-        public int health = 5;
+        private Color[] _colors = new Color[0];
+
         private int _actualHealth;
-        public Crack crackTexture = Crack.Crack0;
+        private Crack crackTexture = Crack.Crack0;
 
+        public BlockSetup blockSetup;
 
         public Block(BlockType blockType, Vector3 position, GameObject parent, Chunk chunk)
         {
-            this.blockType = blockType;
-            this.parent = parent;
+            this.blockSetup = GenerateBlockSetup(blockType);
+            this._parent = parent;
             this.position = position;
             this.owner = chunk;
-            isSolid = blockType != BlockType.Air;
-            _actualHealth = health * toughness;
+            _actualHealth = blockSetup.health * blockSetup.toughness;
         }
 
         public Block(BlockType blockType, Vector3 position, GameObject parent, Material material)
         {
-            this.blockType = blockType;
+            this.blockSetup = GenerateBlockSetup(blockType);
             this.position = position;
-            this.parent = parent;
-            this.material = material;
+            this._parent = parent;
+            this._material = material;
             Draw(true);
         }
 
         public bool HitBlock()
         {
             _actualHealth--;
-            crackTexture += (int)(10 / health);
+            crackTexture += (int) (10 / blockSetup.health);
 
             if (_actualHealth <= 0)
             {
-                blockType = BlockType.Air;
-                isSolid = false;
+                blockSetup = GenerateBlockSetup(BlockType.Air);
                 crackTexture = Crack.Crack0;
                 owner.Redraw();
                 return true;
@@ -62,46 +61,45 @@ namespace VoxelWorld
 
         public void SetType(BlockType blockType)
         {
-            this.blockType = blockType;
-            isSolid = blockType != BlockType.Air;
+            this.blockSetup = GenerateBlockSetup(blockType);
             crackTexture = Crack.Crack0;
-            _actualHealth = health * toughness;
+            _actualHealth = blockSetup.health * blockSetup.toughness;
         }
 
         private void CreateQuad(CubeSide side, bool handBlock = false)
         {
             Vector3[] normals;
             Vector3[] vertices;
-            
+
             List<Vector2> secondaryUVs = new List<Vector2>();
 
             Mesh mesh = new Mesh
             {
                 name = "DynamicQuadMesh"
             };
-            
-            colors = new[]
+
+            _colors = new[]
             {
-                Color.white, 
-                Color.white, 
-                Color.white, 
+                Color.white,
+                Color.white,
+                Color.white,
                 Color.white
             };
 
             Vector2[] uvs;
-            switch (blockType)
+            switch (blockSetup.blockType)
             {
                 case BlockType.Grass:
                     switch (side)
                     {
                         case CubeSide.Top:
                             uvs = BlockUVs.GrassTop;
-                            colors = new[]
+                            _colors = new[]
                             {
-                                new Color(.7f, 1f, .2f, .1f), 
-                                new Color(.7f, 1f, .2f, .1f), 
-                                new Color(.7f, 1f, .2f, .1f), 
-                                new Color(.7f, 1f, .2f, .1f), 
+                                new Color(.7f, 1f, .2f, .1f),
+                                new Color(.7f, 1f, .2f, .1f),
+                                new Color(.7f, 1f, .2f, .1f),
+                                new Color(.7f, 1f, .2f, .1f),
                             };
                             break;
                         case CubeSide.Bottom:
@@ -159,7 +157,10 @@ namespace VoxelWorld
                 case BlockType.Gravel:
                     uvs = BlockUVs.Gravel;
                     break;
-                
+                case BlockType.Water:
+                    uvs = BlockUVs.Water;
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -268,16 +269,16 @@ namespace VoxelWorld
             mesh.SetUVs(1, secondaryUVs);
             mesh.triangles = triangles;
 
-            if (colors.Length == mesh.vertices.Length)
+            if (_colors.Length == mesh.vertices.Length)
             {
-                mesh.colors = colors;
+                mesh.colors = _colors;
             }
-            
+
             mesh.RecalculateBounds();
 
             GameObject quad = new GameObject("Quad");
             if (!handBlock) quad.transform.position = position;
-            quad.transform.parent = parent.transform;
+            quad.transform.parent = _parent.transform;
             if (handBlock)
             {
                 quad.transform.localPosition = position;
@@ -291,7 +292,7 @@ namespace VoxelWorld
             if (handBlock)
             {
                 MeshRenderer meshRenderer = quad.AddComponent<MeshRenderer>();
-                meshRenderer.material = material;
+                meshRenderer.material = _material;
             }
         }
 
@@ -311,7 +312,7 @@ namespace VoxelWorld
                 y < 0 || y >= Settings.CHUNK_SIZE ||
                 z < 0 || z >= Settings.CHUNK_SIZE)
             {
-                Vector3 neighbourChunkPos = parent.transform.position +
+                Vector3 neighbourChunkPos = _parent.transform.position +
                                             new Vector3((x - (int) position.x) * Settings.CHUNK_SIZE,
                                                 (y - (int) position.y) * Settings.CHUNK_SIZE,
                                                 (z - (int) position.z) * Settings.CHUNK_SIZE);
@@ -332,7 +333,8 @@ namespace VoxelWorld
 
             try
             {
-                return chunkData[x, y, z].isSolid;
+                return (chunkData[x, y, z].blockSetup.blockOpacity == BlockOpacity.Solid ||
+                        chunkData[x, y, z].blockSetup.blockType == blockSetup.blockType);
             }
             catch
             {
@@ -342,23 +344,23 @@ namespace VoxelWorld
 
         public void Draw(bool handBlock = false)
         {
-            if (blockType == BlockType.Air) return;
+            if (blockSetup.blockType == BlockType.Air) return;
 
-            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z - 1)) 
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z - 1))
                 CreateQuad(CubeSide.Back, handBlock);
-            
+
             if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y, (int) position.z + 1))
                 CreateQuad(CubeSide.Front, handBlock);
-            
+
             if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y - 1, (int) position.z))
                 CreateQuad(CubeSide.Bottom, handBlock);
-            
-            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y + 1, (int) position.z)) 
+
+            if (handBlock || !HasSolidNeighbour((int) position.x, (int) position.y + 1, (int) position.z))
                 CreateQuad(CubeSide.Top, handBlock);
-            
-            if (handBlock || !HasSolidNeighbour((int) position.x - 1, (int) position.y, (int) position.z)) 
+
+            if (handBlock || !HasSolidNeighbour((int) position.x - 1, (int) position.y, (int) position.z))
                 CreateQuad(CubeSide.Left, handBlock);
-            
+
             if (handBlock || !HasSolidNeighbour((int) position.x + 1, (int) position.y, (int) position.z))
                 CreateQuad(CubeSide.Right, handBlock);
         }
@@ -366,7 +368,7 @@ namespace VoxelWorld
         public void Reset()
         {
             crackTexture = Crack.Crack0;
-            _actualHealth = health;
+            _actualHealth = blockSetup.health;
             owner.Redraw();
         }
 
@@ -375,6 +377,26 @@ namespace VoxelWorld
             SetType(blockType);
             owner.Redraw();
             return true;
+        }
+
+        private BlockSetup GenerateBlockSetup(BlockType blockType)
+        {
+            BlockSetup setup = new BlockSetup()
+            {
+                blockType = blockType,
+                health = blockType == BlockType.Water ? 8 : 5,
+                toughness = 1,
+                blockOpacity = GetBlockOpacity(blockType)
+            };
+
+            return setup;
+        }
+
+        private BlockOpacity GetBlockOpacity(BlockType blockType)
+        {
+            if (blockType == BlockType.Air) return BlockOpacity.Transparent;
+            if (blockType == BlockType.Water) return BlockOpacity.Liquid;
+            return BlockOpacity.Solid;
         }
     }
 }

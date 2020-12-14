@@ -7,9 +7,11 @@ namespace VoxelWorld
 {
     public class Chunk
     {
-        public Material material;
+        public Material solidMaterial;
+        public Material fluidMaterial;
         public Block[,,] chunkData;
         public GameObject chunk;
+        public GameObject fluid;
         public ChunkState chunkState;
         public BlockData blockData;
         public string chunkName;
@@ -55,12 +57,17 @@ namespace VoxelWorld
             changed = false;
         }
 
-        public Chunk(Vector3 position, Material material)
+        public Chunk(Vector3 position, Material solidMaterial, Material fluidMaterial)
         {
             chunkName = World.BuildChunkName(position);
             chunk = new GameObject(chunkName);
             chunk.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
-            this.material = material;
+
+            fluid = new GameObject(World.BuildChunkName(position) + "_F");
+            fluid.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);;
+            
+            this.solidMaterial = solidMaterial;
+            this.fluidMaterial = fluidMaterial;
             BuildChunk();
         }
 
@@ -78,6 +85,7 @@ namespace VoxelWorld
                 {
                     for (int x = 0; x < Settings.CHUNK_SIZE; x++)
                     {
+                        bool addToFluid = false;
                         Vector3 position = new Vector3(x, y, z);
                         int worldX = (int) (x + chunk.transform.position.x);
                         int worldY = (int) (y + chunk.transform.position.y);
@@ -124,12 +132,17 @@ namespace VoxelWorld
 
                             else blockType = BlockType.Stone;
                         }
+                        else if (worldY < Settings.OCEAN_HEIGHT)
+                        {
+                            blockType = BlockType.Water;
+                            addToFluid = true;
+                        }
                         else blockType = BlockType.Air;
 
                         if ((worldY <= 1) && (worldY > 0)) blockType = BlockType.Bedrock;
 
 
-                        chunkData[x, y, z] = new Block(blockType, position, chunk, this);
+                        chunkData[x, y, z] = new Block(blockType, position, addToFluid ? fluid : chunk, this);
                     }
                 }
             }
@@ -142,6 +155,9 @@ namespace VoxelWorld
             GameObject.DestroyImmediate(chunk.GetComponent<MeshFilter>());
             GameObject.DestroyImmediate(chunk.GetComponent<MeshRenderer>());
             GameObject.DestroyImmediate(chunk.GetComponent<Collider>());
+            
+            GameObject.DestroyImmediate(fluid.GetComponent<MeshFilter>());
+            GameObject.DestroyImmediate(fluid.GetComponent<MeshRenderer>());
             DrawChunk();
         }
 
@@ -159,17 +175,18 @@ namespace VoxelWorld
                 }
             }
 
-            CombineQuads();
-
+            CombineQuads(chunk, solidMaterial);
             MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = chunk.GetComponent<MeshFilter>().mesh;
+            
+            CombineQuads(fluid, fluidMaterial);
             chunkState = ChunkState.Idle;
         }
 
-        private void CombineQuads()
+        private void CombineQuads(GameObject gObject, Material material)
         {
             // Combining
-            MeshFilter[] meshFilters = chunk.GetComponentsInChildren<MeshFilter>();
+            MeshFilter[] meshFilters = gObject.GetComponentsInChildren<MeshFilter>();
             CombineInstance[] combine = new CombineInstance[meshFilters.Length];
             int i = 0;
             while (i < meshFilters.Length)
@@ -180,18 +197,19 @@ namespace VoxelWorld
             }
 
             // Creating new mesh
-            MeshFilter meshFilter = chunk.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = gObject.GetComponent<MeshFilter>();
+            if (meshFilter == null) meshFilter = gObject.AddComponent<MeshFilter>();
             meshFilter.mesh = new Mesh();
 
             // Assign mesh
             meshFilter.mesh.CombineMeshes(combine);
 
             // Add renderer
-            MeshRenderer meshRenderer = chunk.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = gObject.AddComponent<MeshRenderer>();
             meshRenderer.material = material;
 
             // Delete all children (the quads)
-            chunk.transform.DestroyAllChildren();
+            gObject.transform.DestroyAllChildren();
         }
     }
 }

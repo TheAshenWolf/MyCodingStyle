@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Minecraft
-  m_Shader: {fileID: -6465566751694194690, guid: 0c71d0389e6f1448f98053d41e1a04e7, type: 3}
+  m_Name: TransparentAltas
+  m_Shader: {fileID: -6465566751694194690, guid: 7c6d7123137fa302b9625d92a61764ab, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -89,6 +89,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Alpha: 0.75
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1

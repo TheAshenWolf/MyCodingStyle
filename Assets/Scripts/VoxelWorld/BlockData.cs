@@ -20,7 +20,7 @@ namespace VoxelWorld
                 {
                     for (int x = 0; x < Settings.CHUNK_SIZE; x++)
                     {
-                        blockMatrix[x, y, z] = blocks[x, y, z].blockType;
+                        blockMatrix[x, y, z] = blocks[x, y, z].blockSetup.blockType;
                     }
                 }
             }

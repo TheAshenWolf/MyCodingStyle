@@ -12,17 +12,13 @@ namespace VoxelWorld
     {
         public GameObject player;
         public Material textureAtlas;
+        public Material fluidTextureAtlas;
         public static ConcurrentDictionary<string, Chunk> chunks;
         public bool initialBuild = true;
-        public static List<string> chunksToRemove = new List<string>();
+        private static readonly List<string> ChunksToRemove = new List<string>();
         public Vector3 lastBuildPosition;
 
         public CoroutineQueue coroutineQueue;
-        public static uint maxCoroutines = 1000;
-
-        [SerializeField] private Slider slider;
-        [SerializeField] private Camera loadingCamera;
-        [SerializeField] private TextMeshProUGUI statusText;
 
 
         private void Start()
@@ -39,7 +35,7 @@ namespace VoxelWorld
             transform.rotation = Quaternion.identity;
 
 
-            coroutineQueue = new CoroutineQueue(maxCoroutines, StartCoroutine);
+            coroutineQueue = new CoroutineQueue(Settings.MAX_COROUTINES, StartCoroutine);
 
             BuildChunkAt((int) (playerPosition.x / Settings.CHUNK_SIZE), (int) (playerPosition.y / Settings.CHUNK_SIZE),
                 (int) (playerPosition.z / Settings.CHUNK_SIZE));
@@ -54,12 +50,6 @@ namespace VoxelWorld
             
             
             InvokeRepeating(nameof(SaveChangedChunks), Settings.AUTOSAVE_DELAY, Settings.AUTOSAVE_DELAY);
-        }
-
-        public void StartLoading()
-        {
-            slider.gameObject.SetActive(true);
-            statusText.gameObject.SetActive(true);
         }
 
         private void Update()
@@ -97,8 +87,9 @@ namespace VoxelWorld
 
             if (!chunks.TryGetValue(chunkName, out chunk))
             {
-                chunk = new Chunk(chunkPosition, textureAtlas);
+                chunk = new Chunk(chunkPosition, textureAtlas, fluidTextureAtlas);
                 chunk.chunk.transform.parent = transform;
+                chunk.fluid.transform.parent = transform;
                 chunks.TryAdd(chunk.chunk.name, chunk);
             }
         }
@@ -141,7 +132,7 @@ namespace VoxelWorld
                     Vector3.Distance(player.transform.position, chunk.Value.chunk.transform.position) >
                     Settings.RENDER_DISTANCE * Settings.CHUNK_SIZE)
                 {
-                    chunksToRemove.Add(chunk.Key);
+                    ChunksToRemove.Add(chunk.Key);
                 }
 
                 yield return null;
@@ -150,9 +141,9 @@ namespace VoxelWorld
 
         public IEnumerator RemoveOldChunksOutsideRadius()
         {
-            for (int index = 0; index < chunksToRemove.Count; index++)
+            for (int index = 0; index < ChunksToRemove.Count; index++)
             {
-                string chunkName = chunksToRemove[index];
+                string chunkName = ChunksToRemove[index];
                 if (chunks.TryGetValue(chunkName, out Chunk chunk))
                 {
                     Destroy(chunk.chunk);

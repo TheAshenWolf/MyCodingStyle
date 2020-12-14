@@ -405,6 +405,7 @@
             <e p="CoroutineQueue.cs" t="Include" />
             <e p="Enums.cs" t="Include" />
             <e p="Settings.cs" t="Include" />
+            <e p="Structs.cs" t="Include" />
             <e p="Utils.cs" t="Include" />
             <e p="World.cs" t="Include" />
           </e>

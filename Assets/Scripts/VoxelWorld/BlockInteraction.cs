@@ -152,7 +152,7 @@ namespace VoxelWorld
                             if (World.chunks.TryGetValue(chunkName, out Chunk chunk))
                             {
                                 // todo: recalculate the components instead
-                                if (chunk.chunkData[x, y, z].blockType != BlockType.Bedrock)
+                                if (chunk.chunkData[x, y, z].blockSetup.blockType != BlockType.Bedrock)
                                 {
                                     chunk.Redraw();
                                 }
