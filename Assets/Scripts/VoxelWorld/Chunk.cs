@@ -16,6 +16,7 @@ namespace VoxelWorld
         public BlockData blockData;
         public string chunkName;
         public bool changed;
+        public World world;
 
         private string BuildChunkFileName(Vector3 position)
         {
@@ -98,12 +99,11 @@ namespace VoxelWorld
                             continue;
                         }
 
-                        BlockType blockType;
+                        BlockType blockType = BlockType.Stone;
 
                         // Default "chunk" of materials grass - dirt - stone - bedrock
-                        if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, pers: 0.04f) < .4f)
-                            blockType = BlockType.Air;
-                        else if (worldY == Utils.GenerateHeight(worldX, worldZ)) blockType = BlockType.Grass;
+                        
+                        if (worldY == Utils.GenerateHeight(worldX, worldZ)) blockType = BlockType.Grass;
                         else if (worldY < Utils.GenerateHeight(worldX, worldZ) &&
                                  worldY > Utils.GenerateStoneHeight(worldX, worldZ)) blockType = BlockType.Dirt;
                         else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ) && worldY > 1)
@@ -128,16 +128,21 @@ namespace VoxelWorld
                             {
                                 blockType = BlockType.RedstoneOre;
                             }
+                            
+                            if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, pers: 0.04f) < .4f && (blockType != BlockType.Water))
+                                blockType = BlockType.Air;
 
 
                             else blockType = BlockType.Stone;
                         }
-                        else if (worldY < Settings.OCEAN_HEIGHT)
+                        else if (worldY < Settings.OCEAN_HEIGHT && worldY > Utils.GenerateHeight(worldX, worldZ))
                         {
                             blockType = BlockType.Water;
                             addToFluid = true;
                         }
                         else blockType = BlockType.Air;
+                        
+                        
 
                         if ((worldY <= 1) && (worldY > 0)) blockType = BlockType.Bedrock;
 

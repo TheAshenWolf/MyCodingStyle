@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
@@ -304,7 +305,7 @@ namespace VoxelWorld
             return index;
         }
 
-        private bool HasSolidNeighbour(int x, int y, int z)
+        public Block GetBlock(int x, int y, int z)
         {
             Block[,,] chunkData;
 
@@ -327,14 +328,21 @@ namespace VoxelWorld
                 {
                     chunkData = neighbourChunk.chunkData;
                 }
-                else return false;
+                else return null;
             }
             else chunkData = owner.chunkData;
 
+            return chunkData[x, y, z];
+        }
+
+        private bool HasSolidNeighbour(int x, int y, int z)
+        {
+            
+
             try
             {
-                return (chunkData[x, y, z].blockSetup.blockOpacity == BlockOpacity.Solid ||
-                        chunkData[x, y, z].blockSetup.blockType == blockSetup.blockType);
+                return (GetBlock(x,y,z).blockSetup.blockOpacity == BlockOpacity.Solid ||
+                        GetBlock(x,y,z).blockSetup.blockType == blockSetup.blockType);
             }
             catch
             {
@@ -374,8 +382,16 @@ namespace VoxelWorld
 
         public bool BuildBlock(BlockType blockType)
         {
-            SetType(blockType);
-            owner.Redraw();
+            if (blockType == BlockType.Water)
+            {
+                owner.world.StartCoroutine(World.Flow(this, BlockType.Water, blockSetup.health, 8));
+            }
+            else
+            {
+                SetType(blockType);
+                owner.Redraw();
+            }
+            
             return true;
         }
 

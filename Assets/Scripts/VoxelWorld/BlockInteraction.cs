@@ -20,7 +20,7 @@ namespace VoxelWorld
 
         public readonly BlockType[] hotbar =
         {
-            BlockType.Stone, BlockType.Sand, BlockType.Wood,
+            BlockType.Stone, BlockType.Sand, /*BlockType.Wood*/ BlockType.Water,
             BlockType.Brick, BlockType.Planks, BlockType.Dirt,
             BlockType.Gravel, BlockType.Cobblestone, BlockType.BookShelf
         };

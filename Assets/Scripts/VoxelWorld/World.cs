@@ -2,9 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using TMPro;
+using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace VoxelWorld
 {
@@ -17,9 +16,14 @@ namespace VoxelWorld
         public bool initialBuild = true;
         private static readonly List<string> ChunksToRemove = new List<string>();
         public Vector3 lastBuildPosition;
+        public static CoroutineQueue coroutineQueue;
 
-        public CoroutineQueue coroutineQueue;
+        public static World instance;
 
+        private void Awake()
+        {
+            instance = this;
+        }
 
         private void Start()
         {
@@ -88,6 +92,7 @@ namespace VoxelWorld
             if (!chunks.TryGetValue(chunkName, out chunk))
             {
                 chunk = new Chunk(chunkPosition, textureAtlas, fluidTextureAtlas);
+                chunk.world = this;
                 chunk.chunk.transform.parent = transform;
                 chunk.fluid.transform.parent = transform;
                 chunks.TryAdd(chunk.chunk.name, chunk);
@@ -214,6 +219,47 @@ namespace VoxelWorld
         private void OnApplicationQuit()
         {
             StartCoroutine(SaveChangedChunks());
+        }
+
+        public static IEnumerator Flow(Block block, BlockType blockType, int strength, int maxSize)
+        {
+            if (maxSize <= 0) yield break;
+            if (block == null) yield break;
+            if (strength == 0) yield break;
+            if (block.blockSetup.blockType != BlockType.Air) yield break;
+
+            block.SetType(blockType);
+            block.blockSetup.health = strength;
+            block.owner.Redraw();
+            yield return new WaitForSeconds(1);
+
+            int x = (int) block.position.x;
+            int y = (int) block.position.y;
+            int z = (int) block.position.z;
+
+            Block below = block.GetBlock(x, y - 1, z);
+            if (below != null && (below.blockSetup.blockOpacity == BlockOpacity.Transparent || below.blockSetup.blockOpacity == BlockOpacity.Liquid))
+            {
+                instance.StartCoroutine(Flow(block.GetBlock(x, y - 1, z), blockType, strength, --maxSize));
+                yield break;
+            }
+            else
+            {
+                --strength;
+                --maxSize;
+
+                coroutineQueue.Run(Flow(block.GetBlock(x - 1, y, z), blockType ,strength, maxSize));
+                yield return new WaitForSeconds(1);
+                
+                coroutineQueue.Run(Flow(block.GetBlock(x + 1, y, z), blockType ,strength, maxSize));
+                yield return new WaitForSeconds(1);
+                
+                coroutineQueue.Run(Flow(block.GetBlock(x, y, z - 1), blockType ,strength, maxSize));
+                yield return new WaitForSeconds(1);
+                
+                coroutineQueue.Run(Flow(block.GetBlock(x, y, z + 1), blockType ,strength, maxSize));
+                yield return new WaitForSeconds(1);
+            }
         }
     }
 }
