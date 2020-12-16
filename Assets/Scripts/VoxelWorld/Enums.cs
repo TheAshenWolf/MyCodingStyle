@@ -33,7 +33,8 @@ namespace VoxelWorld
         Sand,
         BookShelf,
         Cobblestone,
-        Water
+        Water,
+        Lava
     }
 
     [Serializable]

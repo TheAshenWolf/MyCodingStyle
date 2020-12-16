@@ -204,7 +204,7 @@ namespace VoxelWorld
             return chunks.TryGetValue(chunkName, out Chunk chunk) ? chunk.chunkData[blockX, blockY, blockZ] : null;
         }
 
-        private static IEnumerator SaveChangedChunks()
+        private IEnumerator SaveChangedChunks()
         {
             Debug.Log("World Saving In Progress...");
             foreach (KeyValuePair<string, Chunk> chunkPair in chunks)
@@ -228,6 +228,7 @@ namespace VoxelWorld
             if (strength == 0) yield break;
             if (block.blockSetup.blockType != BlockType.Air) yield break;
 
+            block.SetParent(block.owner.fluid);
             block.SetType(blockType);
             block.blockSetup.health = strength;
             block.owner.Redraw();
@@ -259,6 +260,40 @@ namespace VoxelWorld
                 
                 coroutineQueue.Run(Flow(block.GetBlock(x, y, z + 1), blockType ,strength, maxSize));
                 yield return new WaitForSeconds(1);
+            }
+        }
+
+        public static IEnumerator Fall(Block block, BlockType blockType)
+        {
+            Block thisBlock = block;
+            Block previousBlock = null;
+
+            Vector3 blockPosition = block.position;
+    
+            Debug.Log(block.owner);
+            while (true)
+            {
+                BlockType previousType = thisBlock.blockSetup.blockType;
+                thisBlock.SetType(blockType);
+                if (previousBlock == null) thisBlock.owner.Redraw();
+
+                previousBlock?.SetType(previousType);
+                previousBlock?.owner.Redraw();
+                
+                previousBlock = thisBlock;
+
+                Vector3 position = thisBlock.position;
+                thisBlock = thisBlock.GetBlock((int) position.x, (int) position.y - 1, (int) position.z);
+                thisBlock.owner.Redraw();
+                yield return new WaitForSeconds(.1f);
+                                
+
+                if (thisBlock.blockSetup.blockOpacity == BlockOpacity.Solid)
+                {
+                    thisBlock.owner.Redraw();
+                    if (thisBlock.owner != previousBlock.owner) previousBlock.owner.Redraw();
+                    yield break;
+                }
             }
         }
     }

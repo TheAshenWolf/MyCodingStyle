@@ -15,7 +15,7 @@ namespace VoxelWorld
 
         private readonly Material _material;
 
-        private readonly GameObject _parent;
+        private GameObject _parent;
         public Vector3 position;
 
         private Color[] _colors = new Color[0];
@@ -337,12 +337,10 @@ namespace VoxelWorld
 
         private bool HasSolidNeighbour(int x, int y, int z)
         {
-            
-
             try
             {
-                return (GetBlock(x,y,z).blockSetup.blockOpacity == BlockOpacity.Solid ||
-                        GetBlock(x,y,z).blockSetup.blockType == blockSetup.blockType);
+                return (GetBlock(x, y, z).blockSetup.blockOpacity == BlockOpacity.Solid ||
+                        GetBlock(x, y, z).blockSetup.blockType == blockSetup.blockType);
             }
             catch
             {
@@ -380,18 +378,23 @@ namespace VoxelWorld
             owner.Redraw();
         }
 
-        public bool BuildBlock(BlockType blockType)
+        public bool BuildBlock(BlockType blockType, GameObject parent)
         {
-            if (blockType == BlockType.Water)
+            SetParent(parent);
+            if (blockType == BlockType.Water || blockType == BlockType.Lava)
             {
-                owner.world.StartCoroutine(World.Flow(this, BlockType.Water, blockSetup.health, 8));
+                owner.world.StartCoroutine(World.Flow(this, blockType, blockSetup.health, 8));
+            }
+            else if (blockType == BlockType.Sand || blockType == BlockType.Gravel)
+            {
+                owner.world.StartCoroutine(World.Fall(this, blockType));
             }
             else
             {
                 SetType(blockType);
                 owner.Redraw();
             }
-            
+
             return true;
         }
 
@@ -402,17 +405,23 @@ namespace VoxelWorld
                 blockType = blockType,
                 health = blockType == BlockType.Water ? 8 : 5,
                 toughness = 1,
-                blockOpacity = GetBlockOpacity(blockType)
+                blockOpacity = GetBlockOpacity(blockType),
+                isFalling = (blockType == BlockType.Gravel || blockType == BlockType.Sand)
             };
 
             return setup;
         }
 
-        private BlockOpacity GetBlockOpacity(BlockType blockType)
+        public static BlockOpacity GetBlockOpacity(BlockType blockType)
         {
             if (blockType == BlockType.Air) return BlockOpacity.Transparent;
             if (blockType == BlockType.Water) return BlockOpacity.Liquid;
             return BlockOpacity.Solid;
+        }
+
+        public void SetParent(GameObject parent)
+        {
+            _parent = parent;
         }
     }
 }

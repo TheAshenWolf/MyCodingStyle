@@ -94,7 +94,7 @@ namespace VoxelWorld
 
                         if (loadingFromFile)
                         {
-                            chunkData[x, y, z] = new Block(blockData.blockMatrix[x, y, z], position, chunk.gameObject,
+                            chunkData[x, y, z] = new Block(blockData.blockMatrix[x, y, z], position, Block.GetBlockOpacity(blockData.blockMatrix[x, y, z]) == BlockOpacity.Solid ? chunk : fluid,
                                 this);
                             continue;
                         }
