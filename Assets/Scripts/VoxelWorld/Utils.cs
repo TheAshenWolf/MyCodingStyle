@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace VoxelWorld
@@ -59,6 +60,11 @@ namespace VoxelWorld
             }
 
             return total / maxValue;
+        }
+
+        public static void Debug(params object[] items)
+        {
+            UnityEngine.Debug.Log(items.Aggregate("", (current, item) => current + (item.ToString() + " ")));
         }
     }
 }

@@ -171,7 +171,7 @@ namespace VoxelWorld
                 Settings.RENDER_DISTANCE));
         }
 
-        public static Block GetWorldBlock(Vector3 position, Chunk hitChunk)
+        public static Block GetWorldBlock(Vector3 position)
         {
             int modX = (int) (position.x % Settings.CHUNK_SIZE);
             int modY = (int) (position.y % Settings.CHUNK_SIZE);
@@ -191,6 +191,12 @@ namespace VoxelWorld
                 chunkX -= Settings.CHUNK_SIZE;
             }
             
+            if (blockY < 0)
+            {
+                blockY += Settings.CHUNK_SIZE + 1;
+                chunkY -= Settings.CHUNK_SIZE;
+            }
+            
             if (blockZ < 0)
             {
                 blockZ += Settings.CHUNK_SIZE + 1;
@@ -201,7 +207,13 @@ namespace VoxelWorld
             Vector3 chunkPosition = new Vector3(chunkX, chunkY, chunkZ);
 
             string chunkName = BuildChunkName(chunkPosition);
+            Utils.Debug(blockX, blockY, blockZ);
             return chunks.TryGetValue(chunkName, out Chunk chunk) ? chunk.chunkData[blockX, blockY, blockZ] : null;
+        }
+
+        public static Block GetWorldBlock(int x, int y, int z)
+        {
+            return GetWorldBlock(new Vector3(x, y, z));
         }
 
         private IEnumerator SaveChangedChunks()
@@ -263,19 +275,32 @@ namespace VoxelWorld
             }
         }
 
+        public static IEnumerator DelayedFall(Block block, BlockType blockType)
+        {
+            yield return new WaitForSeconds(.25f);
+            yield return Fall(block, blockType);
+        }
+
         public static IEnumerator Fall(Block block, BlockType blockType)
         {
             Block thisBlock = block;
             Block previousBlock = null;
 
-            Vector3 blockPosition = block.position;
-    
-            Debug.Log(block.owner);
             while (true)
             {
+                thisBlock.SetParent(thisBlock.owner.chunk);
                 BlockType previousType = thisBlock.blockSetup.blockType;
                 thisBlock.SetType(blockType);
                 if (previousBlock == null) thisBlock.owner.Redraw();
+
+                /*Block aboveBlock = thisBlock.GetBlock((int) thisBlock.position.x, (int) thisBlock.position.y + 1,
+                    (int) thisBlock.position.z);
+                if (aboveBlock.blockSetup.isFalling &&
+                    (int) thisBlock.position.y == Settings.CHUNK_SIZE - 1)
+                {
+                    Debug.Log("Fall?");
+                    yield return DelayedFall(aboveBlock, aboveBlock.blockSetup.blockType);
+                }*/
 
                 previousBlock?.SetType(previousType);
                 previousBlock?.owner.Redraw();
@@ -284,6 +309,8 @@ namespace VoxelWorld
 
                 Vector3 position = thisBlock.position;
                 thisBlock = thisBlock.GetBlock((int) position.x, (int) position.y - 1, (int) position.z);
+                if (thisBlock == null) Utils.Debug((int) position.x, (int) position.y - 1, (int) position.z);
+                Debug.Log(thisBlock + " " + thisBlock?.owner);
                 thisBlock.owner.Redraw();
                 yield return new WaitForSeconds(.1f);
                                 

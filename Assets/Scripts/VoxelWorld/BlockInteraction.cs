@@ -72,7 +72,7 @@ namespace VoxelWorld
                         hitBlockPosition = hit.point - hit.normal / 2f;
                     else hitBlockPosition = hit.point + hit.normal / 2f;
 
-                    Block block = World.GetWorldBlock(hitBlockPosition, hitChunk);
+                    Block block = World.GetWorldBlock(hitBlockPosition);
                     hitChunk = block.owner;
 
                     Vector3 hitChunkPosition = hit.collider.gameObject.transform.position;

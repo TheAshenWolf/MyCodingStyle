@@ -53,6 +53,7 @@ namespace VoxelWorld
                 blockSetup = GenerateBlockSetup(BlockType.Air);
                 crackTexture = Crack.Crack0;
                 owner.Redraw();
+                owner.UpdateChunk();
                 return true;
             }
 
@@ -299,10 +300,10 @@ namespace VoxelWorld
 
         private int ConvertBlockIndexToLocal(int index)
         {
-            if (index == -1) index = Settings.CHUNK_SIZE - 1;
-            else if (index == Settings.CHUNK_SIZE) index = 0;
-
-            return index;
+            int mod = index % Settings.CHUNK_SIZE;
+            mod = mod >= 0 ? mod : Settings.CHUNK_SIZE + mod;
+            if (index < 0) Debug.Log(mod);
+            return mod;
         }
 
         public Block GetBlock(int x, int y, int z)
@@ -314,7 +315,8 @@ namespace VoxelWorld
                 z < 0 || z >= Settings.CHUNK_SIZE)
             {
                 Vector3 neighbourChunkPos = _parent.transform.position +
-                                            new Vector3((x - (int) position.x) * Settings.CHUNK_SIZE,
+                                            new Vector3(
+                                                (x - (int) position.x) * Settings.CHUNK_SIZE,
                                                 (y - (int) position.y) * Settings.CHUNK_SIZE,
                                                 (z - (int) position.z) * Settings.CHUNK_SIZE);
 
@@ -328,10 +330,12 @@ namespace VoxelWorld
                 {
                     chunkData = neighbourChunk.chunkData;
                 }
-                else return null;
+                else
+                {
+                    return null;
+                }
             }
             else chunkData = owner.chunkData;
-
             return chunkData[x, y, z];
         }
 

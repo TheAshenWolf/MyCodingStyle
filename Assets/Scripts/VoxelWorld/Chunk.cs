@@ -65,15 +65,40 @@ namespace VoxelWorld
             chunk.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
 
             fluid = new GameObject(World.BuildChunkName(position) + "_F");
-            fluid.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);;
-            
+            fluid.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
+
             this.solidMaterial = solidMaterial;
             this.fluidMaterial = fluidMaterial;
             BuildChunk();
         }
 
+        public void UpdateChunk()
+        {
+            for (int z = 0; z < Settings.CHUNK_SIZE; z++)
+            {
+                for (int y = 0; y < Settings.CHUNK_SIZE; y++)
+                {
+                    for (int x = 0; x < Settings.CHUNK_SIZE; x++)
+                    {
+                        Block block = chunkData[x, y, z];
+                        BlockType blockType = block.blockSetup.blockType;
 
-        public void BuildChunk()
+                        if (block.blockSetup.isFalling)
+                        {
+                            world.StartCoroutine(World.Fall(block, blockType));
+                        }
+                        else if (block.blockSetup.blockOpacity == BlockOpacity.Liquid)
+                        {
+                            world.StartCoroutine(World.Flow(block, blockType,
+                                8, 8));
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private void BuildChunk()
         {
             bool loadingFromFile = false;
             loadingFromFile = Load();
@@ -94,7 +119,10 @@ namespace VoxelWorld
 
                         if (loadingFromFile)
                         {
-                            chunkData[x, y, z] = new Block(blockData.blockMatrix[x, y, z], position, Block.GetBlockOpacity(blockData.blockMatrix[x, y, z]) == BlockOpacity.Solid ? chunk : fluid,
+                            chunkData[x, y, z] = new Block(blockData.blockMatrix[x, y, z], position,
+                                Block.GetBlockOpacity(blockData.blockMatrix[x, y, z]) == BlockOpacity.Solid
+                                    ? chunk
+                                    : fluid,
                                 this);
                             continue;
                         }
@@ -102,7 +130,7 @@ namespace VoxelWorld
                         BlockType blockType = BlockType.Stone;
 
                         // Default "chunk" of materials grass - dirt - stone - bedrock
-                        
+
                         if (worldY == Utils.GenerateHeight(worldX, worldZ)) blockType = BlockType.Grass;
                         else if (worldY < Utils.GenerateHeight(worldX, worldZ) &&
                                  worldY > Utils.GenerateStoneHeight(worldX, worldZ)) blockType = BlockType.Dirt;
@@ -128,8 +156,9 @@ namespace VoxelWorld
                             {
                                 blockType = BlockType.RedstoneOre;
                             }
-                            
-                            if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, pers: 0.04f) < .4f && (blockType != BlockType.Water))
+
+                            if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, pers: 0.04f) < .4f &&
+                                (blockType != BlockType.Water))
                                 blockType = BlockType.Air;
 
 
@@ -141,8 +170,7 @@ namespace VoxelWorld
                             addToFluid = true;
                         }
                         else blockType = BlockType.Air;
-                        
-                        
+
 
                         if ((worldY <= 1) && (worldY > 0)) blockType = BlockType.Bedrock;
 
@@ -160,7 +188,7 @@ namespace VoxelWorld
             GameObject.DestroyImmediate(chunk.GetComponent<MeshFilter>());
             GameObject.DestroyImmediate(chunk.GetComponent<MeshRenderer>());
             GameObject.DestroyImmediate(chunk.GetComponent<Collider>());
-            
+
             GameObject.DestroyImmediate(fluid.GetComponent<MeshFilter>());
             GameObject.DestroyImmediate(fluid.GetComponent<MeshRenderer>());
             DrawChunk();
@@ -183,7 +211,7 @@ namespace VoxelWorld
             CombineQuads(chunk, solidMaterial);
             MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = chunk.GetComponent<MeshFilter>().mesh;
-            
+
             CombineQuads(fluid, fluidMaterial);
             chunkState = ChunkState.Idle;
         }
