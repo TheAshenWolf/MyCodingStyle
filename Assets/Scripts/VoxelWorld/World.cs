@@ -207,7 +207,6 @@ namespace VoxelWorld
             Vector3 chunkPosition = new Vector3(chunkX, chunkY, chunkZ);
 
             string chunkName = BuildChunkName(chunkPosition);
-            Utils.Debug(blockX, blockY, blockZ);
             return chunks.TryGetValue(chunkName, out Chunk chunk) ? chunk.chunkData[blockX, blockY, blockZ] : null;
         }
 
@@ -285,22 +284,23 @@ namespace VoxelWorld
         {
             Block thisBlock = block;
             Block previousBlock = null;
+            bool fall = false;
 
             while (true)
             {
+                Block aboveBlock = thisBlock.GetBlock((int) thisBlock.position.x, (int) thisBlock.position.y + 1,
+                    (int) thisBlock.position.z);
+
+                if (aboveBlock.blockSetup.isFalling)
+                {
+                    Debug.Log("Fall? " + aboveBlock.blockSetup.blockType);
+                    fall = true;
+                }
+                
                 thisBlock.SetParent(thisBlock.owner.chunk);
                 BlockType previousType = thisBlock.blockSetup.blockType;
                 thisBlock.SetType(blockType);
                 if (previousBlock == null) thisBlock.owner.Redraw();
-
-                /*Block aboveBlock = thisBlock.GetBlock((int) thisBlock.position.x, (int) thisBlock.position.y + 1,
-                    (int) thisBlock.position.z);
-                if (aboveBlock.blockSetup.isFalling &&
-                    (int) thisBlock.position.y == Settings.CHUNK_SIZE - 1)
-                {
-                    Debug.Log("Fall?");
-                    yield return DelayedFall(aboveBlock, aboveBlock.blockSetup.blockType);
-                }*/
 
                 previousBlock?.SetType(previousType);
                 previousBlock?.owner.Redraw();
@@ -309,8 +309,6 @@ namespace VoxelWorld
 
                 Vector3 position = thisBlock.position;
                 thisBlock = thisBlock.GetBlock((int) position.x, (int) position.y - 1, (int) position.z);
-                if (thisBlock == null) Utils.Debug((int) position.x, (int) position.y - 1, (int) position.z);
-                Debug.Log(thisBlock + " " + thisBlock?.owner);
                 thisBlock.owner.Redraw();
                 yield return new WaitForSeconds(.1f);
                                 
@@ -321,6 +319,8 @@ namespace VoxelWorld
                     if (thisBlock.owner != previousBlock.owner) previousBlock.owner.Redraw();
                     yield break;
                 }
+                
+                if (fall) yield return instance.StartCoroutine(DelayedFall(aboveBlock, aboveBlock.blockSetup.blockType));
             }
         }
     }

@@ -53,7 +53,11 @@ namespace VoxelWorld
                 blockSetup = GenerateBlockSetup(BlockType.Air);
                 crackTexture = Crack.Crack0;
                 owner.Redraw();
-                owner.UpdateChunk();
+                Block blockAbove = GetBlock((int) position.x, (int) position.y + 1, (int) position.z);
+                if (blockAbove.blockSetup.isFalling)
+                {
+                    owner.world.StartCoroutine(World.Fall(blockAbove, blockAbove.blockSetup.blockType));
+                }
                 return true;
             }
 
@@ -302,7 +306,6 @@ namespace VoxelWorld
         {
             int mod = index % Settings.CHUNK_SIZE;
             mod = mod >= 0 ? mod : Settings.CHUNK_SIZE + mod;
-            if (index < 0) Debug.Log(mod);
             return mod;
         }
 
