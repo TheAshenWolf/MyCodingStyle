@@ -284,18 +284,21 @@ namespace VoxelWorld
         {
             Block thisBlock = block;
             Block previousBlock = null;
+            bool isFalling = true;
             bool fall = false;
+            
+            Block aboveBlock = thisBlock.GetBlock((int) thisBlock.position.x, (int) thisBlock.position.y + 1,
+                (int) thisBlock.position.z);
 
-            while (true)
+            if (aboveBlock.blockSetup.isFalling)
             {
-                Block aboveBlock = thisBlock.GetBlock((int) thisBlock.position.x, (int) thisBlock.position.y + 1,
-                    (int) thisBlock.position.z);
+                Debug.Log("Fall? " + aboveBlock.blockSetup.blockType);
+                fall = true;
+            }
 
-                if (aboveBlock.blockSetup.isFalling)
-                {
-                    Debug.Log("Fall? " + aboveBlock.blockSetup.blockType);
-                    fall = true;
-                }
+            while (isFalling)
+            {
+                
                 
                 thisBlock.SetParent(thisBlock.owner.chunk);
                 BlockType previousType = thisBlock.blockSetup.blockType;
@@ -317,11 +320,11 @@ namespace VoxelWorld
                 {
                     thisBlock.owner.Redraw();
                     if (thisBlock.owner != previousBlock.owner) previousBlock.owner.Redraw();
-                    yield break;
+                    isFalling = false;
                 }
-                
-                if (fall) yield return instance.StartCoroutine(DelayedFall(aboveBlock, aboveBlock.blockSetup.blockType));
             }
+            
+            if (fall) yield return instance.StartCoroutine(Fall(aboveBlock, aboveBlock.blockSetup.blockType));
         }
     }
 }

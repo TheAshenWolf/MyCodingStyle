@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2e6d9ce2-49d4-40ab-8542-f98a9fda04b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Materials/VoxelWorld/Textures/textureAtlas 1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/VoxelWorld/Textures/textureAtlas 1.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Demos/Custom Drawers.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Demos/Editor Windows.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Zenject/Source/Zenject.csproj.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Flocking.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Flocking.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/World.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +65,7 @@
       <updated>1608489411253</updated>
       <workItem from="1608489428559" duration="3917000" />
       <workItem from="1608497954875" duration="2756000" />
+      <workItem from="1608539550272" duration="336000" />
     </task>
     <servers />
   </component>
