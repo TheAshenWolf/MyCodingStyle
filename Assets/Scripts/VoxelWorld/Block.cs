@@ -54,7 +54,7 @@ namespace VoxelWorld
                 crackTexture = Crack.Crack0;
                 owner.Redraw();
                 Block blockAbove = GetBlock((int) position.x, (int) position.y + 1, (int) position.z);
-                if (blockAbove.blockSetup.isFalling)
+                if (blockAbove != null && blockAbove.blockSetup.isFalling)
                 {
                     owner.world.StartCoroutine(World.Fall(blockAbove, blockAbove.blockSetup.blockType));
                 }
@@ -165,6 +165,19 @@ namespace VoxelWorld
                     break;
                 case BlockType.Water:
                     uvs = BlockUVs.Water;
+                    break;
+                case BlockType.Leaves:
+                    uvs = BlockUVs.Leaves;
+                    _colors = new[]
+                    {
+                        new Color(0f, .8f, 0f, .1f),
+                        new Color(0f, .8f, 0f, .1f),
+                        new Color(0f, .8f, 0f, .1f),
+                        new Color(0f, .8f, 0f, .1f)
+                    };
+                    break;
+                case BlockType.TreeSeed:
+                    uvs = BlockUVs.Dirt;
                     break;
 
                 default:
@@ -317,11 +330,28 @@ namespace VoxelWorld
                 y < 0 || y >= Settings.CHUNK_SIZE ||
                 z < 0 || z >= Settings.CHUNK_SIZE)
             {
-                Vector3 neighbourChunkPos = _parent.transform.position +
-                                            new Vector3(
-                                                (x - (int) position.x) * Settings.CHUNK_SIZE,
-                                                (y - (int) position.y) * Settings.CHUNK_SIZE,
-                                                (z - (int) position.z) * Settings.CHUNK_SIZE);
+
+               int newX = x, newY = y, newZ = z;
+                if (x < 0 || x >= Settings.CHUNK_SIZE)
+                {
+                    newX = (x - (int) position.x) * Settings.CHUNK_SIZE;
+                }
+                if (y < 0 || y >= Settings.CHUNK_SIZE)
+                {
+                    newY = (y - (int) position.y) * Settings.CHUNK_SIZE;
+                }
+                if (z < 0 || z >= Settings.CHUNK_SIZE)
+                {
+                    newZ = (z - (int) position.z) * Settings.CHUNK_SIZE;
+                }
+
+
+               Vector3 neighbourChunkPos = _parent.transform.position +
+                                           new Vector3(newX, newY, newZ);
+                                           /*new Vector3(
+                                               (x - (int) position.x) * Settings.CHUNK_SIZE,
+                                               (y - (int) position.y) * Settings.CHUNK_SIZE,
+                                               (z - (int) position.z) * Settings.CHUNK_SIZE);*/
 
                 string neighbourName = World.BuildChunkName(neighbourChunkPos);
 

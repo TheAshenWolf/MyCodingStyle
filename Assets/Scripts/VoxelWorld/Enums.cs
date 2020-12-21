@@ -34,7 +34,9 @@ namespace VoxelWorld
         BookShelf,
         Cobblestone,
         Water,
-        Lava
+        Lava,
+        Leaves,
+        TreeSeed
     }
 
     [Serializable]

@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace VoxelWorld
 {
-    public class Utils
+    public static class Utils
     {
+
         public static int maxHeight = 128;
         private static float smooth = 0.01f;
         private static int octaves = 4;
@@ -43,6 +44,7 @@ namespace VoxelWorld
 
         private static float FractalBrownianMotion(float x, float z, int octaves, float persistance)
         {
+
             float total = 0;
             float frequency = 1;
             float amplitude = 1;
@@ -51,7 +53,7 @@ namespace VoxelWorld
 
             for (int i = 0; i < octaves; i++)
             {
-                total += Mathf.PerlinNoise((x + offset) * frequency, (z + offset) * frequency) * amplitude;
+                total +=  Mathf.PerlinNoise((x + offset) * frequency, (z + offset) * frequency) * amplitude;
 
                 maxValue += amplitude;
 

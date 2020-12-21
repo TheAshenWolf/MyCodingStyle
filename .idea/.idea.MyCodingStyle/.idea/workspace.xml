@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="2e6d9ce2-49d4-40ab-8542-f98a9fda04b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/World.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/BlockUVs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/BlockUVs.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Chunk.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Enums.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Enums.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Utils.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,12 +38,18 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/FE84F4A7-54DA-4A6B-B64F-CA409D40938A/51/10a53b31/Debug.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/Downloads/OpenSimplexNoise.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/World.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/BlockUVs.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Enums.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Block.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Chunk.cs" />
+        <option value="$USER_HOME$/Downloads/OpenSimplexNoise.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/VoxelWorld/Utils.cs" />
       </list>
     </option>
   </component>
@@ -65,7 +94,7 @@
       <updated>1608489411253</updated>
       <workItem from="1608489428559" duration="3917000" />
       <workItem from="1608497954875" duration="2756000" />
-      <workItem from="1608539550272" duration="336000" />
+      <workItem from="1608539550272" duration="10163000" />
     </task>
     <servers />
   </component>
@@ -74,6 +103,17 @@
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using TheAshenWolf;
@@ -17,6 +18,7 @@ namespace VoxelWorld
         public string chunkName;
         public bool changed;
         public World world;
+        private bool _treesGenerated;
 
         private string BuildChunkFileName(Vector3 position)
         {
@@ -113,9 +115,10 @@ namespace VoxelWorld
                     {
                         bool addToFluid = false;
                         Vector3 position = new Vector3(x, y, z);
-                        int worldX = (int) (x + chunk.transform.position.x);
-                        int worldY = (int) (y + chunk.transform.position.y);
-                        int worldZ = (int) (z + chunk.transform.position.z);
+                        Vector3 chunkPosition = chunk.transform.position;
+                        int worldX = (int) (x + chunkPosition.x);
+                        int worldY = (int) (y + chunkPosition.y);
+                        int worldZ = (int) (z + chunkPosition.z);
 
                         if (loadingFromFile)
                         {
@@ -131,7 +134,21 @@ namespace VoxelWorld
 
                         // Default "chunk" of materials grass - dirt - stone - bedrock
 
-                        if (worldY == Utils.GenerateHeight(worldX, worldZ)) blockType = BlockType.Grass;
+                        if (worldY == Utils.GenerateHeight(worldX, worldZ))
+                        {
+                            if (worldY <= Settings.OCEAN_HEIGHT + Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, .4f, 2) * 3 - 1)
+                            {
+                                blockType = Settings.OCEAN_HEIGHT - worldY > 4 ? BlockType.Gravel : BlockType.Sand;
+                            }
+                            else if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, .4f, 2) < .3f)
+                            {
+                                blockType = BlockType.TreeSeed;
+                            }
+                            else
+                            {
+                                blockType = BlockType.Grass;
+                            }
+                        }
                         else if (worldY < Utils.GenerateHeight(worldX, worldZ) &&
                                  worldY > Utils.GenerateStoneHeight(worldX, worldZ)) blockType = BlockType.Dirt;
                         else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ) && worldY > 1)
@@ -162,7 +179,7 @@ namespace VoxelWorld
                                 blockType = BlockType.Air;
 
 
-                            else blockType = BlockType.Stone;
+                            // else blockType = BlockType.Stone;
                         }
                         else if (worldY < Settings.OCEAN_HEIGHT && worldY > Utils.GenerateHeight(worldX, worldZ))
                         {
@@ -196,6 +213,23 @@ namespace VoxelWorld
 
         public void DrawChunk()
         {
+            if (!_treesGenerated)
+            {
+                for (int z = 0; z < Settings.CHUNK_SIZE; z++)
+                {
+                    for (int y = 0; y < Settings.CHUNK_SIZE; y++)
+                    {
+                        for (int x = 0; x < Settings.CHUNK_SIZE; x++)
+                        {
+                            BuildTrees(chunkData[x, y, z], x, y, z);
+                        }
+                    }
+                }
+
+                _treesGenerated = true;
+            }
+
+
             // Rendering
             for (int z = 0; z < Settings.CHUNK_SIZE; z++)
             {
@@ -243,6 +277,64 @@ namespace VoxelWorld
 
             // Delete all children (the quads)
             gObject.transform.DestroyAllChildren();
+        }
+
+        private void BuildTrees(Block seed, int x, int y, int z)
+        {
+            if (seed.blockSetup.blockType != BlockType.TreeSeed) return;
+
+            Block trunk = seed.GetBlock(x, y + 1, z);
+            if (trunk != null)
+            {
+                trunk.SetParent(trunk.owner.chunk);
+                trunk.SetType(BlockType.Wood);
+                Block trunk1 = seed.GetBlock(x, y + 2, z);
+                if (trunk1 != null)
+                {
+                    trunk1.SetParent(trunk1.owner.chunk);
+                    trunk1.SetType(BlockType.Wood);
+
+                    for (int i = -2; i <= 2; i++)
+                    {
+                        for (int j = -2; j <= 2; j++)
+                        {
+                            for (int k = 3; k <= 4; k++)
+                            {
+                                Block treetop = seed.GetBlock(x + i, y + k, z + j);
+                                if (treetop != null)
+                                {
+                                    if (i == 0 && j == 0)
+                                    {
+                                        treetop.SetType(BlockType.Wood);
+                                    }
+                                    else
+                                    {
+                                        treetop.SetType(BlockType.Leaves);
+                                    }
+                                }
+                                else return;
+                            }
+                        }
+                    }
+
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        for (int j = -1; j <= 1; j++)
+                        {
+                            Block treetop0 = seed.GetBlock(x + i, y + 5, z + j);
+                            treetop0?.SetParent(treetop0.owner.chunk);
+                            treetop0?.SetType(BlockType.Leaves);
+
+                            if (Math.Abs(i) != Math.Abs(j) || (i == 0 && j == 0))
+                            {
+                                Block treetop1 = seed.GetBlock(x + i, y + 6, z + j);
+                                treetop1?.SetParent(treetop1.owner.chunk);
+                                treetop1?.SetType(BlockType.Leaves);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

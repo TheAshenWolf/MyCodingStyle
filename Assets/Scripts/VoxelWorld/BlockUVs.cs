@@ -59,6 +59,8 @@ namespace VoxelWorld
         public static Vector2[] Obsidian => GetUvsFromTexturePosition(5, 2);
 
         public static Vector2[] Water => GetUvsFromTexturePosition(14, 0);
+
+        public static Vector2[] Leaves => GetUvsFromTexturePosition(5, 3);
         
         
         
