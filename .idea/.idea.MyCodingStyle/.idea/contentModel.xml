@@ -395,6 +395,12 @@
             <e p="Fish.cs" t="Include" />
             <e p="FlockManager.cs" t="Include" />
           </e>
+          <e p="MachineLearning" t="Include">
+            <e p="Camouflage" t="Include">
+              <e p="Dna.cs" t="Include" />
+              <e p="PopulationManager.cs" t="Include" />
+            </e>
+          </e>
           <e p="VoxelWorld" t="Include">
             <e p="Block.cs" t="Include" />
             <e p="BlockData.cs" t="Include" />
