@@ -20,14 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e6d9ce2-49d4-40ab-8542-f98a9fda04b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/SmallAssets/VoxelWorlds.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/SmallAssets/VoxelWorlds/crosshair.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/SmallAssets/VoxelWorlds/crosshair.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/SmallAssets/VoxelWorlds/round_play.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/SmallAssets/VoxelWorlds/round_play.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/Camouflage/Dna.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/Camouflage/Dna.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/Camouflage/PopulationManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/Camouflage/PopulationManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,6 +104,7 @@
       <workItem from="1608539550272" duration="10163000" />
       <workItem from="1608553012967" duration="248000" />
       <workItem from="1608918275156" duration="2506000" />
+      <workItem from="1608978068032" duration="4076000" />
     </task>
     <servers />
   </component>
