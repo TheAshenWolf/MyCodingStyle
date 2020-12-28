@@ -45,13 +45,4 @@ namespace MachineLearning.Camouflage
             Debug.Log(_collider2D);
         }
     }
-
-    public struct Gene
-    {
-        public float r;
-        public float g;
-        public float b;
-        public float sizeFactor;
-    }
-
 }
