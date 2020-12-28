@@ -22,6 +22,15 @@ namespace MachineLearning.WalkingStraight
             if (other.gameObject.CompareTag("Dead"))
             {
                 _alive = false;
+                gameObject.SetActive(false);
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.CompareTag("Finish"))
+            {
+                timeAlive *= 2;
             }
         }
 
