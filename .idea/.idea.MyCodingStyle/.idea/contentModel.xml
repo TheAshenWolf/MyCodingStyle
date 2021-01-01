@@ -402,6 +402,13 @@
               <e p="Gene.cs" t="Include" />
               <e p="PopulationManager.cs" t="Include" />
             </e>
+            <e p="StayOnPlatform" t="Include">
+              <e p="Brain.cs" t="Include" />
+              <e p="Dna.cs" t="Include" />
+              <e p="MovementType.cs" t="Include" />
+              <e p="ObjectMover.cs" t="Include" />
+              <e p="PopulationManager.cs" t="Include" />
+            </e>
             <e p="WalkingStraight" t="Include">
               <e p="Brain.cs" t="Include" />
               <e p="Dna.cs" t="Include" />

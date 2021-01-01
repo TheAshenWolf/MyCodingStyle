@@ -21,11 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2e6d9ce2-49d4-40ab-8542-f98a9fda04b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MachineLearning/WalkStraight.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MachineLearning/WalkStraight.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/Brain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/Brain.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/PopulationManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/PopulationManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/DynamicsManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/DynamicsManager.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/MachineLearning/Path.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/MachineLearning/Path.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,6 +39,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/Brain.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/Downloads/OpenSimplexNoise.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/ObjectMover.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/Brain.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -63,6 +62,8 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/Brain.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/ObjectMover.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/PopulationManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/MovementType.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/Brain.cs" />
       </list>
     </option>
   </component>
@@ -125,6 +126,7 @@
       <workItem from="1608978068032" duration="4076000" />
       <workItem from="1609145392424" duration="3698000" />
       <workItem from="1609176726189" duration="3387000" />
+      <workItem from="1609490263049" duration="1262000" />
     </task>
     <servers />
   </component>
