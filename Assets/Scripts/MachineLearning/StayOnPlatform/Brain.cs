@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
 
@@ -8,9 +9,10 @@ namespace MachineLearning.StayOnPlatform
     {
         public int dnaLength = 2;
         public float timeAlive;
+        public float timeWalking;
         public Dna dna;
         public GameObject eyes;
-        private bool _alive = true;
+        [SerializeField, ReadOnly] private bool _alive = true;
         private bool _seeGround = true;
 
 
@@ -25,7 +27,7 @@ namespace MachineLearning.StayOnPlatform
 
         public void Init()
         {
-            dna = new Dna(dnaLength, 6);
+            dna = new Dna(dnaLength, 3);
             timeAlive = 0;
             _alive = true;
         }
@@ -34,7 +36,7 @@ namespace MachineLearning.StayOnPlatform
         {
             if (!_alive) return;
 
-            Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 10, Color.red, 10);
+            Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 10, Color.red);
             _seeGround = false;
 
             RaycastHit hit;
@@ -51,10 +53,12 @@ namespace MachineLearning.StayOnPlatform
             float turn = 0;
             float movement = 0;
 
+
             switch (_seeGround ? (MovementType) dna.GetGene(0) : (MovementType) dna.GetGene(1))
             {
                 case MovementType.MoveForward:
                     movement = 1;
+                    timeWalking += Time.deltaTime;
                     break;
                 case MovementType.TurnLeft:
                     turn = -90;
@@ -66,7 +70,7 @@ namespace MachineLearning.StayOnPlatform
                     throw new ArgumentOutOfRangeException();
             }
 
-            this.transform.Translate(0, 0, movement * 0.1f);
+            this.transform.Translate(0, 0, movement * Time.deltaTime * 10f);
             this.transform.Rotate(0, turn, 0);
         }
     }

@@ -21,10 +21,13 @@
   <component name="ChangeListManager">
     <list default="true" id="2e6d9ce2-49d4-40ab-8542-f98a9fda04b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MyCodingStyle/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Materials/MachineLearning/Path.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/MachineLearning/Path.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MachineLearning/StayOnPlatform.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MachineLearning/StayOnPlatform.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/Brain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/Brain.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/MovementType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/MovementType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/ObjectMover.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/ObjectMover.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/PopulationManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/PopulationManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +66,7 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/ObjectMover.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/WalkingStraight/PopulationManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/MovementType.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/PopulationManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MachineLearning/StayOnPlatform/Brain.cs" />
       </list>
     </option>
@@ -126,7 +130,8 @@
       <workItem from="1608978068032" duration="4076000" />
       <workItem from="1609145392424" duration="3698000" />
       <workItem from="1609176726189" duration="3387000" />
-      <workItem from="1609490263049" duration="1262000" />
+      <workItem from="1609490263049" duration="2054000" />
+      <workItem from="1609681150851" duration="3105000" />
     </task>
     <servers />
   </component>

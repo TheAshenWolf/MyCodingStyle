@@ -2,8 +2,8 @@
 {
     public enum MovementType
     {
-        MoveForward,
-        TurnLeft,
-        TurnRight
+        MoveForward = 0,
+        TurnLeft = 1,
+        TurnRight = 2
     }
 }

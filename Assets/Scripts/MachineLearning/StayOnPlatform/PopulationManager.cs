@@ -14,8 +14,6 @@ namespace MachineLearning.StayOnPlatform
         public float trialTime = 10f;
         private int _generation = 0;
 
-        [SerializeField] private ObjectMover objectMover;
-
         private void OnGUI()
         {
             GUIStyle guiStyle = new GUIStyle
@@ -28,7 +26,7 @@ namespace MachineLearning.StayOnPlatform
             };
 
             GUI.Label(new Rect(10, 10, 100, 20), "Generation: " + _generation, guiStyle);
-            GUI.Label(new Rect(10, 65, 100, 20), "Trial time: " + (int) elapsed, guiStyle);
+            GUI.Label(new Rect(10, 65, 100, 20), string.Format("Trial time: {0:0.00}",elapsed),  guiStyle);
             GUI.Label(new Rect(10, 120, 100, 20), "Population: " + (int) population.Count, guiStyle);
         }
 
@@ -71,7 +69,7 @@ namespace MachineLearning.StayOnPlatform
 
         private void BreedNewPopulation()
         {
-            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().timeAlive).ToList();
+            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().timeAlive + bot.GetComponent<Brain>().timeWalking).ToList();
 
             population.Clear();
             for (int i = Mathf.FloorToInt(sortedList.Count / 2f) - 1; i < sortedList.Count - 1; i++)
@@ -95,7 +93,6 @@ namespace MachineLearning.StayOnPlatform
             if (elapsed >= trialTime)
             {
                 BreedNewPopulation();
-                objectMover.Reset();
                 elapsed = 0;
             }
         }
