@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -1880185140478654673}
   m_Layer: 8
   m_Name: Bot 1
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,10 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a0486300ed44884cb07eeb779bf11be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dnaLength: 2
+  start: {fileID: 0}
   timeAlive: 0
+  timeWalking: 0
+  dna:
+    genes: 
   eyes: {fileID: 3575809967300018029}
   _alive: 1
+  farthestDistance: 0
 --- !u!54 &-1880185140478654673
 Rigidbody:
   m_ObjectHideFlags: 0

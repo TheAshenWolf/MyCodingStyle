@@ -1,27 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MachineLearning.StayOnPlatform
 {
+    [Serializable]
     public class Dna
     {
-        private List<int> genes = new List<int>();
-        private int dnaLength = 0;
-        private int maxValues = 0;
+        [SerializeField] private List<int> genes = new List<int>();
+        private readonly int _dnaLength;
+        private readonly int _maxValues;
 
         public Dna(int length, int values)
         {
-            dnaLength = length;
-            maxValues = values;
+            _dnaLength = length;
+            _maxValues = values;
             SetRandom();
         }
 
-        public void SetRandom()
+        private void SetRandom()
         {
             genes.Clear();
-            for (int i = 0; i < dnaLength; i++)
+            for (int i = 0; i < _dnaLength; i++)
             {
-                genes.Add(Random.Range(0, maxValues));
+                genes.Add(Random.Range(0, _maxValues));
             }
         }
 
@@ -32,9 +35,9 @@ namespace MachineLearning.StayOnPlatform
 
         public void Combine(Dna dna1, Dna dna2)
         {
-            for (int i = 0; i < dnaLength; i++)
+            for (int i = 0; i < _dnaLength; i++)
             {
-                if (i < dnaLength / 2f)
+                if (i % 2 == 0)
                 {
                     int gene = dna1.genes[i];
                     genes[i] = gene;
@@ -49,7 +52,7 @@ namespace MachineLearning.StayOnPlatform
 
         public void Mutate()
         {
-            genes[Random.Range(0, dnaLength)] = Random.Range(0, maxValues);
+            genes[Random.Range(0, _dnaLength)] = Random.Range(0, _maxValues);
         }
 
         public int GetGene(int index)

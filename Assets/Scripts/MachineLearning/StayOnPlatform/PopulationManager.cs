@@ -11,8 +11,10 @@ namespace MachineLearning.StayOnPlatform
         public int populationSize = 50;
         private List<GameObject> population = new List<GameObject>();
         public static float elapsed = 0f;
-        public float trialTime = 10f;
+        public float trialTime = 30f;
         private int _generation = 0;
+
+        [SerializeField] private Transform start;
 
         private void OnGUI()
         {
@@ -35,10 +37,11 @@ namespace MachineLearning.StayOnPlatform
             for (int i = 0; i < populationSize; i++)
             {
                 Vector3 position = transform.position;
-                Vector3 startingPosition = new Vector3(position.x + Random.Range(-2, 2), position.y,
-                    position.z + Random.Range(-2, 2));
+                Vector3 startingPosition = new Vector3(position.x, position.y,
+                    position.z);
                 GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
                 bot.GetComponent<Brain>().Init();
+                bot.GetComponent<Brain>().start = start;
                 population.Add(bot);
             }
         }
@@ -47,8 +50,8 @@ namespace MachineLearning.StayOnPlatform
         private GameObject Breed(GameObject parent1, GameObject parent2)
         {
             Vector3 position = transform.position;
-            Vector3 startingPosition = new Vector3(position.x + Random.Range(-2, 2), position.y,
-                position.z + Random.Range(-2, 2));
+            Vector3 startingPosition = new Vector3(position.x, position.y,
+                position.z);
 
             GameObject child = Instantiate(botPrefab, startingPosition, this.transform.rotation);
             Brain brain = child.GetComponent<Brain>();
@@ -56,11 +59,13 @@ namespace MachineLearning.StayOnPlatform
             if (Random.Range(0, 100) == 50)
             {
                 brain.Init();
+                brain.start = start;
                 brain.dna.Mutate();
             }
             else
             {
                 brain.Init();
+                brain.start = start;
                 brain.dna.Combine(parent1.GetComponent<Brain>().dna, parent2.GetComponent<Brain>().dna);
             }
 
@@ -69,7 +74,7 @@ namespace MachineLearning.StayOnPlatform
 
         private void BreedNewPopulation()
         {
-            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().timeAlive + bot.GetComponent<Brain>().timeWalking).ToList();
+            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().farthestDistance).ToList();
 
             population.Clear();
             for (int i = Mathf.FloorToInt(sortedList.Count / 2f) - 1; i < sortedList.Count - 1; i++)

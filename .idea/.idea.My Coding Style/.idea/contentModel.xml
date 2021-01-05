@@ -4,6 +4,7 @@
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_My Coding Style.883885187.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
@@ -395,6 +396,26 @@
             <e p="Fish.cs" t="Include" />
             <e p="FlockManager.cs" t="Include" />
           </e>
+          <e p="MachineLearning" t="Include">
+            <e p="Camouflage" t="Include">
+              <e p="Dna.cs" t="Include" />
+              <e p="Gene.cs" t="Include" />
+              <e p="PopulationManager.cs" t="Include" />
+            </e>
+            <e p="StayOnPlatform" t="Include">
+              <e p="Brain.cs" t="Include" />
+              <e p="Dna.cs" t="Include" />
+              <e p="MovementType.cs" t="Include" />
+              <e p="PopulationManager.cs" t="Include" />
+            </e>
+            <e p="WalkingStraight" t="Include">
+              <e p="Brain.cs" t="Include" />
+              <e p="Dna.cs" t="Include" />
+              <e p="MovementType.cs" t="Include" />
+              <e p="ObjectMover.cs" t="Include" />
+              <e p="PopulationManager.cs" t="Include" />
+            </e>
+          </e>
           <e p="VoxelWorld" t="Include">
             <e p="Block.cs" t="Include" />
             <e p="BlockData.cs" t="Include" />
@@ -453,6 +474,11 @@
               <e p="TiltInput.cs" t="Include" />
               <e p="TouchPad.cs" t="Include" />
               <e p="VirtualInput.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Editor" t="Include">
+            <e p="CrossPlatformInput" t="Include">
+              <e p="CrossPlatformInputInitialize.cs" t="Include" />
             </e>
           </e>
           <e p="Utility" t="Include">
