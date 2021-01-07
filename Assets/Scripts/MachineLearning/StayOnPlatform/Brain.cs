@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
@@ -15,7 +16,8 @@ namespace MachineLearning.StayOnPlatform
         public GameObject eyes;
         [SerializeField, ReadOnly] private bool _alive = true;
         private bool _seeGround = true;
-        private MovementType _lastMovement;
+        private float _previousDistance;
+        private float _currentDistance;
         public float farthestDistance = 0;
 
 
@@ -23,8 +25,10 @@ namespace MachineLearning.StayOnPlatform
         {
             if (other.gameObject.CompareTag("Dead"))
             {
+                farthestDistance = -1;
                 _alive = false;
                 gameObject.SetActive(false);
+                gameObject.name = "Dead!";
             } 
         }
 
@@ -35,12 +39,13 @@ namespace MachineLearning.StayOnPlatform
                 farthestDistance = 9999f;
                 _alive = false;
                 gameObject.SetActive(false);
+                gameObject.name = "Passed!";
             }
         }
 
         public void Init()
         {
-            dna = new Dna(DNA_LENGTH, 3);
+            dna = new Dna(DNA_LENGTH, new List<int>() {3, 3, 3, 3});
             timeAlive = 0;
             _alive = true;
         }
@@ -49,10 +54,10 @@ namespace MachineLearning.StayOnPlatform
         {
             if (!_alive) return;
 
-            Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 10, Color.red);
+            Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 2, Color.red);
             _seeGround = false;
 
-            if (Physics.Raycast(eyes.transform.position, eyes.transform.forward * 10, out RaycastHit hit))
+            if (Physics.SphereCast(eyes.transform.position, 0.1f, eyes.transform.forward * 2, out RaycastHit hit))
             {
                 if (hit.collider.gameObject.CompareTag("Platform") || hit.collider.gameObject.CompareTag("Player"))
                 {
@@ -63,7 +68,8 @@ namespace MachineLearning.StayOnPlatform
             timeAlive = PopulationManager.elapsed;
             Vector3 myPos = new Vector3(transform.position.x, 0, transform.position.z);
             Vector3 startPos = new Vector3(start.position.x, 0, start.position.z);
-            farthestDistance = Mathf.Max(farthestDistance, Vector3.Distance(myPos, startPos));
+            _currentDistance = Vector3.Distance(myPos, startPos);
+            farthestDistance = Mathf.Max(farthestDistance, _currentDistance);
 
             float turn = 0;
             float movement = 0;
@@ -72,22 +78,13 @@ namespace MachineLearning.StayOnPlatform
             MovementType gene;
             if (_seeGround)
             {
-                gene = (MovementType) dna.GetGene(0);
+                if (_previousDistance > _currentDistance) gene = (MovementType) dna.GetGene(0);
+                else gene = (MovementType) dna.GetGene(1);
             }
             else
             {
-                switch (_lastMovement)
-                {
-                    case MovementType.TurnLeft:
-                        gene = (MovementType) dna.GetGene(2);
-                        break;
-                    case MovementType.TurnRight:
-                        gene = (MovementType) dna.GetGene(3);
-                        break;
-                    default:
-                        gene = (MovementType) dna.GetGene(1);
-                        break;
-                }
+                if (_previousDistance > _currentDistance) gene = (MovementType) dna.GetGene(2);
+                else gene = (MovementType) dna.GetGene(3);
             }
 
             switch (gene)
@@ -97,16 +94,16 @@ namespace MachineLearning.StayOnPlatform
                     timeWalking += Time.deltaTime;
                     break;
                 case MovementType.TurnLeft:
-                    turn = -90;
-                    _lastMovement = MovementType.TurnLeft;
+                    turn = -5;
                     break;
                 case MovementType.TurnRight:
-                    _lastMovement = MovementType.TurnRight;
-                    turn = 90;
+                    turn = 5;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            _previousDistance = _currentDistance;
 
             this.transform.Translate(0, 0, movement * Time.deltaTime * 10f);
             this.transform.Rotate(0, turn, 0);

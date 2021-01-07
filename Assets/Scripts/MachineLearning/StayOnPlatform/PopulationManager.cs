@@ -28,7 +28,7 @@ namespace MachineLearning.StayOnPlatform
             };
 
             GUI.Label(new Rect(10, 10, 100, 20), "Generation: " + _generation, guiStyle);
-            GUI.Label(new Rect(10, 65, 100, 20), string.Format("Trial time: {0:0.00}",elapsed),  guiStyle);
+            GUI.Label(new Rect(10, 65, 100, 20), string.Format("Trial time: {0:0.00}", elapsed), guiStyle);
             GUI.Label(new Rect(10, 120, 100, 20), "Population: " + (int) population.Count, guiStyle);
         }
 
@@ -37,8 +37,8 @@ namespace MachineLearning.StayOnPlatform
             for (int i = 0; i < populationSize; i++)
             {
                 Vector3 position = transform.position;
-                Vector3 startingPosition = new Vector3(position.x, position.y,
-                    position.z);
+                Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f), position.y,
+                    position.z + Random.Range(-0.5f, 0.5f));
                 GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
                 bot.GetComponent<Brain>().Init();
                 bot.GetComponent<Brain>().start = start;
@@ -50,8 +50,8 @@ namespace MachineLearning.StayOnPlatform
         private GameObject Breed(GameObject parent1, GameObject parent2)
         {
             Vector3 position = transform.position;
-            Vector3 startingPosition = new Vector3(position.x, position.y,
-                position.z);
+            Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f), position.y,
+                position.z + Random.Range(-0.5f, 0.5f));
 
             GameObject child = Instantiate(botPrefab, startingPosition, this.transform.rotation);
             Brain brain = child.GetComponent<Brain>();
@@ -74,7 +74,8 @@ namespace MachineLearning.StayOnPlatform
 
         private void BreedNewPopulation()
         {
-            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().farthestDistance).ToList();
+            List<GameObject> sortedList =
+                population.OrderBy(bot => bot.GetComponent<Brain>().farthestDistance).ToList();
 
             population.Clear();
             for (int i = Mathf.FloorToInt(sortedList.Count / 2f) - 1; i < sortedList.Count - 1; i++)

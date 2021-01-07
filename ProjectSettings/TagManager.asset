@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Dead
   - Platform
+  - Obstacle
   layers:
   - Default
   - TransparentFX

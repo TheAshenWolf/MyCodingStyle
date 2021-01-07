@@ -10,9 +10,9 @@ namespace MachineLearning.StayOnPlatform
     {
         [SerializeField] private List<int> genes = new List<int>();
         private readonly int _dnaLength;
-        private readonly int _maxValues;
-
-        public Dna(int length, int values)
+        private readonly List<int> _maxValues;
+        
+        public Dna(int length, List<int> values)
         {
             _dnaLength = length;
             _maxValues = values;
@@ -24,7 +24,7 @@ namespace MachineLearning.StayOnPlatform
             genes.Clear();
             for (int i = 0; i < _dnaLength; i++)
             {
-                genes.Add(Random.Range(0, _maxValues));
+                genes.Add(Random.Range(0, _maxValues[i]));
             }
         }
 
@@ -52,7 +52,8 @@ namespace MachineLearning.StayOnPlatform
 
         public void Mutate()
         {
-            genes[Random.Range(0, _dnaLength)] = Random.Range(0, _maxValues);
+            int index = Random.Range(0, _dnaLength);
+            genes[index] = Random.Range(0, _maxValues[index]);
         }
 
         public int GetGene(int index)
