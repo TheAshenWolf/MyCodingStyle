@@ -9,40 +9,62 @@ namespace MachineLearning.StayOnPlatform
     {
         public GameObject botPrefab;
         public int populationSize = 50;
-        private List<GameObject> population = new List<GameObject>();
+        public int died = 0;
+        public int reachedGoal = 0;
+        private readonly List<GameObject> _population = new List<GameObject>();
         public static float elapsed = 0f;
         public float trialTime = 30f;
         private int _generation = 0;
+        private float _topFitness = 9999f;
+
+        private float _maxDistance;
 
         [SerializeField] private Transform start;
+        [SerializeField] private Transform end;
+
 
         private void OnGUI()
         {
             GUIStyle guiStyle = new GUIStyle
             {
-                fontSize = 50,
+                fontSize = 25,
                 normal =
                 {
                     textColor = Color.white
                 }
             };
 
-            GUI.Label(new Rect(10, 10, 100, 20), "Generation: " + _generation, guiStyle);
-            GUI.Label(new Rect(10, 65, 100, 20), string.Format("Trial time: {0:0.00}", elapsed), guiStyle);
-            GUI.Label(new Rect(10, 120, 100, 20), "Population: " + (int) population.Count, guiStyle);
+
+            GUI.Label(new Rect(10, 10, 50, 10), "Generation: " + _generation, guiStyle);
+            GUI.Label(new Rect(10, 40, 50, 10), $"Trial time: {elapsed:0.00}", guiStyle);
+            GUI.Label(new Rect(10, 70, 50, 10), "Population: " + (int) _population.Count, guiStyle);
+            GUI.Label(new Rect(10, 100, 50, 10), "Dead: " + died, guiStyle);
+            GUI.Label(new Rect(10, 130, 50, 10), "Reached Goal: " + reachedGoal, guiStyle);
+            GUI.Label(new Rect(10, 160, 50, 10), "------------------------", guiStyle);
+            GUI.Label(new Rect(10, 190, 50, 10), "Red -> Green = fitness level", guiStyle);
+            GUI.Label(new Rect(10, 220, 50, 10), "Blue = Both parents reached goal", guiStyle);
         }
 
         private void Start()
         {
+            _maxDistance = Vector3.Distance(start.position, end.position);
+
             for (int i = 0; i < populationSize; i++)
             {
                 Vector3 position = transform.position;
                 Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f), position.y,
                     position.z + Random.Range(-0.5f, 0.5f));
                 GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
-                bot.GetComponent<Brain>().Init();
-                bot.GetComponent<Brain>().start = start;
-                population.Add(bot);
+
+                Brain botBrain = bot.GetComponent<Brain>();
+
+                botBrain.averageParentFitness = 0;
+                botBrain.Init();
+                botBrain.start = start;
+                botBrain.end = end;
+                botBrain.topFitness = _topFitness;
+                botBrain.populationManager = this;
+                _population.Add(bot);
             }
         }
 
@@ -58,31 +80,54 @@ namespace MachineLearning.StayOnPlatform
 
             if (Random.Range(0, 100) == 50)
             {
+                brain.averageParentFitness = 0;
                 brain.Init();
                 brain.start = start;
                 brain.dna.Mutate();
             }
             else
             {
+                Brain parent1Brain = parent1.GetComponent<Brain>();
+                Brain parent2Brain = parent2.GetComponent<Brain>();
+
+                if (Mathf.Approximately(parent1Brain.farthestDistance, _topFitness) &&
+                    Mathf.Approximately(parent2Brain.farthestDistance, _topFitness))
+                {
+                    brain.averageParentFitness = 2;
+                }
+                else
+                {
+                    brain.averageParentFitness = Mathf.Clamp01(
+                        ((parent1Brain.farthestDistance + parent2Brain.farthestDistance) /
+                         2f) / _maxDistance);
+                }
+
+
                 brain.Init();
                 brain.start = start;
-                brain.dna.Combine(parent1.GetComponent<Brain>().dna, parent2.GetComponent<Brain>().dna);
+                brain.dna.Combine(parent1Brain.dna, parent2Brain.dna);
             }
+
+            brain.topFitness = _topFitness;
+            brain.populationManager = this;
 
             return child;
         }
 
         private void BreedNewPopulation()
         {
+            died = 0;
+            reachedGoal = 0;
+            
             List<GameObject> sortedList =
-                population.OrderBy(bot => bot.GetComponent<Brain>().farthestDistance).ToList();
+                _population.OrderBy(bot => bot.GetComponent<Brain>().farthestDistance).ToList();
 
-            population.Clear();
+            _population.Clear();
             for (int i = Mathf.FloorToInt(sortedList.Count / 2f) - 1; i < sortedList.Count - 1; i++)
             {
-                Debug.Log("Breedin'");
-                population.Add(Breed(sortedList[i], sortedList[i + 1]));
-                population.Add(Breed(sortedList[i + 1], sortedList[i]));
+                Debug.Log("Breeding");
+                _population.Add(Breed(sortedList[i], sortedList[i + 1]));
+                _population.Add(Breed(sortedList[i + 1], sortedList[i]));
             }
 
             foreach (GameObject bot in sortedList)

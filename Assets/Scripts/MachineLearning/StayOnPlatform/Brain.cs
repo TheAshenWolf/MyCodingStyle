@@ -8,8 +8,9 @@ namespace MachineLearning.StayOnPlatform
 {
     public class Brain : MonoBehaviour
     {
-        private const int DNA_LENGTH = 4;
+        private const int DNA_LENGTH = 5;
         public Transform start;
+        public Transform end;
         public float timeAlive;
         public float timeWalking;
         public Dna dna;
@@ -19,6 +20,17 @@ namespace MachineLearning.StayOnPlatform
         private float _previousDistance;
         private float _currentDistance;
         public float farthestDistance = 0;
+        public PopulationManager populationManager;
+
+        
+        // Fitness color
+        [SerializeField] private Renderer bodyRenderer;
+        [SerializeField] private Color notFitColor = new Color(1, 0, 0, 1);
+        [SerializeField] private Color fullFitColor = new Color(0, 1, 0, 1);
+        [SerializeField] private Color bestCandidateColor = new Color(0,0,1,1);
+        public float topFitness;
+        public float averageParentFitness = 0;
+        
 
 
         private void OnCollisionEnter(Collision other)
@@ -29,23 +41,38 @@ namespace MachineLearning.StayOnPlatform
                 _alive = false;
                 gameObject.SetActive(false);
                 gameObject.name = "Dead!";
+                populationManager.died++;
             } 
+        }
+
+        private Color GetFitnessColor(float fitness)
+        {
+            if (Mathf.Approximately(fitness, 2f))
+            {
+                return bestCandidateColor;
+            }
+
+            Color fitnessColor = notFitColor * (1 - fitness) + (fullFitColor * fitness);
+
+            return fitnessColor;
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.CompareTag("Finish"))
             {
-                farthestDistance = 9999f;
+                farthestDistance = topFitness;
                 _alive = false;
                 gameObject.SetActive(false);
                 gameObject.name = "Passed!";
+                populationManager.reachedGoal++;
             }
         }
 
         public void Init()
         {
-            dna = new Dna(DNA_LENGTH, new List<int>() {3, 3, 3, 3});
+            bodyRenderer.material.color = GetFitnessColor(averageParentFitness);
+            dna = new Dna(DNA_LENGTH, new List<int>() {3, 3, 3, 3, 45});
             timeAlive = 0;
             _alive = true;
         }
@@ -94,10 +121,10 @@ namespace MachineLearning.StayOnPlatform
                     timeWalking += Time.deltaTime;
                     break;
                 case MovementType.TurnLeft:
-                    turn = -5;
+                    turn = -dna.GetGene(4);
                     break;
                 case MovementType.TurnRight:
-                    turn = 5;
+                    turn = dna.GetGene(4);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

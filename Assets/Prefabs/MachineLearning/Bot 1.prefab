@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   start: {fileID: 0}
+  end: {fileID: 0}
   timeAlive: 0
   timeWalking: 0
   dna:
@@ -54,6 +55,10 @@ MonoBehaviour:
   eyes: {fileID: 3575809967300018029}
   _alive: 1
   farthestDistance: 0
+  bodyRenderer: {fileID: 3575809968102280343}
+  notFitColor: {r: 1, g: 0, b: 0, a: 1}
+  fullFitColor: {r: 0, g: 1, b: 0, a: 1}
+  averageParentFitness: 0
 --- !u!54 &-1880185140478654673
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -225,7 +230,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b06a5ad7074034ed89559c0b06c300be, type: 2}
+  - {fileID: 2100000, guid: 17e072e32bf1db84e8b33f8ce3c433fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
