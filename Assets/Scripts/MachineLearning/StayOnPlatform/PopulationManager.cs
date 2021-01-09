@@ -83,6 +83,7 @@ namespace MachineLearning.StayOnPlatform
                 brain.averageParentFitness = 0;
                 brain.Init();
                 brain.start = start;
+                brain.end = end;
                 brain.dna.Mutate();
             }
             else
@@ -105,6 +106,7 @@ namespace MachineLearning.StayOnPlatform
 
                 brain.Init();
                 brain.start = start;
+                brain.end = end;
                 brain.dna.Combine(parent1Brain.dna, parent2Brain.dna);
             }
 
