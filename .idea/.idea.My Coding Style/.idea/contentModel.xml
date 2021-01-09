@@ -408,6 +408,11 @@
               <e p="MovementType.cs" t="Include" />
               <e p="PopulationManager.cs" t="Include" />
             </e>
+            <e p="Perceptron" t="Include">
+              <e p="Perceptron.cs" t="Include" />
+              <e p="TrainingResources.cs" t="Include" />
+              <e p="TrainingSet.cs" t="Include" />
+            </e>
             <e p="StayOnPlatform" t="Include">
               <e p="Brain.cs" t="Include" />
               <e p="Dna.cs" t="Include" />
