@@ -40,12 +40,13 @@ namespace MachineLearning.FlappyBird
             for (int i = 0; i < populationSize; i++)
             {
                 Vector3 position = transform.position;
-                Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f), position.y + Random.Range(-0.5f, 0.5f),
+                Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f),
+                    position.y + Random.Range(-0.5f, 0.5f),
                     0);
                 GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
 
                 Brain botBrain = bot.GetComponent<Brain>();
-                
+
                 botBrain.Init();
                 botBrain.populationManager = this;
                 _population.Add(bot);
@@ -72,10 +73,11 @@ namespace MachineLearning.FlappyBird
                 Brain parent1Brain = parent1.GetComponent<Brain>();
                 Brain parent2Brain = parent2.GetComponent<Brain>();
 
-                
+
                 brain.Init();
                 brain.dna.Combine(parent1Brain.dna, parent2Brain.dna);
             }
+
             brain.populationManager = this;
 
             return child;
@@ -83,9 +85,12 @@ namespace MachineLearning.FlappyBird
 
         private void BreedNewPopulation()
         {
+            Debug.Log("In generation <b>" + _generation + "</b> of the population of <b>" + populationSize +
+                      "</b> reached goal <b>" + reachedGoal + "</b>. On the way died <b>" + died + "</b> bots.");
+
             died = 0;
             reachedGoal = 0;
-            
+
             List<GameObject> sortedList =
                 _population.OrderBy(bot => bot.GetComponent<Brain>().distanceTravelled).ToList();
 

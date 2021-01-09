@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   botPrefab: {fileID: 1332806756903643194, guid: fb11c68107526e4ebb7c3c14904dd6b7, type: 3}
-  populationSize: 200
+  populationSize: 100
   died: 0
   reachedGoal: 0
   trialTime: 30
