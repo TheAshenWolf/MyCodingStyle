@@ -410,6 +410,7 @@
             </e>
             <e p="Perceptron" t="Include">
               <e p="Perceptron.cs" t="Include" />
+              <e p="SimpleGrapher.cs" t="Include" />
               <e p="TrainingResources.cs" t="Include" />
               <e p="TrainingSet.cs" t="Include" />
             </e>
