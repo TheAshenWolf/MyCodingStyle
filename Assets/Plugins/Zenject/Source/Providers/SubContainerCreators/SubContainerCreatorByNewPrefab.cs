@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using ModestTree;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -27,13 +29,13 @@ namespace Zenject
         {
             Assert.That(args.IsEmpty());
 
-            var prefab = _prefabProvider.GetPrefab(parentContext);
+            Object prefab = _prefabProvider.GetPrefab(parentContext);
 
             bool shouldMakeActive;
-            var gameObject = _container.CreateAndParentPrefab(
+            GameObject gameObject = _container.CreateAndParentPrefab(
                 prefab, _gameObjectBindInfo, null, out shouldMakeActive);
 
-            var context = gameObject.GetComponent<GameObjectContext>();
+            GameObjectContext context = gameObject.GetComponent<GameObjectContext>();
 
             Assert.That(context != null,
                 "Expected prefab with name '{0}' to contain a component of type 'GameObjectContext' on the root", prefab.name);

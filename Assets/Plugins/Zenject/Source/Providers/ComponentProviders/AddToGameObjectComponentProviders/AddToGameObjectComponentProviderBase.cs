@@ -70,9 +70,9 @@ namespace Zenject
             object instance;
 
             // We still want to make sure we can get the game object during validation
-            var gameObj = GetGameObject(context);
+            GameObject gameObj = GetGameObject(context);
 
-            var wasActive = gameObj.activeSelf;
+            bool wasActive = gameObj.activeSelf;
 
             if (wasActive && ShouldToggleActive)
             {
@@ -107,7 +107,7 @@ namespace Zenject
             {
                 try
                 {
-                    var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+                    List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
                     extraArgs.AllocFreeAddRange(_extraArguments);
                     extraArgs.AllocFreeAddRange(args);

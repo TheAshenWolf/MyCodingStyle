@@ -73,13 +73,13 @@ namespace Zenject
 
             for (int i = 0; i < _cachedInstances.Count; i++) 
             {
-                var instanceList = _cachedInstances[i];
+                List<object> instanceList = _cachedInstances[i];
 
                 bool matchesAll = true;
 
                 for (int k = 0; k < instanceList.Count; k++) 
                 {
-                    var instance = instanceList[k];
+                    object instance = instanceList[k];
 
                     if (instance == null) 
                     {
@@ -118,7 +118,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var instances = TryGetMatchFromCache(context.MemberType);
+                List<object> instances = TryGetMatchFromCache(context.MemberType);
 
                 if (instances != null)
                 {
@@ -132,7 +132,7 @@ namespace Zenject
                 // Field or property injection should allow circular dependencies
                 if (_isCreatingInstance)
                 {
-                    var instanceType = _creator.GetInstanceType(context);
+                    Type instanceType = _creator.GetInstanceType(context);
                     throw Assert.CreateException(
                         "Found circular dependency when creating type '{0}'. Object graph:\n {1}{2}\n",
                         instanceType, context.GetObjectGraphString(), instanceType);

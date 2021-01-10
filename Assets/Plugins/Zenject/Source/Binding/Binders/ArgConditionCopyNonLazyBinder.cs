@@ -81,7 +81,7 @@ namespace Zenject
 
             for (int i = 0; i < args.Length; i++)
             {
-                var arg = args[i];
+                object arg = args[i];
 
                 Assert.IsNotNull(arg,
                     "Cannot include null values when creating a zenject argument list because zenject has no way of deducing the type from a null value.  If you want to allow null, use the Explicit form.");
@@ -96,7 +96,7 @@ namespace Zenject
         {
             BindInfo.Arguments.Clear();
 
-            foreach (var arg in extraArgs)
+            foreach (TypeValuePair arg in extraArgs)
             {
                 BindInfo.Arguments.Add(arg);
             }

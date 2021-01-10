@@ -14,10 +14,10 @@ namespace MachineLearning.FlappyBird
         [SerializeField, ReadOnly] private bool alive = true;
         public PopulationManager populationManager;
 
-        private bool _seeTopWall = false;
-        private bool _seeBottomWall = false;
+        private bool _seeTopWall;
+        private bool _seeBottomWall;
         public float distanceTravelled;
-        [SerializeField] private Rigidbody2D rigidbody;
+        [SerializeField] private new Rigidbody2D rigidbody;
         private float _altitude;
 
 
@@ -26,8 +26,9 @@ namespace MachineLearning.FlappyBird
             if (other.gameObject.CompareTag("Dead") || other.gameObject.CompareTag("DownDead") || other.gameObject.CompareTag("TopDead"))
             {
                 alive = false;
-                gameObject.SetActive(false);
-                gameObject.name = "Dead!";
+                GameObject localGameObject;
+                (localGameObject = gameObject).SetActive(false);
+                localGameObject.name = "Dead!";
                 populationManager.died++;
             }
         }
@@ -38,8 +39,9 @@ namespace MachineLearning.FlappyBird
             {
                 alive = false;
                 distanceTravelled *= 2;
-                gameObject.SetActive(false);
-                gameObject.name = "Passed!";
+                GameObject localGameObject;
+                (localGameObject = gameObject).SetActive(false);
+                localGameObject.name = "Passed!";
                 populationManager.reachedGoal++;
             }
         }
@@ -55,10 +57,12 @@ namespace MachineLearning.FlappyBird
             if (!alive) return;
             _altitude = transform.position.y;
 
-            Debug.DrawRay(eyes.transform.position, eyes.transform.right * 2, Color.red);
+            Vector3 position = eyes.transform.position;
+            Vector3 right = eyes.transform.right;
+            Debug.DrawRay(position, right * 2, Color.red);
 
 
-            RaycastHit2D hit = (Physics2D.CircleCast(eyes.transform.position, 1, eyes.transform.right, 2));
+            RaycastHit2D hit = (Physics2D.CircleCast(position, 1, right, 2));
             
             if (hit.collider != null)
             {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ namespace UnityStandardAssets.Utility
                 return;
             }
 
-            var mainCamera = FindCamera();
+            Camera mainCamera = FindCamera();
 
             // We need to actually hit an object
             RaycastHit hit = new RaycastHit();
@@ -43,7 +42,7 @@ namespace UnityStandardAssets.Utility
 
             if (!m_SpringJoint)
             {
-                var go = new GameObject("Rigidbody dragger");
+                GameObject go = new GameObject("Rigidbody dragger");
                 Rigidbody body = go.AddComponent<Rigidbody>();
                 m_SpringJoint = go.AddComponent<SpringJoint>();
                 body.isKinematic = true;
@@ -63,14 +62,14 @@ namespace UnityStandardAssets.Utility
 
         private IEnumerator DragObject(float distance)
         {
-            var oldDrag = m_SpringJoint.connectedBody.drag;
-            var oldAngularDrag = m_SpringJoint.connectedBody.angularDrag;
+            float oldDrag = m_SpringJoint.connectedBody.drag;
+            float oldAngularDrag = m_SpringJoint.connectedBody.angularDrag;
             m_SpringJoint.connectedBody.drag = k_Drag;
             m_SpringJoint.connectedBody.angularDrag = k_AngularDrag;
-            var mainCamera = FindCamera();
+            Camera mainCamera = FindCamera();
             while (Input.GetMouseButton(0))
             {
-                var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
                 m_SpringJoint.transform.position = ray.GetPoint(distance);
                 yield return null;
             }

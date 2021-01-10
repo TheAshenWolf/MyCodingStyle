@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace ModestTree.Util
 {
@@ -22,7 +21,7 @@ namespace ModestTree.Util
 
         public override bool Equals(Object obj)
         {
-            var that = obj as ValuePair<T1, T2>;
+            ValuePair<T1, T2> that = obj as ValuePair<T1, T2>;
 
             if (that == null)
             {
@@ -39,7 +38,7 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second);
+            return Equals(First, that.First) && Equals(Second, that.Second);
         }
 
         public override int GetHashCode()
@@ -76,7 +75,7 @@ namespace ModestTree.Util
 
         public override bool Equals(Object obj)
         {
-            var that = obj as ValuePair<T1, T2, T3>;
+            ValuePair<T1, T2, T3> that = obj as ValuePair<T1, T2, T3>;
 
             if (that == null)
             {
@@ -93,7 +92,7 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second) && object.Equals(Third, that.Third);
+            return Equals(First, that.First) && Equals(Second, that.Second) && Equals(Third, that.Third);
         }
 
         public override int GetHashCode()
@@ -134,7 +133,7 @@ namespace ModestTree.Util
 
         public override bool Equals(Object obj)
         {
-            var that = obj as ValuePair<T1, T2, T3, T4>;
+            ValuePair<T1, T2, T3, T4> that = obj as ValuePair<T1, T2, T3, T4>;
 
             if (that == null)
             {
@@ -151,8 +150,8 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second)
-                && object.Equals(Third, that.Third) && object.Equals(Fourth, that.Fourth);
+            return Equals(First, that.First) && Equals(Second, that.Second)
+                && Equals(Third, that.Third) && Equals(Fourth, that.Fourth);
         }
 
         public override int GetHashCode()

@@ -6,6 +6,7 @@ using System.Linq;
 using ModestTree;
 using UnityEngine;
 using Zenject.Internal;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -59,11 +60,11 @@ namespace Zenject
 
             if (_createNew)
             {
-                var objects = Resources.LoadAll(_resourcePath, _resourceType);
+                Object[] objects = Resources.LoadAll(_resourcePath, _resourceType);
 
                 for (int i = 0; i < objects.Length; i++)
                 {
-                    buffer.Add(ScriptableObject.Instantiate(objects[i]));
+                    buffer.Add(Object.Instantiate(objects[i]));
                 }
             }
             else
@@ -79,9 +80,9 @@ namespace Zenject
             {
                 for (int i = 0; i < buffer.Count; i++)
                 {
-                    var obj = buffer[i];
+                    object obj = buffer[i];
 
-                    var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+                    List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
                     extraArgs.AllocFreeAddRange(_extraArguments);
                     extraArgs.AllocFreeAddRange(args);

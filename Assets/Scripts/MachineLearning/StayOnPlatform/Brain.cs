@@ -12,28 +12,24 @@ namespace MachineLearning.StayOnPlatform
 
         public Transform start;
         public Transform end;
-        public float timeAlive;
-        public float timeWalking;
         public Dna dna;
         public GameObject eyes;
-        [SerializeField, ReadOnly] private bool _alive = true;
+        [SerializeField, ReadOnly] private bool alive = true;
         private bool _seeGround = true;
         private float _previousDistance;
         private float _currentDistance;
-        public float farthestDistance = 0;
+        public float farthestDistance;
         public PopulationManager populationManager;
-        private int _backtrackingStepsLeft = 0;
-        
+        private int _backtrackingStepsLeft;
 
-        
+
         // Fitness color
         [SerializeField] private Renderer bodyRenderer;
         [SerializeField] private Color notFitColor = new Color(1, 0, 0, 1);
         [SerializeField] private Color fullFitColor = new Color(0, 1, 0, 1);
-        [SerializeField] private Color bestCandidateColor = new Color(0,0,1,1);
+        [SerializeField] private Color bestCandidateColor = new Color(0, 0, 1, 1);
         public float topFitness;
-        public float averageParentFitness = 0;
-        
+        public float averageParentFitness;
 
 
         private void OnCollisionEnter(Collision other)
@@ -41,11 +37,12 @@ namespace MachineLearning.StayOnPlatform
             if (other.gameObject.CompareTag("Dead"))
             {
                 farthestDistance = -1;
-                _alive = false;
-                gameObject.SetActive(false);
-                gameObject.name = "Dead!";
+                alive = false;
+                GameObject localGameObject;
+                (localGameObject = gameObject).SetActive(false);
+                localGameObject.name = "Dead!";
                 populationManager.died++;
-            } 
+            }
         }
 
         private Color GetFitnessColor(float fitness)
@@ -65,9 +62,10 @@ namespace MachineLearning.StayOnPlatform
             if (other.gameObject.CompareTag("Finish"))
             {
                 farthestDistance = topFitness;
-                _alive = false;
-                gameObject.SetActive(false);
-                gameObject.name = "Passed!";
+                alive = false;
+                GameObject localGameObject;
+                (localGameObject = gameObject).SetActive(false);
+                localGameObject.name = "Passed!";
                 populationManager.reachedGoal++;
             }
         }
@@ -76,13 +74,12 @@ namespace MachineLearning.StayOnPlatform
         {
             bodyRenderer.material.color = GetFitnessColor(averageParentFitness);
             dna = new Dna(DNA_LENGTH, new List<int>() {3, 3, 3, 3, 45, 5});
-            timeAlive = 0;
-            _alive = true;
+            alive = true;
         }
 
         private void Update()
         {
-            if (!_alive) return;
+            if (!alive) return;
 
             Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 2, Color.red);
             _seeGround = false;
@@ -95,10 +92,13 @@ namespace MachineLearning.StayOnPlatform
                 }
             }
 
-            timeAlive = PopulationManager.elapsed;
-            Vector3 myPos = new Vector3(transform.position.x, 0, transform.position.z);
-            Vector3 startPos = new Vector3(start.position.x, 0, start.position.z);
-            Vector3 endPos = new Vector3(end.position.x, 0, end.position.z);
+            Transform localTransform = transform;
+            Vector3 position = localTransform.position;
+            Vector3 myPos = new Vector3(position.x, 0, position.z);
+            Vector3 startPosition = start.position;
+            Vector3 startPos = new Vector3(startPosition.x, 0, startPosition.z);
+            Vector3 endPosition = end.position;
+            Vector3 endPos = new Vector3(endPosition.x, 0, endPosition.z);
             _currentDistance = Vector3.Distance(startPos, endPos) - Vector3.Distance(myPos, endPos);
             farthestDistance = Mathf.Max(farthestDistance, _currentDistance);
 
@@ -138,7 +138,6 @@ namespace MachineLearning.StayOnPlatform
             {
                 case MovementType.MoveForward:
                     movement = 1;
-                    timeWalking += Time.deltaTime;
                     break;
                 case MovementType.TurnLeft:
                     turn = -dna.GetGene(4);
@@ -152,8 +151,8 @@ namespace MachineLearning.StayOnPlatform
 
             _previousDistance = _currentDistance;
 
-            this.transform.Translate(0, 0, movement * Time.deltaTime * 10f);
-            this.transform.Rotate(0, turn, 0);
+            transform.Translate(0, 0, movement * Time.deltaTime * 10f);
+            transform.Rotate(0, turn, 0);
         }
     }
 }

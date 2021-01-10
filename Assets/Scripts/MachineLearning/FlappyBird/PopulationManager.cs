@@ -9,12 +9,12 @@ namespace MachineLearning.FlappyBird
     {
         public GameObject botPrefab;
         public int populationSize = 50;
-        public int died = 0;
-        public int reachedGoal = 0;
+        public int died;
+        public int reachedGoal;
         private readonly List<GameObject> _population = new List<GameObject>();
-        public static float elapsed = 0f;
+        private static float _elapsed;
         public float trialTime = 30f;
-        private int _generation = 0;
+        private int _generation;
 
         private void OnGUI()
         {
@@ -29,8 +29,8 @@ namespace MachineLearning.FlappyBird
 
 
             GUI.Label(new Rect(10, 10, 50, 10), "Generation: " + _generation, guiStyle);
-            GUI.Label(new Rect(10, 40, 50, 10), $"Trial time: {elapsed:0.00}", guiStyle);
-            GUI.Label(new Rect(10, 70, 50, 10), "Population: " + (int) _population.Count, guiStyle);
+            GUI.Label(new Rect(10, 40, 50, 10), $"Trial time: {_elapsed:0.00}", guiStyle);
+            GUI.Label(new Rect(10, 70, 50, 10), "Population: " + _population.Count, guiStyle);
             GUI.Label(new Rect(10, 100, 50, 10), "Dead: " + died, guiStyle);
             GUI.Label(new Rect(10, 130, 50, 10), "Reached Goal: " + reachedGoal, guiStyle);
         }
@@ -43,7 +43,7 @@ namespace MachineLearning.FlappyBird
                 Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f),
                     position.y + Random.Range(-0.5f, 0.5f),
                     0);
-                GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
+                GameObject bot = Instantiate(botPrefab, startingPosition, transform.rotation);
 
                 Brain botBrain = bot.GetComponent<Brain>();
 
@@ -60,7 +60,7 @@ namespace MachineLearning.FlappyBird
             Vector3 startingPosition = new Vector3(position.x + Random.Range(-0.5f, 0.5f), position.y,
                 position.z + Random.Range(-0.5f, 0.5f));
 
-            GameObject child = Instantiate(botPrefab, startingPosition, this.transform.rotation);
+            GameObject child = Instantiate(botPrefab, startingPosition, transform.rotation);
             Brain brain = child.GetComponent<Brain>();
 
             if (Random.Range(0, 100) == 50)
@@ -112,11 +112,11 @@ namespace MachineLearning.FlappyBird
 
         private void Update()
         {
-            elapsed += Time.deltaTime;
-            if (elapsed >= trialTime)
+            _elapsed += Time.deltaTime;
+            if (_elapsed >= trialTime)
             {
                 BreedNewPopulation();
-                elapsed = 0;
+                _elapsed = 0;
             }
         }
     }

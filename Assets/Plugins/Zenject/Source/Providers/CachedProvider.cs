@@ -87,7 +87,7 @@ namespace Zenject
                 // Field or property injection should allow circular dependencies
                 if (_isCreatingInstance)
                 {
-                    var instanceType = _creator.GetInstanceType(context);
+                    Type instanceType = _creator.GetInstanceType(context);
                     throw Assert.CreateException(
                         "Found circular dependency when creating type '{0}'. Object graph:\n {1}{2}\n",
                         instanceType, context.GetObjectGraphString(), instanceType);
@@ -96,7 +96,7 @@ namespace Zenject
                 _isCreatingInstance = true;
 #endif
 
-                var instances = new List<object>();
+                List<object> instances = new List<object>();
                 _creator.GetAllInstancesWithInjectSplit(context, args, out injectAction, instances);
                 Assert.IsNotNull(instances);
 

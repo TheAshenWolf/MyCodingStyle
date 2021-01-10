@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using ModestTree;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -46,7 +47,7 @@ namespace Zenject
 
             if (_matchSingle)
             {
-                var obj = Resources.Load(_resourcePath, _resourceType);
+                Object obj = Resources.Load(_resourcePath, _resourceType);
 
                 Assert.That(obj != null,
                 "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
@@ -57,7 +58,7 @@ namespace Zenject
                 return;
             }
 
-            var objects = Resources.LoadAll(_resourcePath, _resourceType);
+            Object[] objects = Resources.LoadAll(_resourcePath, _resourceType);
 
             Assert.That(objects.Length > 0,
             "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);

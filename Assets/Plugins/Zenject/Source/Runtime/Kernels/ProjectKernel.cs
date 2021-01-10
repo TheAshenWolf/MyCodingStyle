@@ -60,7 +60,7 @@ namespace Zenject
             // (Unless it is destroyed manually)
             Assert.That(!IsDestroyed);
 
-            var sceneOrder = new List<Scene>();
+            List<Scene> sceneOrder = new List<Scene>();
 
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
@@ -69,7 +69,7 @@ namespace Zenject
 
             // Destroy the scene contexts from bottom to top
             // Since this is the reverse order that they were loaded in
-            foreach (var sceneContext in _contextRegistry.SceneContexts.OrderByDescending(x => sceneOrder.IndexOf(x.gameObject.scene)).ToList())
+            foreach (SceneContext sceneContext in _contextRegistry.SceneContexts.OrderByDescending(x => sceneOrder.IndexOf(x.gameObject.scene)).ToList())
             {
                 if (immediate)
                 {

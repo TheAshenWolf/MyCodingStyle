@@ -9,10 +9,10 @@ namespace MachineLearning.WalkingStraight
     {
         public GameObject botPrefab;
         public int populationSize = 50;
-        private List<GameObject> population = new List<GameObject>();
-        public static float elapsed = 0f;
+        private readonly List<GameObject> _population = new List<GameObject>();
+        private static float _elapsed;
         public float trialTime = 10f;
-        private int _generation = 0;
+        private int _generation;
 
         [SerializeField] private ObjectMover objectMover;
 
@@ -28,8 +28,8 @@ namespace MachineLearning.WalkingStraight
             };
 
             GUI.Label(new Rect(10, 10, 100, 20), "Generation: " + _generation, guiStyle);
-            GUI.Label(new Rect(10, 65, 100, 20), "Trial time: " + (int) elapsed, guiStyle);
-            GUI.Label(new Rect(10, 120, 100, 20), "Population: " + (int) population.Count, guiStyle);
+            GUI.Label(new Rect(10, 65, 100, 20), "Trial time: " + (int) _elapsed, guiStyle);
+            GUI.Label(new Rect(10, 120, 100, 20), "Population: " + _population.Count, guiStyle);
         }
 
         private void Start()
@@ -39,9 +39,9 @@ namespace MachineLearning.WalkingStraight
                 Vector3 position = transform.position;
                 Vector3 startingPosition = new Vector3(position.x + Random.Range(-2, 2), position.y,
                     position.z + Random.Range(-2, 2));
-                GameObject bot = Instantiate(botPrefab, startingPosition, this.transform.rotation);
+                GameObject bot = Instantiate(botPrefab, startingPosition, transform.rotation);
                 bot.GetComponent<Brain>().Init();
-                population.Add(bot);
+                _population.Add(bot);
             }
         }
 
@@ -52,7 +52,7 @@ namespace MachineLearning.WalkingStraight
             Vector3 startingPosition = new Vector3(position.x + Random.Range(-2, 2), position.y,
                 position.z + Random.Range(-2, 2));
 
-            GameObject child = Instantiate(botPrefab, startingPosition, this.transform.rotation);
+            GameObject child = Instantiate(botPrefab, startingPosition, transform.rotation);
             Brain brain = child.GetComponent<Brain>();
 
             if (Random.Range(0, 100) == 50)
@@ -71,14 +71,14 @@ namespace MachineLearning.WalkingStraight
 
         private void BreedNewPopulation()
         {
-            List<GameObject> sortedList = population.OrderBy(bot => bot.GetComponent<Brain>().timeAlive).ToList();
+            List<GameObject> sortedList = _population.OrderBy(bot => bot.GetComponent<Brain>().timeAlive).ToList();
 
-            population.Clear();
+            _population.Clear();
             for (int i = Mathf.FloorToInt(sortedList.Count / 2f) - 1; i < sortedList.Count - 1; i++)
             {
-                Debug.Log("Breedin'");
-                population.Add(Breed(sortedList[i], sortedList[i + 1]));
-                population.Add(Breed(sortedList[i + 1], sortedList[i]));
+                Debug.Log("Breeding");
+                _population.Add(Breed(sortedList[i], sortedList[i + 1]));
+                _population.Add(Breed(sortedList[i + 1], sortedList[i]));
             }
 
             foreach (GameObject bot in sortedList)
@@ -91,12 +91,12 @@ namespace MachineLearning.WalkingStraight
 
         private void Update()
         {
-            elapsed += Time.deltaTime;
-            if (elapsed >= trialTime)
+            _elapsed += Time.deltaTime;
+            if (_elapsed >= trialTime)
             {
                 BreedNewPopulation();
                 objectMover.Reset();
-                elapsed = 0;
+                _elapsed = 0;
             }
         }
     }

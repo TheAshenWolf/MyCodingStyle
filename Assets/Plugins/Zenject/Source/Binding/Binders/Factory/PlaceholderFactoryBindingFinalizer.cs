@@ -21,9 +21,9 @@ namespace Zenject
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            var provider = _factoryBindInfo.ProviderFunc(container);
+            IProvider provider = _factoryBindInfo.ProviderFunc(container);
 
-            var transientProvider = new TransientProvider(
+            TransientProvider transientProvider = new TransientProvider(
                 _factoryBindInfo.FactoryType,
                 container,
                 _factoryBindInfo.Arguments.Concat(

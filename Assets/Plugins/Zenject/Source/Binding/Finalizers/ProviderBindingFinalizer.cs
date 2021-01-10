@@ -86,7 +86,7 @@ namespace Zenject
 
             if (contractType.IsValueType() && !(contractType.IsGenericType() && contractType.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
-                var nullableType = typeof(Nullable<>).MakeGenericType(contractType);
+                Type nullableType = typeof(Nullable<>).MakeGenericType(contractType);
 
                 // Also bind to nullable primitives
                 // this is useful so that we can have optional primitive dependencies
@@ -100,9 +100,9 @@ namespace Zenject
         protected void RegisterProviderPerContract(
             DiContainer container, Func<DiContainer, Type, IProvider> providerFunc)
         {
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (Type contractType in BindInfo.ContractTypes)
             {
-                var provider = providerFunc(container, contractType);
+                IProvider provider = providerFunc(container, contractType);
 
                 if (BindInfo.MarkAsUniqueSingleton)
                 {
@@ -120,7 +120,7 @@ namespace Zenject
         protected void RegisterProviderForAllContracts(
             DiContainer container, IProvider provider)
         {
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (Type contractType in BindInfo.ContractTypes)
             {
                 if (BindInfo.MarkAsUniqueSingleton)
                 {
@@ -143,9 +143,9 @@ namespace Zenject
             Assert.That(!BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
 
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (Type contractType in BindInfo.ContractTypes)
             {
-                foreach (var concreteType in concreteTypes)
+                foreach (Type concreteType in concreteTypes)
                 {
                     if (ValidateBindTypes(concreteType, contractType))
                     {
@@ -209,12 +209,12 @@ namespace Zenject
             Assert.That(!BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
 
-            var providerMap = ZenPools.SpawnDictionary<Type, IProvider>();
+            Dictionary<Type, IProvider> providerMap = ZenPools.SpawnDictionary<Type, IProvider>();
             try
             {
-                foreach (var concreteType in concreteTypes)
+                foreach (Type concreteType in concreteTypes)
                 {
-                    var provider = providerFunc(container, concreteType);
+                    IProvider provider = providerFunc(container, concreteType);
 
                     providerMap[concreteType] = provider;
 
@@ -228,9 +228,9 @@ namespace Zenject
                     }
                 }
 
-                foreach (var contractType in BindInfo.ContractTypes)
+                foreach (Type contractType in BindInfo.ContractTypes)
                 {
-                    foreach (var concreteType in concreteTypes)
+                    foreach (Type concreteType in concreteTypes)
                     {
                         if (ValidateBindTypes(concreteType, contractType))
                         {

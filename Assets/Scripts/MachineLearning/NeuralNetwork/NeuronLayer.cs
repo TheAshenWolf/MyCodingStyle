@@ -4,8 +4,8 @@ namespace MachineLearning.NeuralNetwork
 {
     public class NeuronLayer
     {
-        public int amountOfNeurons;
-        public List<Neuron> neurons = new List<Neuron>();
+        public readonly int amountOfNeurons;
+        public readonly List<Neuron> neurons = new List<Neuron>();
 
         public NeuronLayer(int amountOfNeurons, int amountOfNeuronInputs)
         {

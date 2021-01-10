@@ -62,7 +62,7 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            var subcontainerBindInfo = new SubContainerCreatorBindInfo();
+            SubContainerCreatorBindInfo subcontainerBindInfo = new SubContainerCreatorBindInfo();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -85,7 +85,7 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -109,7 +109,7 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -135,7 +135,7 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -162,7 +162,7 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(

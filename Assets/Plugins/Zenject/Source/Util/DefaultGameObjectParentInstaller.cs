@@ -2,6 +2,7 @@
 
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -17,7 +18,7 @@ namespace Zenject
         public override void InstallBindings()
         {
 #if !ZEN_TESTS_OUTSIDE_UNITY
-            var defaultParent = new GameObject(_name);
+            GameObject defaultParent = new GameObject(_name);
 
             defaultParent.transform.SetParent(
                 Container.InheritedDefaultParent, false);
@@ -44,7 +45,7 @@ namespace Zenject
 
             public void Dispose()
             {
-                GameObject.Destroy(_gameObject);
+                Object.Destroy(_gameObject);
             }
         }
     }

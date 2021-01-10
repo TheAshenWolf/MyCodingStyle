@@ -11,7 +11,7 @@ namespace Sirenix.OdinInspector.Editor
     using System.IO;
     using System.Collections.Generic;
     using Sirenix.Serialization.Utilities.Editor;
-    using Sirenix.Utilities;
+    using Utilities;
     using UnityEditor;
     using UnityEditor.Build;
 
@@ -36,21 +36,21 @@ namespace Sirenix.OdinInspector.Editor
                 return;
             }
 
-            var assemblyDir = new DirectoryInfo(SirenixAssetPaths.SirenixAssembliesPath).FullName;
-            var projectAssetsPath = Directory.GetCurrentDirectory().TrimEnd('\\', '/');
+            string assemblyDir = new DirectoryInfo(SirenixAssetPaths.SirenixAssembliesPath).FullName;
+            string projectAssetsPath = Directory.GetCurrentDirectory().TrimEnd('\\', '/');
 
-            var isPackage = PathUtilities.HasSubDirectory(new DirectoryInfo(projectAssetsPath), new DirectoryInfo(assemblyDir)) == false;
+            bool isPackage = PathUtilities.HasSubDirectory(new DirectoryInfo(projectAssetsPath), new DirectoryInfo(assemblyDir)) == false;
 
-            var aotDirPath = assemblyDir + "NoEmitAndNoEditor/";
-            var jitDirPath = assemblyDir + "NoEditor/";
+            string aotDirPath = assemblyDir + "NoEmitAndNoEditor/";
+            string jitDirPath = assemblyDir + "NoEditor/";
 
-            var aotDir = new DirectoryInfo(aotDirPath);
-            var jitDir = new DirectoryInfo(jitDirPath);
+            DirectoryInfo aotDir = new DirectoryInfo(aotDirPath);
+            DirectoryInfo jitDir = new DirectoryInfo(jitDirPath);
 
-            var aotAssemblies = new List<string>();
-            var jitAssemblies = new List<string>();
+            List<string> aotAssemblies = new List<string>();
+            List<string> jitAssemblies = new List<string>();
 
-            foreach (var file in aotDir.GetFiles("*.dll"))
+            foreach (FileInfo file in aotDir.GetFiles("*.dll"))
             {
                 string path = file.FullName;
                 if (isPackage)
@@ -65,7 +65,7 @@ namespace Sirenix.OdinInspector.Editor
                 aotAssemblies.Add(path);
             }
 
-            foreach (var file in jitDir.GetFiles("*.dll"))
+            foreach (FileInfo file in jitDir.GetFiles("*.dll"))
             {
                 string path = file.FullName;
                 if (isPackage)
@@ -83,7 +83,7 @@ namespace Sirenix.OdinInspector.Editor
             AssetDatabase.StartAssetEditing();
             try
             {
-                var platform = EditorUserBuildSettings.activeBuildTarget;
+                BuildTarget platform = EditorUserBuildSettings.activeBuildTarget;
 
                 if (AssemblyImportSettingsUtilities.IsJITSupported(
                     platform,

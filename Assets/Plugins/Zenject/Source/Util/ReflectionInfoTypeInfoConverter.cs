@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using ModestTree;
 #if !NOT_UNITY3D
@@ -17,8 +16,8 @@ namespace Zenject.Internal
         public static InjectTypeInfo.InjectMethodInfo ConvertMethod(
             ReflectionTypeInfo.InjectMethodInfo injectMethod)
         {
-            var methodInfo = injectMethod.MethodInfo;
-            var action = TryCreateActionForMethod(methodInfo);
+            MethodInfo methodInfo = injectMethod.MethodInfo;
+            ZenInjectMethod action = TryCreateActionForMethod(methodInfo);
 
             if (action == null)
             {
@@ -69,9 +68,9 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var constructor = reflectionInfo.ConstructorInfo;
+            ConstructorInfo constructor = reflectionInfo.ConstructorInfo;
 
-            var factoryMethod = TryCreateFactoryMethodCompiledLambdaExpression(type, constructor);
+            ZenFactoryMethod factoryMethod = TryCreateFactoryMethodCompiledLambdaExpression(type, constructor);
 
             if (factoryMethod == null)
             {
@@ -188,10 +187,10 @@ namespace Zenject.Internal
             Assert.That(parentType != null);
             Assert.That(!string.IsNullOrEmpty(propertyName));
 
-            var allFields = GetAllFields(
+            List<FieldInfo> allFields = GetAllFields(
                 parentType, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy).ToList();
 
-            var writeableFields = allFields.Where(f => f.Name == string.Format("<" + propertyName + ">k__BackingField", propertyName)).ToList();
+            List<FieldInfo> writeableFields = allFields.Where(f => f.Name == string.Format("<" + propertyName + ">k__BackingField", propertyName)).ToList();
 
             if (!writeableFields.Any())
             {
@@ -206,15 +205,15 @@ namespace Zenject.Internal
 
         static ZenMemberSetterMethod GetSetter(Type parentType, MemberInfo memInfo)
         {
-            var setterMethod = TryGetSetterAsCompiledExpression(parentType, memInfo);
+            ZenMemberSetterMethod setterMethod = TryGetSetterAsCompiledExpression(parentType, memInfo);
 
             if (setterMethod != null)
             {
                 return setterMethod;
             }
 
-            var fieldInfo = memInfo as FieldInfo;
-            var propInfo = memInfo as PropertyInfo;
+            FieldInfo fieldInfo = memInfo as FieldInfo;
+            PropertyInfo propInfo = memInfo as PropertyInfo;
 
             if (fieldInfo != null)
             {

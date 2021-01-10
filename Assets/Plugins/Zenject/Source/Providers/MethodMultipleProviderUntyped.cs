@@ -46,7 +46,7 @@ namespace Zenject
             }
             else
             {
-                var result = _method(context);
+                IEnumerable<object> result = _method(context);
 
                 if (result == null)
                 {
@@ -55,7 +55,7 @@ namespace Zenject
                         _method.ToDebugString(), context.GetObjectGraphString());
                 }
 
-                foreach (var obj in result)
+                foreach (object obj in result)
                 {
                     buffer.Add(obj);
                 }

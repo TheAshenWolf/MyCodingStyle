@@ -18,37 +18,37 @@ namespace VoxelWorld
         private Color[] _colors = new Color[0];
 
         private int _actualHealth;
-        private Crack crackTexture = Crack.Crack0;
+        private Crack _crackTexture = Crack.Crack0;
 
         public BlockSetup blockSetup;
 
         public Block(BlockType blockType, Vector3 position, GameObject parent, Chunk chunk)
         {
-            this.blockSetup = GenerateBlockSetup(blockType);
-            this._parent = parent;
+            blockSetup = GenerateBlockSetup(blockType);
+            _parent = parent;
             this.position = position;
-            this.owner = chunk;
+            owner = chunk;
             _actualHealth = blockSetup.health * blockSetup.toughness;
         }
 
         public Block(BlockType blockType, Vector3 position, GameObject parent, Material material)
         {
-            this.blockSetup = GenerateBlockSetup(blockType);
+            blockSetup = GenerateBlockSetup(blockType);
             this.position = position;
-            this._parent = parent;
-            this._material = material;
+            _parent = parent;
+            _material = material;
             Draw(true);
         }
 
         public bool HitBlock()
         {
             _actualHealth--;
-            crackTexture += (int) (10 / blockSetup.health);
+            _crackTexture += 10 / blockSetup.health;
 
             if (_actualHealth <= 0)
             {
                 blockSetup = GenerateBlockSetup(BlockType.Air);
-                crackTexture = Crack.Crack0;
+                _crackTexture = Crack.Crack0;
                 owner.Redraw();
                 Block blockAbove = GetBlock((int) position.x, (int) position.y + 1, (int) position.z);
                 if (blockAbove != null && blockAbove.blockSetup.isFalling)
@@ -64,8 +64,8 @@ namespace VoxelWorld
 
         public void SetType(BlockType blockType)
         {
-            this.blockSetup = GenerateBlockSetup(blockType);
-            crackTexture = Crack.Crack0;
+            blockSetup = GenerateBlockSetup(blockType);
+            _crackTexture = Crack.Crack0;
             _actualHealth = blockSetup.health * blockSetup.toughness;
         }
 
@@ -73,8 +73,6 @@ namespace VoxelWorld
         {
             Vector3[] normals;
             Vector3[] vertices;
-
-            List<Vector2> secondaryUVs = new List<Vector2>();
 
             Mesh mesh = new Mesh
             {
@@ -181,7 +179,7 @@ namespace VoxelWorld
                     throw new ArgumentOutOfRangeException();
             }
 
-            secondaryUVs = BlockUVs.GetCrack(crackTexture).ToList();
+            List<Vector2> secondaryUVs = BlockUVs.GetCrack(_crackTexture).ToList();
 
             // Vertices - If we consider -0.5f a 0 and 0.5f a 1, we have the same behaviour as above
             Vector3 v0 = new Vector3(-0.5f, -0.5f, -0.5f); // p3
@@ -196,11 +194,11 @@ namespace VoxelWorld
             switch (side)
             {
                 case CubeSide.Top:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v2, v6, v7, v3
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.up,
                         Vector3.up,
@@ -209,11 +207,11 @@ namespace VoxelWorld
                     };
                     break;
                 case CubeSide.Bottom:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v1, v5, v4, v0
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.down,
                         Vector3.down,
@@ -222,11 +220,11 @@ namespace VoxelWorld
                     };
                     break;
                 case CubeSide.Left:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v2, v3, v1, v0
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.left,
                         Vector3.left,
@@ -235,11 +233,11 @@ namespace VoxelWorld
                     };
                     break;
                 case CubeSide.Right:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v7, v6, v4, v5
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.right,
                         Vector3.right,
@@ -248,11 +246,11 @@ namespace VoxelWorld
                     };
                     break;
                 case CubeSide.Front:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v3, v7, v5, v1
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.forward,
                         Vector3.forward,
@@ -261,11 +259,11 @@ namespace VoxelWorld
                     };
                     break;
                 case CubeSide.Back:
-                    vertices = new Vector3[]
+                    vertices = new[]
                     {
                         v6, v2, v0, v4
                     };
-                    normals = new Vector3[]
+                    normals = new[]
                     {
                         Vector3.back,
                         Vector3.back,
@@ -407,7 +405,7 @@ namespace VoxelWorld
 
         public void Reset()
         {
-            crackTexture = Crack.Crack0;
+            _crackTexture = Crack.Crack0;
             _actualHealth = blockSetup.health;
             owner.Redraw();
         }

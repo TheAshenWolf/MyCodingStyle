@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ModestTree;
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -27,9 +25,9 @@ namespace Zenject
             List<TypeValuePair> args, InjectContext parentContext, out Action injectAction)
         {
             bool shouldMakeActive;
-            var gameObj = CreateGameObject(parentContext, out shouldMakeActive);
+            GameObject gameObj = CreateGameObject(parentContext, out shouldMakeActive);
 
-            var context = gameObj.AddComponent<GameObjectContext>();
+            GameObjectContext context = gameObj.AddComponent<GameObjectContext>();
 
             AddInstallers(args, context);
 

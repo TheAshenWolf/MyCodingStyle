@@ -17,9 +17,9 @@ namespace Zenject
             IEnumerable<Type> externalIgnoreTypes, IEnumerable<Type> contractTypes)
         {
             // Output the entire object graph to file
-            var graph = CalculateObjectGraph(container, contractTypes);
+            Dictionary<Type, List<Type>> graph = CalculateObjectGraph(container, contractTypes);
 
-            var ignoreTypes = new List<Type>
+            List<Type> ignoreTypes = new List<Type>
             {
                 typeof(DiContainer),
                 typeof(InitializableManager)
@@ -27,18 +27,18 @@ namespace Zenject
 
             ignoreTypes.AddRange(externalIgnoreTypes);
 
-            var resultStr = "digraph { \n";
+            string resultStr = "digraph { \n";
 
             resultStr += "rankdir=LR;\n";
 
-            foreach (var entry in graph)
+            foreach (KeyValuePair<Type, List<Type>> entry in graph)
             {
                 if (ShouldIgnoreType(entry.Key, ignoreTypes))
                 {
                     continue;
                 }
 
-                foreach (var dependencyType in entry.Value)
+                foreach (Type dependencyType in entry.Value)
                 {
                     if (ShouldIgnoreType(dependencyType, ignoreTypes))
                     {
@@ -62,11 +62,11 @@ namespace Zenject
         static Dictionary<Type, List<Type>> CalculateObjectGraph(
             DiContainer container, IEnumerable<Type> contracts)
         {
-            var map = new Dictionary<Type, List<Type>>();
+            Dictionary<Type, List<Type>> map = new Dictionary<Type, List<Type>>();
 
-            foreach (var contractType in contracts)
+            foreach (Type contractType in contracts)
             {
-                var depends = GetDependencies(container, contractType);
+                List<Type> depends = GetDependencies(container, contractType);
 
                 if (depends.Any())
                 {
@@ -80,18 +80,18 @@ namespace Zenject
         static List<Type> GetDependencies(
             DiContainer container, Type type)
         {
-            var dependencies = new List<Type>();
+            List<Type> dependencies = new List<Type>();
 
-            foreach (var contractType in container.GetDependencyContracts(type))
+            foreach (Type contractType in container.GetDependencyContracts(type))
             {
                 List<Type> dependTypes;
 
                 if (contractType.FullName.StartsWith("System.Collections.Generic.List"))
                 {
-                    var subTypes = contractType.GenericArguments();
+                    Type[] subTypes = contractType.GenericArguments();
                     Assert.IsEqual(subTypes.Length, 1);
 
-                    var subType = subTypes[0];
+                    Type subType = subTypes[0];
                     dependTypes = container.ResolveTypeAll(subType);
                 }
                 else
@@ -100,7 +100,7 @@ namespace Zenject
                     Assert.That(dependTypes.Count <= 1);
                 }
 
-                foreach (var dependType in dependTypes)
+                foreach (Type dependType in dependTypes)
                 {
                     dependencies.Add(dependType);
                 }
@@ -111,7 +111,7 @@ namespace Zenject
 
         static string GetFormattedTypeName(Type type)
         {
-            var str = type.PrettyName();
+            string str = type.PrettyName();
 
             // GraphViz does not read names with <, >, or . characters so replace them
             str = str.Replace(">", "_");

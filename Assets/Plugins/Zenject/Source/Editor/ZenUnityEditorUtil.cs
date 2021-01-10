@@ -9,6 +9,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Zenject.Internal
 {
@@ -19,7 +20,7 @@ namespace Zenject.Internal
         {
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
-                var originalSceneSetup = EditorSceneManager.GetSceneManagerSetup();
+                SceneSetup[] originalSceneSetup = EditorSceneManager.GetSceneManagerSetup();
 
                 try
                 {
@@ -62,7 +63,7 @@ namespace Zenject.Internal
                 Assert.That(!ProjectContext.HasInstance);
                 ProjectContext.ValidateOnNextRun = true;
 
-                foreach (var sceneContext in GetAllSceneContexts())
+                foreach (SceneContext sceneContext in GetAllSceneContexts())
                 {
                     sceneContext.Validate();
                 }
@@ -87,10 +88,10 @@ namespace Zenject.Internal
         // Returns the number of scenes that successfully validated
         public static int ValidateAllActiveScenes()
         {
-            var activeScenePaths = EditorBuildSettings.scenes.Where(x => x.enabled)
+            List<string> activeScenePaths = EditorBuildSettings.scenes.Where(x => x.enabled)
                 .Select(x => x.path).ToList();
 
-            foreach (var scenePath in activeScenePaths)
+            foreach (string scenePath in activeScenePaths)
             {
                 EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                 ValidateCurrentSceneSetup();
@@ -104,7 +105,7 @@ namespace Zenject.Internal
         {
             Assert.That(!ProjectContext.HasInstance);
 
-            foreach (var sceneContext in GetAllSceneContexts())
+            foreach (SceneContext sceneContext in GetAllSceneContexts())
             {
                 try
                 {
@@ -121,7 +122,7 @@ namespace Zenject.Internal
 
         public static SceneContext GetSceneContextForScene(Scene scene)
         {
-            var sceneContext = TryGetSceneContextForScene(scene);
+            SceneContext sceneContext = TryGetSceneContextForScene(scene);
 
             Assert.IsNotNull(sceneContext,
                 "Could not find scene context for scene '{0}'", scene.name);
@@ -136,7 +137,7 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var sceneContexts = scene.GetRootGameObjects()
+            List<SceneContext> sceneContexts = scene.GetRootGameObjects()
                 .SelectMany(x => x.GetComponentsInChildren<SceneContext>()).ToList();
 
             if (sceneContexts.IsEmpty())
@@ -152,7 +153,7 @@ namespace Zenject.Internal
 
         public static SceneDecoratorContext GetDecoratorContextForScene(Scene scene)
         {
-            var decoratorContext = TryGetDecoratorContextForScene(scene);
+            SceneDecoratorContext decoratorContext = TryGetDecoratorContextForScene(scene);
 
             Assert.IsNotNull(decoratorContext,
                 "Could not find decorator context for scene '{0}'", scene.name);
@@ -167,7 +168,7 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var decoratorContexts = scene.GetRootGameObjects()
+            List<SceneDecoratorContext> decoratorContexts = scene.GetRootGameObjects()
                 .SelectMany(x => x.GetComponentsInChildren<SceneDecoratorContext>()).ToList();
 
             if (decoratorContexts.IsEmpty())
@@ -183,14 +184,14 @@ namespace Zenject.Internal
 
         static IEnumerable<SceneContext> GetAllSceneContexts()
         {
-            var decoratedSceneNames = new List<string>();
+            List<string> decoratedSceneNames = new List<string>();
 
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+            for (int i = 0; i < SceneManager.sceneCount; i++)
             {
-                var scene = EditorSceneManager.GetSceneAt(i);
+                Scene scene = SceneManager.GetSceneAt(i);
 
-                var sceneContext = TryGetSceneContextForScene(scene);
-                var decoratorContext = TryGetDecoratorContextForScene(scene);
+                SceneContext sceneContext = TryGetSceneContextForScene(scene);
+                SceneDecoratorContext decoratorContext = TryGetDecoratorContextForScene(scene);
 
                 if (sceneContext != null)
                 {
@@ -224,7 +225,7 @@ namespace Zenject.Internal
         {
             fullPath = Path.GetFullPath(fullPath);
 
-            var assetFolderFullPath = Path.GetFullPath(Application.dataPath);
+            string assetFolderFullPath = Path.GetFullPath(Application.dataPath);
 
             if (fullPath.Length == assetFolderFullPath.Length)
             {
@@ -232,7 +233,7 @@ namespace Zenject.Internal
                 return "Assets";
             }
 
-            var assetPath = fullPath.Remove(0, assetFolderFullPath.Length + 1).Replace("\\", "/");
+            string assetPath = fullPath.Remove(0, assetFolderFullPath.Length + 1).Replace("\\", "/");
             return "Assets/" + assetPath;
         }
 
@@ -244,14 +245,14 @@ namespace Zenject.Internal
 
         public static string GetCurrentDirectoryAbsolutePathFromSelection()
         {
-            var folderPath = TryGetSelectedFolderPathInProjectsTab();
+            string folderPath = TryGetSelectedFolderPathInProjectsTab();
 
             if (folderPath != null)
             {
                 return folderPath;
             }
 
-            var filePath = TryGetSelectedFilePathInProjectsTab();
+            string filePath = TryGetSelectedFilePathInProjectsTab();
 
             if (filePath != null)
             {
@@ -274,14 +275,14 @@ namespace Zenject.Internal
 
         public static List<string> GetSelectedAssetPathsInProjectsTab()
         {
-            var paths = new List<string>();
+            List<string> paths = new List<string>();
 
             UnityEngine.Object[] selectedAssets = Selection.GetFiltered(
                 typeof(UnityEngine.Object), SelectionMode.Assets);
 
-            foreach (var item in selectedAssets)
+            foreach (Object item in selectedAssets)
             {
-                var assetPath = AssetDatabase.GetAssetPath(item);
+                string assetPath = AssetDatabase.GetAssetPath(item);
 
                 if (!string.IsNullOrEmpty(assetPath))
                 {
@@ -294,18 +295,18 @@ namespace Zenject.Internal
 
         public static List<string> GetSelectedPathsInProjectsTab()
         {
-            var paths = new List<string>();
+            List<string> paths = new List<string>();
 
             UnityEngine.Object[] selectedAssets = Selection.GetFiltered(
                 typeof(UnityEngine.Object), SelectionMode.Assets);
 
-            foreach (var item in selectedAssets)
+            foreach (Object item in selectedAssets)
             {
-                var relativePath = AssetDatabase.GetAssetPath(item);
+                string relativePath = AssetDatabase.GetAssetPath(item);
 
                 if (!string.IsNullOrEmpty(relativePath))
                 {
-                    var fullPath = Path.GetFullPath(Path.Combine(
+                    string fullPath = Path.GetFullPath(Path.Combine(
                         Application.dataPath, Path.Combine("..", relativePath)));
 
                     paths.Add(fullPath);

@@ -6,6 +6,7 @@ using System.Threading;
 using ModestTree;
 using UnityEngine;
 using Zenject.Internal;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -74,7 +75,7 @@ namespace Zenject
 
         public static GameObject TryGetPrefab()
         {
-            var prefabs = Resources.LoadAll(ProjectContextResourcePath, typeof(GameObject));
+            Object[] prefabs = Resources.LoadAll(ProjectContextResourcePath, typeof(GameObject));
 
             if (prefabs.Length > 0)
             {
@@ -104,9 +105,9 @@ namespace Zenject
             Assert.That(FindObjectsOfType<ProjectContext>().IsEmpty(),
                 "Tried to create multiple instances of ProjectContext!");
 
-            var prefab = TryGetPrefab();
+            GameObject prefab = TryGetPrefab();
 
-            var prefabWasActive = false;
+            bool prefabWasActive = false;
 
 #if ZEN_INTERNAL_PROFILING
             using (ProfileTimers.CreateTimedBlock("GameObject.Instantiate"))
@@ -126,13 +127,13 @@ namespace Zenject
                     if(prefabWasActive)
                     {
                         // This ensures the prefab's Awake() methods don't fire (and, if in the editor, that the prefab file doesn't get modified)
-                        gameObjectInstance = GameObject.Instantiate(prefab, ZenUtilInternal.GetOrCreateInactivePrefabParent());
+                        gameObjectInstance = Instantiate(prefab, ZenUtilInternal.GetOrCreateInactivePrefabParent());
                         gameObjectInstance.SetActive(false);
                         gameObjectInstance.transform.SetParent(null, false);
                     }
                     else
                     {
-                        gameObjectInstance = GameObject.Instantiate(prefab);
+                        gameObjectInstance = Instantiate(prefab);
                     }
 #else
                     if(prefabWasActive)
@@ -206,7 +207,7 @@ namespace Zenject
                 TypeAnalyzer.ReflectionBakingCoverageMode = _buildsReflectionBakingCoverageMode;
             }
 
-            var isValidating = ValidateOnNextRun;
+            bool isValidating = ValidateOnNextRun;
 
             // Reset immediately to ensure it doesn't get used in another run
             ValidateOnNextRun = false;
@@ -220,10 +221,10 @@ namespace Zenject
                 PreInstall();
             }
 
-            var injectableMonoBehaviours = new List<MonoBehaviour>();
+            List<MonoBehaviour> injectableMonoBehaviours = new List<MonoBehaviour>();
             GetInjectableMonoBehaviours(injectableMonoBehaviours);
 
-            foreach (var instance in injectableMonoBehaviours)
+            foreach (MonoBehaviour instance in injectableMonoBehaviours)
             {
                 _container.QueueForInject(instance);
             }

@@ -32,9 +32,9 @@ namespace Zenject
             _installersProperties = new List<SerializedProperty>();
             _installersLists = new List<ReorderableList>();
 
-            var descriptions = PropertyDescriptions;
-            var names = PropertyNames;
-            var displayNames = PropertyDisplayNames;
+            string[] descriptions = PropertyDescriptions;
+            string[] names = PropertyNames;
+            string[] displayNames = PropertyDisplayNames;
 
             Assert.IsEqual(descriptions.Length, names.Length);
 
@@ -42,14 +42,14 @@ namespace Zenject
 
             foreach (var info in infos)
             {
-                var installersProperty = serializedObject.FindProperty(info.Name);
+                SerializedProperty installersProperty = serializedObject.FindProperty(info.Name);
                 _installersProperties.Add(installersProperty);
 
                 ReorderableList installersList = new ReorderableList(serializedObject, installersProperty, true, true, true, true);
                 _installersLists.Add(installersList);
 
-                var closedName = info.DisplayName;
-                var closedDesc = info.Description;
+                string closedName = info.DisplayName;
+                string closedDesc = info.Description;
 
                 installersList.drawHeaderCallback += rect =>
                 {
@@ -81,7 +81,7 @@ namespace Zenject
                 GUI.enabled = false;
             }
 
-            foreach (var list in _installersLists)
+            foreach (ReorderableList list in _installersLists)
             {
                 list.DoLayoutList();
             }

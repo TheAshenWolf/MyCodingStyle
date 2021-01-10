@@ -63,13 +63,13 @@ namespace Zenject
             Assert.That(_argumentTarget == null || _argumentTarget.DerivesFromOrEqual(context.MemberType));
 
             bool shouldMakeActive;
-            var gameObject = _container.CreateAndParentPrefab(
+            GameObject gameObject = _container.CreateAndParentPrefab(
                 GetPrefab(context), _gameObjectBindInfo, context, out shouldMakeActive);
             Assert.IsNotNull(gameObject);
 
             injectAction = () =>
             {
-                var allArgs = ZenPools.SpawnList<TypeValuePair>();
+                List<TypeValuePair> allArgs = ZenPools.SpawnList<TypeValuePair>();
 
                 allArgs.AllocFreeAddRange(_extraArguments);
                 allArgs.AllocFreeAddRange(args);
@@ -107,11 +107,11 @@ namespace Zenject
 
                 if (_instantiateCallback != null)
                 {
-                    var callbackObjects = ZenPools.SpawnHashSet<object>();
+                    HashSet<object> callbackObjects = ZenPools.SpawnHashSet<object>();
 
-                    foreach (var type in _instantiateCallbackTypes)
+                    foreach (Type type in _instantiateCallbackTypes)
                     {
-                        var obj = gameObject.GetComponentInChildren(type);
+                        Component obj = gameObject.GetComponentInChildren(type);
 
                         if (obj != null)
                         {
@@ -119,7 +119,7 @@ namespace Zenject
                         }
                     }
 
-                    foreach (var obj in callbackObjects)
+                    foreach (object obj in callbackObjects)
                     {
                         _instantiateCallback(context, obj);
                     }

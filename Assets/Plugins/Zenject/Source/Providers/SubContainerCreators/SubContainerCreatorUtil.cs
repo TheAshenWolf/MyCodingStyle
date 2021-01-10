@@ -1,7 +1,6 @@
-using System;
 using ModestTree;
 #if !NOT_UNITY3D
-using UnityEngine;
+
 #endif
 
 namespace Zenject
@@ -13,7 +12,7 @@ namespace Zenject
         {
             if (subContainerBindInfo.CreateKernel)
             {
-                var parentContainer = subContainer.ParentContainers.OnlyOrDefault();
+                DiContainer parentContainer = subContainer.ParentContainers.OnlyOrDefault();
                 Assert.IsNotNull(parentContainer, "Could not find unique container when using WithKernel!");
 
                 if (subContainerBindInfo.KernelType != null)

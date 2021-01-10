@@ -24,7 +24,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -104,7 +104,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable<T> poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -184,7 +184,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable<T1, T2> poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -264,7 +264,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3> poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -344,7 +344,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3, T4> poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -425,7 +425,7 @@ namespace Zenject
 
         PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3, T4, T5> poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            int? match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);

@@ -43,8 +43,8 @@ namespace Zenject.Internal
 
                 for (int i = 0; i < _factoryBindIds.Count; i++)
                 {
-                    var bindId = _factoryBindIds[i];
-                    var factory = _container.ResolveId<IFactory<TContract, TContract>>(bindId);
+                    Guid bindId = _factoryBindIds[i];
+                    IFactory<TContract, TContract> factory = _container.ResolveId<IFactory<TContract, TContract>>(bindId);
                     _decoratorFactories.Add(factory);
                 }
             }

@@ -52,7 +52,7 @@ namespace Zenject
 
         public BindInfo SpawnBindInfo()
         {
-            var bindInfo = ZenPools.SpawnBindInfo();
+            BindInfo bindInfo = ZenPools.SpawnBindInfo();
             AddDisposable(bindInfo);
             return bindInfo;
         }

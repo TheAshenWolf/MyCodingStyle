@@ -24,7 +24,7 @@ namespace Zenject
 
         protected DiContainer CreateEmptySubContainer()
         {
-            var subContainer = _container.CreateSubContainer();
+            DiContainer subContainer = _container.CreateSubContainer();
             SubContainerCreatorUtil.ApplyBindSettings(_containerBindInfo, subContainer);
             return subContainer;
         }
@@ -48,7 +48,7 @@ namespace Zenject
         {
             Assert.IsEmpty(args);
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(subContainer);
 
@@ -82,7 +82,7 @@ namespace Zenject
             Assert.IsEqual(args.Count, 1);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(subContainer, (TParam1)args[0].Value);
 
@@ -117,7 +117,7 @@ namespace Zenject
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
             Assert.That(args[1].Type.DerivesFromOrEqual<TParam2>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,
@@ -156,7 +156,7 @@ namespace Zenject
             Assert.That(args[1].Type.DerivesFromOrEqual<TParam2>());
             Assert.That(args[2].Type.DerivesFromOrEqual<TParam3>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,
@@ -204,7 +204,7 @@ namespace Zenject
             Assert.That(args[2].Type.DerivesFromOrEqual<TParam3>());
             Assert.That(args[3].Type.DerivesFromOrEqual<TParam4>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,
@@ -254,7 +254,7 @@ namespace Zenject
             Assert.That(args[3].Type.DerivesFromOrEqual<TParam4>());
             Assert.That(args[4].Type.DerivesFromOrEqual<TParam5>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,
@@ -306,7 +306,7 @@ namespace Zenject
             Assert.That(args[4].Type.DerivesFromOrEqual<TParam5>());
             Assert.That(args[5].Type.DerivesFromOrEqual<TParam6>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,
@@ -364,7 +364,7 @@ namespace Zenject
             Assert.That(args[8].Type.DerivesFromOrEqual<TParam9>());
             Assert.That(args[9].Type.DerivesFromOrEqual<TParam10>());
 
-            var subContainer = CreateEmptySubContainer();
+            DiContainer subContainer = CreateEmptySubContainer();
 
             _installMethod(
                 subContainer,

@@ -3,19 +3,19 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using TheAshenWolf;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace VoxelWorld
 {
     public class Chunk
     {
-        public Material solidMaterial;
-        public Material fluidMaterial;
+        private readonly Material _solidMaterial;
+        private readonly Material _fluidMaterial;
         public Block[,,] chunkData;
-        public GameObject chunk;
-        public GameObject fluid;
+        public readonly GameObject chunk;
+        public readonly GameObject fluid;
         public ChunkState chunkState;
-        public BlockData blockData;
-        public string chunkName;
+        private BlockData _blockData;
         public bool changed;
         public World world;
         private bool _treesGenerated;
@@ -33,8 +33,8 @@ namespace VoxelWorld
             {
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 FileStream file = File.Open(chunkFile, FileMode.Open);
-                blockData = new BlockData();
-                blockData = (BlockData) binaryFormatter.Deserialize(file);
+                _blockData = new BlockData();
+                _blockData = (BlockData) binaryFormatter.Deserialize(file);
                 file.Close();
 
                 return true;
@@ -48,13 +48,13 @@ namespace VoxelWorld
             string chunkFile = BuildChunkFileName(chunk.transform.position);
             if (!File.Exists(chunkFile))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(chunkFile));
+                Directory.CreateDirectory(Path.GetDirectoryName(chunkFile) ?? throw new Exception("Path is null"));
             }
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream file = File.Open(chunkFile, FileMode.OpenOrCreate);
-            blockData = new BlockData(chunkData);
-            binaryFormatter.Serialize(file, blockData);
+            _blockData = new BlockData(chunkData);
+            binaryFormatter.Serialize(file, _blockData);
             file.Close();
 
             changed = false;
@@ -62,47 +62,21 @@ namespace VoxelWorld
 
         public Chunk(Vector3 position, Material solidMaterial, Material fluidMaterial)
         {
-            chunkName = World.BuildChunkName(position);
+            string chunkName = World.BuildChunkName(position);
             chunk = new GameObject(chunkName);
             chunk.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
 
             fluid = new GameObject(World.BuildChunkName(position) + "_F");
             fluid.transform.position = position + new Vector3(0.5f, 0.5f, 0.5f);
 
-            this.solidMaterial = solidMaterial;
-            this.fluidMaterial = fluidMaterial;
+            _solidMaterial = solidMaterial;
+            _fluidMaterial = fluidMaterial;
             BuildChunk();
         }
 
-        public void UpdateChunk()
-        {
-            for (int z = 0; z < Settings.CHUNK_SIZE; z++)
-            {
-                for (int y = 0; y < Settings.CHUNK_SIZE; y++)
-                {
-                    for (int x = 0; x < Settings.CHUNK_SIZE; x++)
-                    {
-                        Block block = chunkData[x, y, z];
-                        BlockType blockType = block.blockSetup.blockType;
-
-                        if (block.blockSetup.isFalling)
-                        {
-                            world.StartCoroutine(World.Fall(block, blockType));
-                        }
-                        else if (block.blockSetup.blockOpacity == BlockOpacity.Liquid)
-                        {
-                            world.StartCoroutine(World.Flow(block, blockType,
-                                8, 8));
-                        }
-                    }
-                }
-            }
-        }
-
-
         private void BuildChunk()
         {
-            bool loadingFromFile = false;
+            bool loadingFromFile;
             loadingFromFile = Load();
 
             chunkData = new Block[Settings.CHUNK_SIZE, Settings.CHUNK_SIZE, Settings.CHUNK_SIZE];
@@ -122,8 +96,8 @@ namespace VoxelWorld
 
                         if (loadingFromFile)
                         {
-                            chunkData[x, y, z] = new Block(blockData.blockMatrix[x, y, z], position,
-                                Block.GetBlockOpacity(blockData.blockMatrix[x, y, z]) == BlockOpacity.Solid
+                            chunkData[x, y, z] = new Block(_blockData.blockMatrix[x, y, z], position,
+                                Block.GetBlockOpacity(_blockData.blockMatrix[x, y, z]) == BlockOpacity.Solid
                                     ? chunk
                                     : fluid,
                                 this);
@@ -136,7 +110,8 @@ namespace VoxelWorld
 
                         if (worldY == Utils.GenerateHeight(worldX, worldZ))
                         {
-                            if (worldY <= Settings.OCEAN_HEIGHT + Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, .4f, 2) * 3 - 1)
+                            if (worldY <= Settings.OCEAN_HEIGHT +
+                                Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, .4f, 2) * 3 - 1)
                             {
                                 blockType = Settings.OCEAN_HEIGHT - worldY > 4 ? BlockType.Gravel : BlockType.Sand;
                             }
@@ -153,17 +128,17 @@ namespace VoxelWorld
                                  worldY > Utils.GenerateStoneHeight(worldX, worldZ)) blockType = BlockType.Dirt;
                         else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ) && worldY > 1)
                         {
-                            if (worldY < Utils.maxHeight / 4 * 3 &&
+                            if (worldY < Utils.MAX_HEIGHT / 4 * 3 &&
                                 Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.3f, 2, .15f) < .376f)
                             {
                                 blockType = BlockType.CoalOre;
                             }
-                            else if (worldY < Utils.maxHeight / 8f * 2.5f &&
+                            else if (worldY < Utils.MAX_HEIGHT / 8f * 2.5f &&
                                      Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.25f, 3, .29f) < .37f)
                             {
                                 blockType = BlockType.IronOre;
                             }
-                            else if (worldY < Utils.maxHeight / 16f * 1.75f &&
+                            else if (worldY < Utils.MAX_HEIGHT / 16f * 1.75f &&
                                      Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, 0.2f, 2, .22f) < .35f)
                             {
                                 blockType = BlockType.GoldOre;
@@ -174,7 +149,7 @@ namespace VoxelWorld
                                 blockType = BlockType.RedstoneOre;
                             }
 
-                            if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, pers: 0.04f) < .4f &&
+                            if (Utils.FractalBrownianMotion3D(worldX, worldY, worldZ, persistence: 0.04f) < .4f &&
                                 (blockType != BlockType.Water))
                                 blockType = BlockType.Air;
 
@@ -202,12 +177,12 @@ namespace VoxelWorld
 
         public void Redraw()
         {
-            GameObject.DestroyImmediate(chunk.GetComponent<MeshFilter>());
-            GameObject.DestroyImmediate(chunk.GetComponent<MeshRenderer>());
-            GameObject.DestroyImmediate(chunk.GetComponent<Collider>());
+            Object.DestroyImmediate(chunk.GetComponent<MeshFilter>());
+            Object.DestroyImmediate(chunk.GetComponent<MeshRenderer>());
+            Object.DestroyImmediate(chunk.GetComponent<Collider>());
 
-            GameObject.DestroyImmediate(fluid.GetComponent<MeshFilter>());
-            GameObject.DestroyImmediate(fluid.GetComponent<MeshRenderer>());
+            Object.DestroyImmediate(fluid.GetComponent<MeshFilter>());
+            Object.DestroyImmediate(fluid.GetComponent<MeshRenderer>());
             DrawChunk();
         }
 
@@ -242,11 +217,11 @@ namespace VoxelWorld
                 }
             }
 
-            CombineQuads(chunk, solidMaterial);
+            CombineQuads(chunk, _solidMaterial);
             MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = chunk.GetComponent<MeshFilter>().mesh;
 
-            CombineQuads(fluid, fluidMaterial);
+            CombineQuads(fluid, _fluidMaterial);
             chunkState = ChunkState.Idle;
         }
 

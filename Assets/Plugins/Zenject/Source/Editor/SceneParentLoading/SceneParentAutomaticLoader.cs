@@ -41,15 +41,15 @@ namespace Zenject.Internal
 
         public static void ValidateMultiSceneSetupAndLoadDefaultSceneParents()
         {
-            var defaultContractsMap = LoadDefaultContractsMap();
+            Dictionary<string, string> defaultContractsMap = LoadDefaultContractsMap();
 
             // NOTE: Even if configs is empty we still want to do the below logic to validate the
             // multi scene setup
 
-            var sceneInfos = GetLoadedZenjectSceneInfos();
-            var contractMap = GetCurrentSceneContractsMap(sceneInfos);
+            List<LoadedSceneInfo> sceneInfos = GetLoadedZenjectSceneInfos();
+            Dictionary<string, LoadedSceneInfo> contractMap = GetCurrentSceneContractsMap(sceneInfos);
 
-            foreach (var sceneInfo in sceneInfos)
+            foreach (LoadedSceneInfo sceneInfo in sceneInfos)
             {
                 ProcessScene(sceneInfo, contractMap, defaultContractsMap);
             }
@@ -58,9 +58,9 @@ namespace Zenject.Internal
         static Dictionary<string, LoadedSceneInfo> GetCurrentSceneContractsMap(
             List<LoadedSceneInfo> sceneInfos)
         {
-            var contractMap = new Dictionary<string, LoadedSceneInfo>();
+            Dictionary<string, LoadedSceneInfo> contractMap = new Dictionary<string, LoadedSceneInfo>();
 
-            foreach (var info in sceneInfos)
+            foreach (LoadedSceneInfo info in sceneInfos)
             {
                 AddToContractMap(contractMap, info);
             }
@@ -90,7 +90,7 @@ namespace Zenject.Internal
             Dictionary<string, LoadedSceneInfo> contractMap,
             Dictionary<string, string> defaultContractsMap)
         {
-            var decoratedContractName = sceneInfo.DecoratorContext.DecoratedContractName;
+            string decoratedContractName = sceneInfo.DecoratorContext.DecoratedContractName;
 
             LoadedSceneInfo decoratedSceneInfo;
 
@@ -115,7 +115,7 @@ namespace Zenject.Internal
             Dictionary<string, LoadedSceneInfo> contractMap,
             Dictionary<string, string> defaultContractsMap)
         {
-            foreach (var parentContractName in sceneInfo.SceneContext.ParentContractNames)
+            foreach (string parentContractName in sceneInfo.SceneContext.ParentContractNames)
             {
                 LoadedSceneInfo parentInfo;
 
@@ -167,9 +167,9 @@ namespace Zenject.Internal
         static void ValidateDecoratedSceneMatch(
             LoadedSceneInfo decoratorInfo, LoadedSceneInfo decoratedInfo)
         {
-            var decoratorIndex = GetSceneIndex(decoratorInfo.Scene);
-            var decoratedIndex = GetSceneIndex(decoratedInfo.Scene);
-            var activeIndex = GetSceneIndex(EditorSceneManager.GetActiveScene());
+            int decoratorIndex = GetSceneIndex(decoratorInfo.Scene);
+            int decoratedIndex = GetSceneIndex(decoratedInfo.Scene);
+            int activeIndex = GetSceneIndex(SceneManager.GetActiveScene());
 
             Assert.That(decoratorIndex < decoratedIndex,
                 "Decorator scene '{0}' must be loaded before decorated scene '{1}'.  Please drag the decorator scene to be placed above the other scene in the scene hierarchy.",
@@ -177,31 +177,31 @@ namespace Zenject.Internal
 
             if (activeIndex > decoratorIndex)
             {
-                EditorSceneManager.SetActiveScene(decoratorInfo.Scene);
+                SceneManager.SetActiveScene(decoratorInfo.Scene);
             }
         }
 
         static void ValidateParentChildMatch(
             LoadedSceneInfo parentSceneInfo, LoadedSceneInfo sceneInfo)
         {
-            var parentIndex = GetSceneIndex(parentSceneInfo.Scene);
-            var childIndex = GetSceneIndex(sceneInfo.Scene);
-            var activeIndex = GetSceneIndex(EditorSceneManager.GetActiveScene());
+            int parentIndex = GetSceneIndex(parentSceneInfo.Scene);
+            int childIndex = GetSceneIndex(sceneInfo.Scene);
+            int activeIndex = GetSceneIndex(SceneManager.GetActiveScene());
 
             Assert.That(parentIndex < childIndex,
                 "Parent scene '{0}' must be loaded before child scene '{1}'.  Please drag it to be placed above its child in the scene hierarchy.", parentSceneInfo.Scene.name, sceneInfo.Scene.name);
 
             if (activeIndex > parentIndex)
             {
-                EditorSceneManager.SetActiveScene(parentSceneInfo.Scene);
+                SceneManager.SetActiveScene(parentSceneInfo.Scene);
             }
         }
 
         static int GetSceneIndex(Scene scene)
         {
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+            for (int i = 0; i < SceneManager.sceneCount; i++)
             {
-                if (EditorSceneManager.GetSceneAt(i) == scene)
+                if (SceneManager.GetSceneAt(i) == scene)
                 {
                     return i;
                 }
@@ -212,13 +212,13 @@ namespace Zenject.Internal
 
         static Dictionary<string, string> LoadDefaultContractsMap()
         {
-            var configs = Resources.LoadAll<DefaultSceneContractConfig>(DefaultSceneContractConfig.ResourcePath);
+            DefaultSceneContractConfig[] configs = Resources.LoadAll<DefaultSceneContractConfig>(DefaultSceneContractConfig.ResourcePath);
 
-            var map = new Dictionary<string, string>();
+            Dictionary<string, string> map = new Dictionary<string, string>();
 
-            foreach (var config in configs)
+            foreach (DefaultSceneContractConfig config in configs)
             {
-                foreach (var info in config.DefaultContracts)
+                foreach (DefaultSceneContractConfig.ContractInfo info in config.DefaultContracts)
                 {
                     if (info.ContractName.Trim().IsEmpty())
                     {
@@ -238,22 +238,22 @@ namespace Zenject.Internal
 
         static LoadedSceneInfo CreateLoadedSceneInfo(Scene scene)
         {
-            var info = TryCreateLoadedSceneInfo(scene);
+            LoadedSceneInfo info = TryCreateLoadedSceneInfo(scene);
             Assert.IsNotNull(info, "Expected scene '{0}' to be a zenject scene", scene.name);
             return info;
         }
 
         static LoadedSceneInfo TryCreateLoadedSceneInfo(Scene scene)
         {
-            var sceneContext = ZenUnityEditorUtil.TryGetSceneContextForScene(scene);
-            var decoratorContext = ZenUnityEditorUtil.TryGetDecoratorContextForScene(scene);
+            SceneContext sceneContext = ZenUnityEditorUtil.TryGetSceneContextForScene(scene);
+            SceneDecoratorContext decoratorContext = ZenUnityEditorUtil.TryGetDecoratorContextForScene(scene);
 
             if (sceneContext == null && decoratorContext == null)
             {
                 return null;
             }
 
-            var info = new LoadedSceneInfo
+            LoadedSceneInfo info = new LoadedSceneInfo
             {
                 Scene = scene
             };
@@ -277,12 +277,12 @@ namespace Zenject.Internal
 
         static List<LoadedSceneInfo> GetLoadedZenjectSceneInfos()
         {
-            var result = new List<LoadedSceneInfo>();
+            List<LoadedSceneInfo> result = new List<LoadedSceneInfo>();
 
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+            for (int i = 0; i < SceneManager.sceneCount; i++)
             {
-                var scene = EditorSceneManager.GetSceneAt(i);
-                var info = TryCreateLoadedSceneInfo(scene);
+                Scene scene = SceneManager.GetSceneAt(i);
+                LoadedSceneInfo info = TryCreateLoadedSceneInfo(scene);
 
                 if (info != null)
                 {
@@ -301,7 +301,7 @@ namespace Zenject.Internal
                 return;
             }
 
-            foreach (var contractName in info.SceneContext.ContractNames)
+            foreach (string contractName in info.SceneContext.ContractNames)
             {
                 LoadedSceneInfo currentInfo;
 

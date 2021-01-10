@@ -14,11 +14,10 @@ namespace MachineLearning.DodgeBall
 
         private readonly double[] _weights = {0, 0};
         private double _bias;
-        private double _totalError;
         private bool _dataLoaded;
 
         public GameObject ethan;
-        private static readonly int Crouch = Animator.StringToHash("Crouch");
+        private static readonly int _crouch = Animator.StringToHash("Crouch");
 
         private void Start()
         {
@@ -70,7 +69,7 @@ namespace MachineLearning.DodgeBall
 
             if (Mathf.Approximately((float) result, 1))
             {
-                ethan.GetComponent<Animator>().SetTrigger(Crouch);
+                ethan.GetComponent<Animator>().SetTrigger(_crouch);
                 ethan.GetComponent<Rigidbody>().isKinematic = false;
             }
             else
@@ -91,8 +90,7 @@ namespace MachineLearning.DodgeBall
         private void Train() // Not the ChooChoo one.
         {
             if (_dataLoaded) return;
-            
-            _totalError = 0;
+
             for (int set = 0; set < trainingSets.Count; set++)
             {
                 UpdateWeights(set);
@@ -125,14 +123,14 @@ namespace MachineLearning.DodgeBall
 
         private double CalculateOutput(double input1, double input2) // Execution calculation
         {
-            double[] inputs = new double[] {input1, input2};
+            double[] inputs = new[] {input1, input2};
             return ActivationFunction(DotProduct(_weights, inputs));
         }
 
         private void UpdateWeights(int set)
         {
             double error = trainingSets[set].output - CalculateOutput(set);
-            _totalError += Mathf.Abs((float) error);
+            Mathf.Abs((float) error);
             for (int i = 0; i < _weights.Length; i++)
             {
                 _weights[i] = _weights[i] + error * trainingSets[set].inputs[i];

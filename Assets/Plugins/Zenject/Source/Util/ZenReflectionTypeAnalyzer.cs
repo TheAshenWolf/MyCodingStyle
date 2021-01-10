@@ -36,7 +36,7 @@ namespace Zenject.Internal
             Assert.That(!type.IsEnum(), "Tried to analyze enum type '{0}'.  This is not supported", type);
             Assert.That(!type.IsArray, "Tried to analyze array type '{0}'.  This is not supported", type);
 
-            var baseType = type.BaseType();
+            Type baseType = type.BaseType();
 
             if (baseType == typeof(object))
             {
@@ -67,19 +67,19 @@ namespace Zenject.Internal
 
         static List<ReflectionTypeInfo.InjectMethodInfo> GetMethodInfos(Type type)
         {
-            var injectMethodInfos = new List<ReflectionTypeInfo.InjectMethodInfo>();
+            List<ReflectionTypeInfo.InjectMethodInfo> injectMethodInfos = new List<ReflectionTypeInfo.InjectMethodInfo>();
 
             // Note that unlike with fields and properties we use GetCustomAttributes
             // This is so that we can ignore inherited attributes, which is necessary
             // otherwise a base class method marked with [Inject] would cause all overridden
             // derived methods to be added as well
-            var methodInfos = type.DeclaredInstanceMethods()
+            List<MethodInfo> methodInfos = type.DeclaredInstanceMethods()
                 .Where(x => _injectAttributeTypes.Any(a => x.GetCustomAttributes(a, false).Any())).ToList();
 
             for (int i = 0; i < methodInfos.Count; i++)
             {
-                var methodInfo = methodInfos[i];
-                var injectAttr = methodInfo.AllAttributes<InjectAttributeBase>().SingleOrDefault();
+                MethodInfo methodInfo = methodInfos[i];
+                InjectAttributeBase injectAttr = methodInfo.AllAttributes<InjectAttributeBase>().SingleOrDefault();
 
                 if (injectAttr != null)
                 {
@@ -87,7 +87,7 @@ namespace Zenject.Internal
                         "Parameters of InjectAttribute do not apply to constructors and methodInfos");
                 }
 
-                var injectParamInfos = methodInfo.GetParameters()
+                List<ReflectionTypeInfo.InjectParameterInfo> injectParamInfos = methodInfo.GetParameters()
                     .Select(x => CreateInjectableInfoForParam(type, x)).ToList();
 
                 injectMethodInfos.Add(
@@ -99,9 +99,9 @@ namespace Zenject.Internal
 
         static ReflectionTypeInfo.InjectConstructorInfo GetConstructorInfo(Type type)
         {
-            var args = new List<ReflectionTypeInfo.InjectParameterInfo>();
+            List<ReflectionTypeInfo.InjectParameterInfo> args = new List<ReflectionTypeInfo.InjectParameterInfo>();
 
-            var constructor = TryGetInjectConstructor(type);
+            ConstructorInfo constructor = TryGetInjectConstructor(type);
 
             if (constructor != null)
             {
@@ -115,12 +115,12 @@ namespace Zenject.Internal
         static ReflectionTypeInfo.InjectParameterInfo CreateInjectableInfoForParam(
             Type parentType, ParameterInfo paramInfo)
         {
-            var injectAttributes = paramInfo.AllAttributes<InjectAttributeBase>().ToList();
+            List<InjectAttributeBase> injectAttributes = paramInfo.AllAttributes<InjectAttributeBase>().ToList();
 
             Assert.That(injectAttributes.Count <= 1,
                 "Found multiple 'Inject' attributes on type parameter '{0}' of type '{1}'.  Parameter should only have one", paramInfo.Name, parentType);
 
-            var injectAttr = injectAttributes.SingleOrDefault();
+            InjectAttributeBase injectAttr = injectAttributes.SingleOrDefault();
 
             object identifier = null;
             bool isOptional = false;
@@ -148,12 +148,12 @@ namespace Zenject.Internal
 
         static InjectableInfo GetInjectableInfoForMember(Type parentType, MemberInfo memInfo)
         {
-            var injectAttributes = memInfo.AllAttributes<InjectAttributeBase>().ToList();
+            List<InjectAttributeBase> injectAttributes = memInfo.AllAttributes<InjectAttributeBase>().ToList();
 
             Assert.That(injectAttributes.Count <= 1,
             "Found multiple 'Inject' attributes on type field '{0}' of type '{1}'.  Field should only container one Inject attribute", memInfo.Name, parentType);
 
-            var injectAttr = injectAttributes.SingleOrDefault();
+            InjectAttributeBase injectAttr = injectAttributes.SingleOrDefault();
 
             object identifier = null;
             bool isOptional = false;
@@ -192,7 +192,7 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var constructors = type.Constructors();
+            ConstructorInfo[] constructors = type.Constructors();
 
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             // WP8 generates a dummy constructor with signature (internal Classname(UIntPtr dummy))
@@ -207,7 +207,7 @@ namespace Zenject.Internal
 
             if (constructors.HasMoreThan(1))
             {
-                var explicitConstructor = (from c in constructors where _injectAttributeTypes.Any(a => c.HasAttribute(a)) select c).SingleOrDefault();
+                ConstructorInfo explicitConstructor = (from c in constructors where _injectAttributeTypes.Any(a => c.HasAttribute(a)) select c).SingleOrDefault();
 
                 if (explicitConstructor != null)
                 {
@@ -217,7 +217,7 @@ namespace Zenject.Internal
                 // If there is only one public constructor then use that
                 // This makes decent sense but is also necessary on WSA sometimes since the WSA generated
                 // constructor can sometimes be private with zero parameters
-                var singlePublicConstructor = constructors.Where(x => x.IsPublic).OnlyOrDefault();
+                ConstructorInfo singlePublicConstructor = constructors.Where(x => x.IsPublic).OnlyOrDefault();
 
                 if (singlePublicConstructor != null)
                 {

@@ -1,4 +1,5 @@
 using UnityEngine;
+// ReSharper disable UnusedMember.Global
 
 namespace VoxelWorld
 {
@@ -9,7 +10,7 @@ namespace VoxelWorld
             return new Vector2(0.0625f * a, 1 - 0.0625f * b);
         }
 
-        public static Vector2[] GetUvsFromTexturePosition(int x, int y)
+        private static Vector2[] GetUvsFromTexturePosition(int x, int y)
         {
             Vector2[] uvs = new Vector2[4];
 

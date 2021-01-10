@@ -223,7 +223,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -263,7 +263,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -303,7 +303,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -343,7 +343,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -393,7 +393,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -443,7 +443,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -493,7 +493,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {
@@ -543,7 +543,7 @@ namespace Zenject
             lock (_locker)
 #endif
             {
-                var item = SpawnInternal();
+                TValue item = SpawnInternal();
 
                 if (_onSpawnMethod != null)
                 {

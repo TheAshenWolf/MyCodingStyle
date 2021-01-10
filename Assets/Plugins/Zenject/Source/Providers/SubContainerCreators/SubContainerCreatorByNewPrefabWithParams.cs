@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
+using UnityEngine;
 using Zenject.Internal;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -33,11 +35,11 @@ namespace Zenject
 
         IEnumerable<InjectableInfo> GetAllInjectableIncludingBaseTypes() 
         {
-            var info = TypeAnalyzer.GetInfo(_installerType);
+            InjectTypeInfo info = TypeAnalyzer.GetInfo(_installerType);
 
             while (info != null) 
             {
-                foreach (var injectable in info.AllInjectables) 
+                foreach (InjectableInfo injectable in info.AllInjectables) 
                 {
                     yield return injectable;
                 }
@@ -48,15 +50,15 @@ namespace Zenject
 
         DiContainer CreateTempContainer(List<TypeValuePair> args)
         {
-            var tempSubContainer = Container.CreateSubContainer();
+            DiContainer tempSubContainer = Container.CreateSubContainer();
 
-            var allInjectables = GetAllInjectableIncludingBaseTypes();
+            IEnumerable<InjectableInfo> allInjectables = GetAllInjectableIncludingBaseTypes();
 
-            foreach (var argPair in args)
+            foreach (TypeValuePair argPair in args)
             {
                 // We need to intelligently match on the exact parameters here to avoid the issue
                 // brought up in github issue #217
-                var match = allInjectables
+                InjectableInfo match = allInjectables
                     .Where(x => argPair.Type.DerivesFromOrEqual(x.MemberType))
                     .OrderBy(x => ZenUtilInternal.GetInheritanceDelta(argPair.Type, x.MemberType)).FirstOrDefault();
 
@@ -75,14 +77,14 @@ namespace Zenject
         {
             Assert.That(!args.IsEmpty());
 
-            var prefab = _prefabProvider.GetPrefab(parentContext);
-            var tempContainer = CreateTempContainer(args);
+            Object prefab = _prefabProvider.GetPrefab(parentContext);
+            DiContainer tempContainer = CreateTempContainer(args);
 
             bool shouldMakeActive;
-            var gameObject = tempContainer.CreateAndParentPrefab(
+            GameObject gameObject = tempContainer.CreateAndParentPrefab(
                 prefab, _gameObjectBindInfo, null, out shouldMakeActive);
 
-            var context = gameObject.GetComponent<GameObjectContext>();
+            GameObjectContext context = gameObject.GetComponent<GameObjectContext>();
 
             Assert.That(context != null,
                 "Expected prefab with name '{0}' to container a component of type 'GameObjectContext'", prefab.name);

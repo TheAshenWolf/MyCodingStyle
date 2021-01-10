@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ModestTree;
 using Zenject.Internal;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -25,9 +26,9 @@ namespace Zenject
 
         protected override GameObject CreateGameObject(InjectContext context, out bool shouldMakeActive)
         {
-            var prefab = _prefabProvider.GetPrefab(context);
+            Object prefab = _prefabProvider.GetPrefab(context);
 
-            var gameObj = Container.CreateAndParentPrefab(
+            GameObject gameObj = Container.CreateAndParentPrefab(
                 prefab, _gameObjectBindInfo, null, out shouldMakeActive);
 
             if (gameObj.GetComponent<GameObjectContext>() != null)
@@ -64,12 +65,12 @@ namespace Zenject
             context.AddNormalInstaller(
                 new ActionInstaller(subContainer =>
                     {
-                        var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+                        List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
                         extraArgs.AllocFreeAddRange(_extraArgs);
                         extraArgs.AllocFreeAddRange(args);
 
-                        var installer = (InstallerBase)subContainer.InstantiateExplicit(
+                        InstallerBase installer = (InstallerBase)subContainer.InstantiateExplicit(
                             _installerType, extraArgs);
 
                         ZenPools.DespawnList(extraArgs);

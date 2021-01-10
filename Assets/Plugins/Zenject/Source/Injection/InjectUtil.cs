@@ -110,7 +110,7 @@ namespace Zenject
         {
             for (int i = 0; i < extraArgMap.Count; i++)
             {
-                var arg = extraArgMap[i];
+                TypeValuePair arg = extraArgMap[i];
 
                 if (arg.Type.DerivesFromOrEqual(injectedFieldType))
                 {

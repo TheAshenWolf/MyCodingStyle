@@ -89,7 +89,7 @@ namespace MachineLearning.Perceptron
 
         private double CalculateOutput(double input1, double input2) // Execution calculation
         {
-            double[] inputs = new double[] {input1, input2};
+            double[] inputs = new[] {input1, input2};
             double dotProduct = DotProduct(_weights, inputs);
             return dotProduct > 0 ? 1 : 0;
         }

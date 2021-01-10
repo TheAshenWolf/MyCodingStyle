@@ -38,46 +38,6 @@ namespace MachineLearning.Perceptron
 			}
 		}
 
-		public void DrawLine(float x, float y, float x2, float y2, Color c)
-		{
-			x = x * scale + xOffset;
-			y = y * scale + yOffset;
-			x2 = x2 * scale + xOffset;
-			y2 = y2 * scale + yOffset;
-			Circle((int)x,(int)y,10,Color.red);
-			Circle((int)x2,(int)y2,10,Color.red);
-
-			int w = (int)(x2 - x);
-			int h = (int)(y2 - y);
-			int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0 ;
-			if (w<0) dx1 = -1 ; else if (w>0) dx1 = 1 ;
-			if (h<0) dy1 = -1 ; else if (h>0) dy1 = 1 ;
-			if (w<0) dx2 = -1 ; else if (w>0) dx2 = 1 ;
-			int longest = Mathf.Abs(w) ;
-			int shortest = Mathf.Abs(h) ;
-			if (!(longest>shortest)) {
-				longest = Mathf.Abs(h) ;
-				shortest = Mathf.Abs(w) ;
-				if (h<0) dy2 = -1 ; else if (h>0) dy2 = 1 ;
-				dx2 = 0 ;            
-			}
-			int numerator = longest >> 1 ;
-			for (int i=0;i<=longest;i++) {
-				_tex.SetPixel((int)x,(int)y,c) ;
-				numerator += shortest ;
-				if (!(numerator<longest)) {
-					numerator -= longest ;
-					x += dx1 ;
-					y += dy1 ;
-				} else {
-					x += dx2 ;
-					y += dy2 ;
-				}
-			}
-			_tex.Apply();
-			_rend.texture = _tex;
-		}
-
 		public void DrawRay(float slope, float intercept, Color c)
 		{
 			//y = mx + c
@@ -138,7 +98,7 @@ namespace MachineLearning.Perceptron
 
 		// Use this for initialization
 		private void Start () {
-			_rend = this.GetComponent<RawImage>();
+			_rend = GetComponent<RawImage>();
 			_tex = _rend.texture as Texture2D;
 			
 			if (_tex == null) return;

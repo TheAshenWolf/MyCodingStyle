@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using ModestTree;
-
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
@@ -53,7 +51,7 @@ namespace Zenject
             {
                 yield return ContractType;
 
-                foreach (var type in BindInfo.ToTypes)
+                foreach (Type type in BindInfo.ToTypes)
                 {
                     yield return type;
                 }
@@ -171,7 +169,7 @@ namespace Zenject
             BindingUtil.AssertIsComponent(ContractType);
             BindingUtil.AssertIsNotAbstract(ContractType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new AddToNewGameObjectComponentProvider(
@@ -187,7 +185,7 @@ namespace Zenject
             BindingUtil.AssertIsComponent(ContractType);
             BindingUtil.AssertIsNotAbstract(ContractType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new InstantiateOnPrefabComponentProvider(
@@ -205,7 +203,7 @@ namespace Zenject
             BindingUtil.AssertIsValidPrefab(prefab);
             BindingUtil.AssertIsInterfaceOrComponent(ContractType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new GetFromPrefabComponentProvider(
@@ -224,7 +222,7 @@ namespace Zenject
             BindingUtil.AssertIsValidResourcePath(resourcePath);
             BindingUtil.AssertIsInterfaceOrComponent(ContractType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new GetFromPrefabComponentProvider(
@@ -243,7 +241,7 @@ namespace Zenject
             BindingUtil.AssertIsComponent(ContractType);
             BindingUtil.AssertIsNotAbstract(ContractType);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new InstantiateOnPrefabComponentProvider(

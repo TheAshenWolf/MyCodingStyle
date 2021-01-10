@@ -12,19 +12,19 @@ namespace VoxelWorld
         [SerializeField] private GameObject hand;
         [SerializeField] private Material textureAtlas;
         
-        private float _time = 0;
+        private float _time;
         private Chunk _lastHitChunk;
         private Vector3 _lastHitPosition;
         private bool _hasLastBlock;
 
-        public readonly BlockType[] hotbar =
+        private readonly BlockType[] _hotbar =
         {
             BlockType.Stone, BlockType.Sand, /*BlockType.Wood*/ BlockType.Water,
             BlockType.Brick, BlockType.Planks, BlockType.Dirt,
             BlockType.Gravel, BlockType.Cobblestone, BlockType.BookShelf
         };
 
-        private int _selectedBlock = 0;
+        private int _selectedBlock;
 
         private void Start()
         {
@@ -75,11 +75,10 @@ namespace VoxelWorld
                     hitChunk = block.owner;
 
                     Vector3 hitChunkPosition = hit.collider.gameObject.transform.position;
-
-                    // Vector3 hitColliderPosition = hit.collider.transform.position;
-                    int x = (int) block.position.x; // (Mathf.Round(hitBlockPosition.x) - hitColliderPosition.x);
-                    int y = (int) block.position.y; // (Mathf.Round(hitBlockPosition.y) - hitColliderPosition.y);
-                    int z = (int) block.position.z; // (Mathf.Round(hitBlockPosition.z) - hitColliderPosition.z);
+                    
+                    int x = (int) block.position.x;
+                    int y = (int) block.position.y;
+                    int z = (int) block.position.z;
 
                     bool updateNeighbours;
 
@@ -101,7 +100,7 @@ namespace VoxelWorld
                     }
                     else
                     {
-                        updateNeighbours = block.BuildBlock(hotbar[_selectedBlock], hotbar[_selectedBlock] == BlockType.Water ? hitChunk.fluid : hitChunk.chunk);
+                        updateNeighbours = block.BuildBlock(_hotbar[_selectedBlock], _hotbar[_selectedBlock] == BlockType.Water ? hitChunk.fluid : hitChunk.chunk);
                     }
 
                     if (updateNeighbours)
@@ -177,7 +176,7 @@ namespace VoxelWorld
         private void SetBlockInHand()
         {
             hand.DestroyAllChildren();
-            Block blockInHand = new Block(hotbar[_selectedBlock], Vector3.zero, hand, textureAtlas);
+            Block blockInHand = new Block(_hotbar[_selectedBlock], Vector3.zero, hand, textureAtlas);
         }
     }
 }

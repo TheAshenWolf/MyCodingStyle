@@ -70,9 +70,9 @@ namespace Zenject
 
             if (!_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType))
             {
-                var gameObj = ((Component)context.ObjectInstance).gameObject;
+                GameObject gameObj = ((Component)context.ObjectInstance).gameObject;
 
-                var componentInstance = gameObj.GetComponent(_componentType);
+                Component componentInstance = gameObj.GetComponent(_componentType);
                 instance = componentInstance;
 
                 // Use componentInstance so that it triggers unity's overloaded comparison operator
@@ -97,7 +97,7 @@ namespace Zenject
 
             injectAction = () =>
             {
-                var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+                List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
                 extraArgs.AllocFreeAddRange(_extraArguments);
                 extraArgs.AllocFreeAddRange(args);

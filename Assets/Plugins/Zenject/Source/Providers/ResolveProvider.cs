@@ -62,7 +62,7 @@ namespace Zenject
 
         InjectContext GetSubContext(InjectContext parent)
         {
-            var subContext = parent.CreateSubContext(_contractType, _identifier);
+            InjectContext subContext = parent.CreateSubContext(_contractType, _identifier);
 
             subContext.SourceType = _source;
             subContext.Optional = _isOptional;

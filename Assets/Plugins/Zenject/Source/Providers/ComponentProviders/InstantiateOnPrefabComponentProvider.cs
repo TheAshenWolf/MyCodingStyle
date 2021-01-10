@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using ModestTree;
+using UnityEngine;
 
 namespace Zenject
 {
@@ -41,9 +42,9 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            var gameObject = _prefabInstantiator.Instantiate(context, args, out injectAction);
+            GameObject gameObject = _prefabInstantiator.Instantiate(context, args, out injectAction);
 
-            var component = gameObject.AddComponent(_componentType);
+            Component component = gameObject.AddComponent(_componentType);
 
             buffer.Add(component);
         }

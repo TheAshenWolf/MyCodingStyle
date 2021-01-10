@@ -114,14 +114,14 @@ namespace Zenject
         {
             if (_fatalError != null)
             {
-                var labelWidth = 600;
-                var labelHeight = 200;
+                int labelWidth = 600;
+                int labelHeight = 200;
 
                 GUI.Label(new Rect(Screen.width / 2 - labelWidth / 2, Screen.height / 3 - labelHeight / 2, labelWidth, labelHeight), "Unrecoverable error occurred!  \nSee log for details.", ErrorTextStyle);
 
-                var buttonWidth = 100;
-                var buttonHeight = 50;
-                var offset = new Vector2(0, 100);
+                int buttonWidth = 100;
+                int buttonHeight = 50;
+                Vector2 offset = new Vector2(0, 100);
 
                 if (GUI.Button(new Rect(Screen.width / 2 - buttonWidth / 2 + offset.x, Screen.height / 3 - buttonHeight / 2 + offset.y, buttonWidth, buttonHeight), "Reload"))
                 {

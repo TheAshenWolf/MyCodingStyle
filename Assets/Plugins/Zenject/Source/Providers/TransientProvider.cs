@@ -57,14 +57,14 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            var instanceType = GetTypeToCreate(context.MemberType);
+            Type instanceType = GetTypeToCreate(context.MemberType);
 
-            var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+            List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
             extraArgs.AllocFreeAddRange(_extraArguments);
             extraArgs.AllocFreeAddRange(args);
 
-            var instance = _container.InstantiateExplicit(instanceType, false, extraArgs, context, _concreteIdentifier);
+            object instance = _container.InstantiateExplicit(instanceType, false, extraArgs, context, _concreteIdentifier);
 
             injectAction = () =>
             {

@@ -25,11 +25,11 @@ namespace Zenject
             // Just don't bother attempting to inject the behaviour classes
             if (_animator != null)
             {
-                var behaviours = _animator.GetBehaviours<StateMachineBehaviour>();
+                StateMachineBehaviour[] behaviours = _animator.GetBehaviours<StateMachineBehaviour>();
 
                 if (behaviours != null)
                 {
-                    foreach (var behaviour in behaviours)
+                    foreach (StateMachineBehaviour behaviour in behaviours)
                     {
                         _container.Inject(behaviour);
                     }

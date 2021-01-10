@@ -13,7 +13,6 @@ namespace MachineLearning.Camouflage
             b = 1,
             sizeFactor = 1
         };
-        private bool _dead = false;
         public float lifeLength = 999f;
         private SpriteRenderer _spriteRenderer;
         private Collider2D _collider2D;
@@ -21,7 +20,6 @@ namespace MachineLearning.Camouflage
 
         private void OnMouseDown()
         {
-            _dead = true;
             lifeLength = PopulationManager.elapsed;
             _spriteRenderer.enabled = false;
             _collider2D.enabled = false;

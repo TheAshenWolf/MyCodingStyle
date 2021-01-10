@@ -66,10 +66,11 @@ namespace Flocking
 
             if (groupSize > 0)
             {
-                center = (center / groupSize) + (flockManager.goalPosition - transform.position);
+                Vector3 position = transform.position;
+                center = (center / groupSize) + (flockManager.goalPosition - position);
                 speed = Mathf.Clamp(groupSpeed / groupSize, flockManager.minimumSpeed, flockManager.maximumSpeed);
 
-                Vector3 direction = (center + avoid) - transform.position;
+                Vector3 direction = (center + avoid) - position;
 
                 if (direction != Vector3.zero)
                 {
@@ -94,7 +95,7 @@ namespace Flocking
             
             if (!bounds.Contains(transform.position))
             {
-                direction = flockManager.transform.position - transform.position;;
+                direction = flockManager.transform.position - transform.position;
                 turning = true;
             }
             else if (Physics.Raycast(transform.position, transform.forward * 2, out RaycastHit hit))

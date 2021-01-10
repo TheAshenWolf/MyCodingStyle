@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace ModestTree
@@ -25,7 +24,7 @@ namespace ModestTree
 
         static string PrettyNameInternal(Type type)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             if (type.IsNested)
             {
@@ -40,11 +39,11 @@ namespace ModestTree
             }
             else
             {
-                var name = GetCSharpTypeName(type.Name);
+                string name = GetCSharpTypeName(type.Name);
 
                 if (type.IsGenericType())
                 {
-                    var quoteIndex = name.IndexOf('`');
+                    int quoteIndex = name.IndexOf('`');
 
                     if (quoteIndex != -1)
                     {
@@ -59,7 +58,7 @@ namespace ModestTree
 
                     if (type.IsGenericTypeDefinition())
                     {
-                        var numArgs = type.GenericArguments().Count();
+                        int numArgs = type.GenericArguments().Count();
 
                         if (numArgs > 0)
                         {

@@ -22,19 +22,19 @@ namespace Sirenix.Utilities
         [InitializeOnLoadMethod]
         private static void EnsureScriptingDefineSymbol()
         {
-            var currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+            BuildTargetGroup currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
 
             if (currentTarget == BuildTargetGroup.Unknown)
             {
                 return;
             }
 
-            var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(currentTarget).Trim();
-            var defines = definesString.Split(';');
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(currentTarget).Trim();
+            string[] defines = definesString.Split(';');
 
             bool changed = false;
 
-            foreach (var define in DEFINES)
+            foreach (string define in DEFINES)
             {
                 if (defines.Contains(define) == false)
                 {

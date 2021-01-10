@@ -1,8 +1,8 @@
 #if !NOT_UNITY3D
 
 using ModestTree;
-using UnityEngine;
 using System;
+using Object = UnityEngine.Object;
 
 namespace Zenject
 {
@@ -18,7 +18,7 @@ namespace Zenject
 
         public UnityEngine.Object GetPrefab(InjectContext context)
         {
-            var prefab = _getter(context);
+            Object prefab = _getter(context);
             Assert.That(prefab != null, "Custom prefab provider returned null");
             return prefab;
         }

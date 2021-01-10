@@ -7,108 +7,111 @@
 
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace VoxelWorld
 {
-    public Transform target;
-    public Vector3 targetOffset;
-    public float distance = 5.0f;
-    public float maxDistance = 100;
-    public float minDistance = .6f;
-    public float xSpeed = 200.0f;
-    public float ySpeed = 200.0f;
-    public int yMinLimit = -80;
-    public int yMaxLimit = 80;
-    public int zoomRate = 40;
-    public float panSpeed = 0.3f;
-    public float zoomDampening = 5.0f;
- 
-    private float xDeg = 0.0f;
-    private float yDeg = 0.0f;
-    private float currentDistance;
-    private float desiredDistance;
-    private Quaternion currentRotation;
-    private Quaternion desiredRotation;
-    private Quaternion rotation;
-    private Vector3 position;
- 
-    void Start() { Init(); }
- 
-    public void Init()
+    public class CameraController : MonoBehaviour
     {
-        GameObject go = new GameObject("Fake Cam Target");
-        go.transform.position = transform.position + (transform.forward * distance);
-        target = go.transform;
+        public Transform target;
+        public Vector3 targetOffset;
+        public float distance = 5.0f;
+        public float maxDistance = 100;
+        public float minDistance = .6f;
+        public float xSpeed = 200.0f;
+        public float ySpeed = 200.0f;
+        public int yMinLimit = -80;
+        public int yMaxLimit = 80;
+        public int zoomRate = 40;
+        public float panSpeed = 0.3f;
+        public float zoomDampening = 5.0f;
  
-        distance = Vector3.Distance(transform.position, target.position);
-        currentDistance = distance;
-        desiredDistance = distance;
+        private float _xDeg;
+        private float _yDeg;
+        private float _currentDistance;
+        private float _desiredDistance;
+        private Quaternion _currentRotation;
+        private Quaternion _desiredRotation;
+        private Quaternion _rotation;
+        private Vector3 _position;
+
+        private void Start() { Init(); }
+
+        private void Init()
+        {
+            GameObject go = new GameObject("Fake Cam Target");
+            Transform localTransform = transform;
+            Vector3 position = localTransform.position;
+            Quaternion rotation = localTransform.rotation;
+            
+            go.transform.position = position + (localTransform.forward * distance);
+            target = go.transform;
  
-        //be sure to grab the current rotations as starting points.
-        position = transform.position;
-        rotation = transform.rotation;
-        currentRotation = transform.rotation;
-        desiredRotation = transform.rotation;
+            distance = Vector3.Distance(position, target.position);
+            _currentDistance = distance;
+            _desiredDistance = distance;
+            
+            _position = position;
+            
+            _rotation = rotation;
+            _currentRotation = rotation;
+            _desiredRotation = rotation;
  
-        xDeg = Vector3.Angle(Vector3.right, transform.right );
-        yDeg = Vector3.Angle(Vector3.up, transform.up );
-    }
+            _xDeg = Vector3.Angle(Vector3.right, localTransform.right );
+            _yDeg = Vector3.Angle(Vector3.up, transform.up );
+        }
  
-    /*
+        /*
      * Camera logic on LateUpdate to only update after all character movement logic has been handled. 
      */
-    void LateUpdate()
-    {
-        // If Control and Alt and Middle button? ZOOM!
-        if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftControl))
+        private void LateUpdate()
         {
-            desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate*0.125f * Mathf.Abs(desiredDistance);
+            // If Control and Alt and Middle button? ZOOM!
+            if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftControl))
+            {
+                _desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate*0.125f * Mathf.Abs(_desiredDistance);
+            }
+            // If middle mouse and left alt are selected? ORBIT
+            else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt))
+            {
+                _xDeg += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+                _yDeg -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+ 
+                ////////OrbitAngle
+ 
+                //Clamp the vertical axis for the orbit
+                _yDeg = ClampAngle(_yDeg, yMinLimit, yMaxLimit);
+                // set camera rotation 
+                _desiredRotation = Quaternion.Euler(_yDeg, _xDeg, 0);
+                _currentRotation = transform.rotation;
+ 
+                _rotation = Quaternion.Lerp(_currentRotation, _desiredRotation, Time.deltaTime * zoomDampening);
+                transform.rotation = _rotation;
+            }
+            else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.Q))
+            {
+                //grab the rotation of the camera so we can move in a pseudo local XY space
+                target.rotation = transform.rotation;
+                target.Translate(Vector3.right * (-Input.GetAxis("Mouse X") * panSpeed));
+                target.Translate(transform.up * (-Input.GetAxis("Mouse Y") * panSpeed), Space.World);
+            }
+ 
+            ////////Orbit Position
+            
+            _desiredDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs(_desiredDistance);
+            _desiredDistance = Mathf.Clamp(_desiredDistance, minDistance, maxDistance);
+            _currentDistance = Mathf.Lerp(_currentDistance, _desiredDistance, Time.deltaTime * zoomDampening);
+ 
+            // calculate position based on the new currentDistance 
+            _position = target.position - (_rotation * Vector3.forward * _currentDistance + targetOffset);
+            transform.position = _position;
         }
-        // If middle mouse and left alt are selected? ORBIT
-        else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt))
+ 
+        private static float ClampAngle(float angle, float min, float max)
         {
-            xDeg += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-            yDeg -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
- 
-            ////////OrbitAngle
- 
-            //Clamp the vertical axis for the orbit
-            yDeg = ClampAngle(yDeg, yMinLimit, yMaxLimit);
-            // set camera rotation 
-            desiredRotation = Quaternion.Euler(yDeg, xDeg, 0);
-            currentRotation = transform.rotation;
- 
-            rotation = Quaternion.Lerp(currentRotation, desiredRotation, Time.deltaTime * zoomDampening);
-            transform.rotation = rotation;
+            if (angle < -360)
+                angle += 360;
+            if (angle > 360)
+                angle -= 360;
+            return Mathf.Clamp(angle, min, max);
         }
-        // left mouse button and Q key, we pan by way of transforming the target in screenspace
-        else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.Q))
-        {
-            //grab the rotation of the camera so we can move in a psuedo local XY space
-            target.rotation = transform.rotation;
-            target.Translate(Vector3.right * -Input.GetAxis("Mouse X") * panSpeed);
-            target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, Space.World);
-        }
- 
-        ////////Orbit Position
- 
-        // affect the desired Zoom distance if we roll the scrollwheel
-        desiredDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs(desiredDistance);
-        //clamp the zoom min/max
-        desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
-        // For smoothing of the zoom, lerp distance
-        currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
- 
-        // calculate position based on the new currentDistance 
-        position = target.position - (rotation * Vector3.forward * currentDistance + targetOffset);
-        transform.position = position;
-    }
- 
-    private static float ClampAngle(float angle, float min, float max)
-    {
-        if (angle < -360)
-            angle += 360;
-        if (angle > 360)
-            angle -= 360;
-        return Mathf.Clamp(angle, min, max);
     }
 }

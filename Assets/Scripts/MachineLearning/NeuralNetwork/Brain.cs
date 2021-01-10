@@ -8,7 +8,7 @@ namespace MachineLearning.NeuralNetwork
     {
         private const int TESTING_ITERATIONS = 1024;
         private Network _network;
-        private double _sumSquareError = 0;
+        private double _sumSquareError;
 
         private void Start()
         {
@@ -17,14 +17,6 @@ namespace MachineLearning.NeuralNetwork
             for (int iteration = 0; iteration < TESTING_ITERATIONS; iteration++)
             {
                 _sumSquareError = 0;
-                /*result = Train(1, 1, 0);
-                sumSquareError += Mathf.Pow((float) result[0] - 0, 2);
-                result = Train(1, 0, 1);
-                sumSquareError += Mathf.Pow((float) result[0] - 1, 2);
-                result = Train(0, 1, 1);
-                sumSquareError += Mathf.Pow((float) result[0] - 1, 2);
-                result = Train(1, 1, 0);
-                sumSquareError += Mathf.Pow((float) result[0] - 0, 2);*/
 
                 _sumSquareError = RunTwoToOneLearning(TrainingResources.xor);
             }

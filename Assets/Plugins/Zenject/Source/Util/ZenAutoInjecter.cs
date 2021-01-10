@@ -47,7 +47,7 @@ namespace Zenject
 
             Assert.IsEqual(_containerSource, ContainerSources.SearchHierarchy);
 
-            var parentContext = transform.GetComponentInParent<Context>();
+            Context parentContext = transform.GetComponentInParent<Context>();
 
             if (parentContext != null)
             {

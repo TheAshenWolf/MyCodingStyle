@@ -1,9 +1,9 @@
-﻿namespace MachineLearning.Perceptron
+﻿// ReSharper disable UnusedMember.Global
+namespace MachineLearning.Perceptron
 {
     public static class TrainingResources
     {
-        public static TrainingSet[] or = new TrainingSet[]
-        {
+        public static TrainingSet[] or = {
             new TrainingSet()
             {
                 inputs = new double[] {0, 0}, output = 0
@@ -22,8 +22,7 @@
             }
         };
         
-        public static TrainingSet[] and = new TrainingSet[]
-        {
+        public static TrainingSet[] and = {
             new TrainingSet()
             {
                 inputs = new double[] {0, 0}, output = 0
@@ -42,8 +41,7 @@
             }
         };
         
-        public static TrainingSet[] xor = new TrainingSet[]
-        {
+        public static readonly TrainingSet[] xor = {
             new TrainingSet()
             {
                 inputs = new double[] {0, 0}, output = 0

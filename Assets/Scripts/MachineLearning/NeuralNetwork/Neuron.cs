@@ -5,12 +5,12 @@ namespace MachineLearning.NeuralNetwork
 {
     public class Neuron
     {
-        public int amountOfInputs;
+        public readonly int amountOfInputs;
         public double bias;
         public double output;
         public double errorGradient;
-        public List<double> weights = new List<double>();
-        public List<double> inputs = new List<double>();
+        public readonly List<double> weights = new List<double>();
+        public readonly List<double> inputs = new List<double>();
 
         public Neuron(int amountOfInputs)
         {

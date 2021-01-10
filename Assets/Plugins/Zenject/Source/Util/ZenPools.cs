@@ -127,7 +127,7 @@ namespace Zenject.Internal
 
         public static LookupId SpawnLookupId(IProvider provider, BindingId bindingId)
         {
-            var lookupId = _lookupIdPool.Spawn();
+            LookupId lookupId = _lookupIdPool.Spawn();
 
             lookupId.Provider = provider;
             lookupId.BindingId = bindingId;
@@ -163,7 +163,7 @@ namespace Zenject.Internal
 
         public static InjectContext SpawnInjectContext(DiContainer container, Type memberType)
         {
-            var context = _contextPool.Spawn();
+            InjectContext context = _contextPool.Spawn();
 
             context.Container = container;
             context.MemberType = memberType;
@@ -182,7 +182,7 @@ namespace Zenject.Internal
             DiContainer container, InjectableInfo injectableInfo, InjectContext currentContext,
             object targetInstance, Type targetType, object concreteIdentifier)
         {
-            var context = SpawnInjectContext(container, injectableInfo.MemberType);
+            InjectContext context = SpawnInjectContext(container, injectableInfo.MemberType);
 
             context.ObjectType = targetType;
             context.ParentContext = currentContext;

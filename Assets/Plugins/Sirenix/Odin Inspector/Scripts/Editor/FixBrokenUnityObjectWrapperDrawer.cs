@@ -9,9 +9,9 @@
 
 namespace Sirenix.OdinInspector.Editor.Drawers
 {
-    using Sirenix.OdinInspector;
-    using Sirenix.OdinInspector.Editor;
-    using Sirenix.Utilities;
+    using OdinInspector;
+    using Editor;
+    using Utilities;
     using Sirenix.Utilities.Editor;
     using System.Linq;
     using UnityEditor;
@@ -19,7 +19,7 @@ namespace Sirenix.OdinInspector.Editor.Drawers
 
     [DrawerPriority(0.001, 0, 0)]
     public class FixBrokenUnityObjectWrapperDrawer<T> : OdinValueDrawer<T>, IDefinesGenericMenuItems
-        where T : UnityEngine.Component
+        where T : Component
     {
         private const string AUTO_FIX_PREFS_KEY = "TemporarilyBrokenUnityObjectWrapperDrawer.autoFix";
 
@@ -30,90 +30,90 @@ namespace Sirenix.OdinInspector.Editor.Drawers
 
         protected override void Initialize()
         {
-            this.allowSceneViewObjects = this.ValueEntry.Property.GetAttribute<AssetsOnlyAttribute>() == null;
+            allowSceneViewObjects = ValueEntry.Property.GetAttribute<AssetsOnlyAttribute>() == null;
             autoFix = EditorPrefs.HasKey(AUTO_FIX_PREFS_KEY);
         }
 
         protected override void DrawPropertyLayout(GUIContent label)
         {
-            if (!(this.ValueEntry.ValueState == PropertyValueState.NullReference || this.ValueEntry.ValueState == PropertyValueState.ReferenceValueConflict))
+            if (!(ValueEntry.ValueState == PropertyValueState.NullReference || ValueEntry.ValueState == PropertyValueState.ReferenceValueConflict))
             {
-                this.CallNextDrawer(label);
+                CallNextDrawer(label);
                 return;
             }
 
             if (Event.current.type == EventType.Layout)
             {
-                this.isBroken = false;
-                var count = this.ValueEntry.ValueCount;
+                isBroken = false;
+                int count = ValueEntry.ValueCount;
                 for (int i = 0; i < count; i++)
                 {
-                    var component = this.ValueEntry.Values[i];
+                    T component = ValueEntry.Values[i];
 
-                    if (ComponentIsBroken(component, ref this.realWrapperInstance))
+                    if (ComponentIsBroken(component, ref realWrapperInstance))
                     {
-                        this.isBroken = true;
+                        isBroken = true;
                         break;
                     }
                 }
 
-                if (this.isBroken && autoFix)
+                if (isBroken && autoFix)
                 {
-                    this.isBroken = false;
+                    isBroken = false;
 
-                    for (int i = 0; i < this.ValueEntry.ValueCount; i++)
+                    for (int i = 0; i < ValueEntry.ValueCount; i++)
                     {
                         T fixedComponent = null;
-                        if (ComponentIsBroken(this.ValueEntry.Values[i], ref fixedComponent) && fixedComponent)
+                        if (ComponentIsBroken(ValueEntry.Values[i], ref fixedComponent) && fixedComponent)
                         {
-                            (this.ValueEntry as IValueEntryActualValueSetter<T>).SetActualValue(i, fixedComponent);
+                            (ValueEntry as IValueEntryActualValueSetter<T>).SetActualValue(i, fixedComponent);
                         }
                     }
 
-                    this.ValueEntry.Update();
+                    ValueEntry.Update();
                 }
             }
 
-            if (!this.isBroken)
+            if (!isBroken)
             {
-                this.CallNextDrawer(label);
+                CallNextDrawer(label);
                 return;
             }
 
-            var rect = EditorGUILayout.GetControlRect(label != null);
-            var btnRect = rect.AlignRight(20);
-            var controlRect = rect.SetXMax(btnRect.xMin - 5);
+            Rect rect = EditorGUILayout.GetControlRect(label != null);
+            Rect btnRect = rect.AlignRight(20);
+            Rect controlRect = rect.SetXMax(btnRect.xMin - 5);
 
             object newInstance = null;
 
             EditorGUI.BeginChangeCheck();
             {
-                if (this.ValueEntry.BaseValueType.IsInterface)
+                if (ValueEntry.BaseValueType.IsInterface)
                 {
                     newInstance = SirenixEditorFields.PolymorphicObjectField(controlRect,
                         label,
-                        this.realWrapperInstance,
-                        this.ValueEntry.BaseValueType,
-                        this.allowSceneViewObjects);
+                        realWrapperInstance,
+                        ValueEntry.BaseValueType,
+                        allowSceneViewObjects);
                 }
                 else
                 {
                     newInstance = SirenixEditorFields.UnityObjectField(
                         controlRect,
                         label,
-                        this.realWrapperInstance,
-                        this.ValueEntry.BaseValueType,
-                        this.allowSceneViewObjects) as Component;
+                        realWrapperInstance,
+                        ValueEntry.BaseValueType,
+                        allowSceneViewObjects) as Component;
                 }
             }
             if (EditorGUI.EndChangeCheck())
             {
-                this.ValueEntry.WeakSmartValue = newInstance;
+                ValueEntry.WeakSmartValue = newInstance;
             }
 
             if (GUI.Button(btnRect, " ", EditorStyles.miniButton))
             {
-                var popup = new FixBrokenUnityObjectWrapperPopup(this.ValueEntry);
+                FixBrokenUnityObjectWrapperPopup popup = new FixBrokenUnityObjectWrapperPopup(ValueEntry);
                 OdinEditorWindow.InspectObjectInDropDown(popup, 300);
             }
 
@@ -125,16 +125,16 @@ namespace Sirenix.OdinInspector.Editor.Drawers
 
         private static bool ComponentIsBroken(T component, ref T realInstance)
         {
-            var uObj = component;
-            var oObj = (object)uObj;
+            T uObj = component;
+            object oObj = (object)uObj;
 
             if (oObj != null && uObj == null)
             {
-                var instanceId = uObj.GetInstanceID();
+                int instanceId = uObj.GetInstanceID();
                 if (AssetDatabase.Contains(instanceId))
                 {
-                    var path = AssetDatabase.GetAssetPath(instanceId);
-                    var realWrapper = AssetDatabase.LoadAllAssetsAtPath(path).FirstOrDefault(n => n.GetInstanceID() == instanceId) as T;
+                    string path = AssetDatabase.GetAssetPath(instanceId);
+                    T realWrapper = AssetDatabase.LoadAllAssetsAtPath(path).FirstOrDefault(n => n.GetInstanceID() == instanceId) as T;
                     if (realWrapper)
                     {
                         realInstance = realWrapper;
@@ -171,15 +171,15 @@ namespace Sirenix.OdinInspector.Editor.Drawers
             [HorizontalGroup, Button(ButtonSizes.Large)]
             public void FixItThisTime()
             {
-                for (int i = 0; i < this.valueEntry.ValueCount; i++)
+                for (int i = 0; i < valueEntry.ValueCount; i++)
                 {
-                    var localI = i;
+                    int localI = i;
                     T fixedComponent = null;
-                    if (ComponentIsBroken(this.valueEntry.Values[i], ref fixedComponent) && fixedComponent)
+                    if (ComponentIsBroken(valueEntry.Values[i], ref fixedComponent) && fixedComponent)
                     {
-                        this.valueEntry.Property.Tree.DelayActionUntilRepaint(() =>
+                        valueEntry.Property.Tree.DelayActionUntilRepaint(() =>
                         {
-                            (this.valueEntry as IValueEntryActualValueSetter<T>).SetActualValue(localI, fixedComponent);
+                            (valueEntry as IValueEntryActualValueSetter<T>).SetActualValue(localI, fixedComponent);
                         });
                     }
                 }

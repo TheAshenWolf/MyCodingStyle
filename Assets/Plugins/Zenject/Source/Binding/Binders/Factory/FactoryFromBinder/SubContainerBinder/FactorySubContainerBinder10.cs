@@ -18,7 +18,7 @@ namespace Zenject
 #endif
             Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> installerMethod)
         {
-            var subcontainerBindInfo = new SubContainerCreatorBindInfo();
+            SubContainerCreatorBindInfo subcontainerBindInfo = new SubContainerCreatorBindInfo();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -37,7 +37,7 @@ namespace Zenject
 #endif
             Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> installerMethod)
         {
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -55,7 +55,7 @@ namespace Zenject
 #endif
             Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> installerMethod)
         {
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -76,7 +76,7 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidPrefab(prefab);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
@@ -97,7 +97,7 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidResourcePath(resourcePath);
 
-            var gameObjectInfo = new GameObjectCreationParameters();
+            GameObjectCreationParameters gameObjectInfo = new GameObjectCreationParameters();
 
             ProviderFunc =
                 (container) => new SubContainerDependencyProvider(

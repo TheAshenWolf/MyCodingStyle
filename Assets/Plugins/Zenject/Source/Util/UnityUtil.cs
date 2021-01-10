@@ -72,7 +72,7 @@ namespace ModestTree.Util
                 yield break;
             }
 
-            foreach (var ancestor in GetParentsAndSelf(transform.parent))
+            foreach (Transform ancestor in GetParentsAndSelf(transform.parent))
             {
                 yield return ancestor;
             }
@@ -87,7 +87,7 @@ namespace ModestTree.Util
 
             yield return transform;
 
-            foreach (var ancestor in GetParentsAndSelf(transform.parent))
+            foreach (Transform ancestor in GetParentsAndSelf(transform.parent))
             {
                 yield return ancestor;
             }
@@ -127,7 +127,7 @@ namespace ModestTree.Util
 
         public static IEnumerable<GameObject> GetAllGameObjects()
         {
-            return GameObject.FindObjectsOfType<Transform>().Select(x => x.gameObject);
+            return Object.FindObjectsOfType<Transform>().Select(x => x.gameObject);
         }
 
         public static List<GameObject> GetAllRootGameObjects()

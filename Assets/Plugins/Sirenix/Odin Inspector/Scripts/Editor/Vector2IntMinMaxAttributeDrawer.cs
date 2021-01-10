@@ -8,12 +8,10 @@
 
 namespace Sirenix.OdinInspector.Editor.Drawers
 {
-    using Sirenix.OdinInspector;
-    using Sirenix.OdinInspector.Editor;
-    using Sirenix.OdinInspector.Editor.ValueResolvers;
-    using Sirenix.Utilities;
+    using OdinInspector;
+    using Editor;
+    using ValueResolvers;
     using Sirenix.Utilities.Editor;
-    using System.Reflection;
     using UnityEditor;
     using UnityEngine;
 
@@ -32,13 +30,13 @@ namespace Sirenix.OdinInspector.Editor.Drawers
         protected override void Initialize()
         {
             // Min member reference.
-            this.minGetter = ValueResolver.Get<float>(this.Property, this.Attribute.MinValueGetter, this.Attribute.MinValue);
-            this.maxGetter = ValueResolver.Get<float>(this.Property, this.Attribute.MaxValueGetter, this.Attribute.MaxValue);
+            minGetter = ValueResolver.Get<float>(Property, Attribute.MinValueGetter, Attribute.MinValue);
+            maxGetter = ValueResolver.Get<float>(Property, Attribute.MaxValueGetter, Attribute.MaxValue);
 
             // Min max member reference.
-            if (this.Attribute.MinMaxValueGetter != null)
+            if (Attribute.MinMaxValueGetter != null)
             {
-                this.vector2IntMinMaxGetter = ValueResolver.Get<Vector2Int>(this.Property, this.Attribute.MinMaxValueGetter);
+                vector2IntMinMaxGetter = ValueResolver.Get<Vector2Int>(Property, Attribute.MinMaxValueGetter);
             }
         }
 
@@ -47,25 +45,25 @@ namespace Sirenix.OdinInspector.Editor.Drawers
         /// </summary>
         protected override void DrawPropertyLayout(GUIContent label)
         {
-            ValueResolver.DrawErrors(this.minGetter, this.maxGetter, this.vector2IntMinMaxGetter);
+            ValueResolver.DrawErrors(minGetter, maxGetter, vector2IntMinMaxGetter);
 
             // Get the range of the slider from the attribute or from member references.
             Vector2 range;
-            if (this.vector2IntMinMaxGetter != null && !this.vector2IntMinMaxGetter.HasError)
+            if (vector2IntMinMaxGetter != null && !vector2IntMinMaxGetter.HasError)
             {
-                range = (Vector2)this.vector2IntMinMaxGetter.GetValue();
+                range = (Vector2)vector2IntMinMaxGetter.GetValue();
             }
             else
             {
-                range.x = this.minGetter.GetValue();
-                range.y = this.maxGetter.GetValue();
+                range.x = minGetter.GetValue();
+                range.y = maxGetter.GetValue();
             }
 
             EditorGUI.BeginChangeCheck();
-            Vector2 value = SirenixEditorFields.MinMaxSlider(label, (Vector2)this.ValueEntry.SmartValue, range, this.Attribute.ShowFields);
+            Vector2 value = SirenixEditorFields.MinMaxSlider(label, (Vector2)ValueEntry.SmartValue, range, Attribute.ShowFields);
             if (EditorGUI.EndChangeCheck())
             {
-                this.ValueEntry.SmartValue = new Vector2Int((int)value.x, (int)value.y);
+                ValueEntry.SmartValue = new Vector2Int((int)value.x, (int)value.y);
             }
         }
     }

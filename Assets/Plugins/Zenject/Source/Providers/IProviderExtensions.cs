@@ -45,7 +45,7 @@ namespace Zenject
         public static object TryGetInstance(
             this IProvider creator, InjectContext context, List<TypeValuePair> args)
         {
-            var allInstances = ZenPools.SpawnList<object>();
+            List<object> allInstances = ZenPools.SpawnList<object>();
 
             try
             {
@@ -76,7 +76,7 @@ namespace Zenject
         public static object GetInstance(
             this IProvider creator, InjectContext context, List<TypeValuePair> args)
         {
-            var allInstances = ZenPools.SpawnList<object>();
+            List<object> allInstances = ZenPools.SpawnList<object>();
 
             try
             {

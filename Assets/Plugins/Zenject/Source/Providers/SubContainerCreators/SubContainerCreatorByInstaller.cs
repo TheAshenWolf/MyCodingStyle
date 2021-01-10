@@ -39,16 +39,16 @@ namespace Zenject
 
         public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
         {
-            var subContainer = _container.CreateSubContainer();
+            DiContainer subContainer = _container.CreateSubContainer();
 
             SubContainerCreatorUtil.ApplyBindSettings(_containerBindInfo, subContainer);
 
-            var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+            List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
             extraArgs.AllocFreeAddRange(_extraArgs);
             extraArgs.AllocFreeAddRange(args);
 
-            var installer = (InstallerBase)subContainer.InstantiateExplicit(
+            InstallerBase installer = (InstallerBase)subContainer.InstantiateExplicit(
                 _installerType, extraArgs);
 
             ZenPools.DespawnList(extraArgs);

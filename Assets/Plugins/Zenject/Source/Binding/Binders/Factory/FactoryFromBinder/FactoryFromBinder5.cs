@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
-using ModestTree;
 
 namespace Zenject
 {
@@ -126,10 +124,10 @@ namespace Zenject
         {
             // Use a random ID so that our provider is the only one that can find it and so it doesn't
             // conflict with anything else
-            var poolId = Guid.NewGuid();
+            Guid poolId = Guid.NewGuid();
 
             // Important to use NoFlush otherwise the binding will be finalized early
-            var binder = fromBinder.BindContainer.BindMemoryPoolCustomInterfaceNoFlush<TContract, TMemoryPool, TMemoryPool>()
+            MemoryPoolInitialSizeMaxSizeBinder<TContract> binder = fromBinder.BindContainer.BindMemoryPoolCustomInterfaceNoFlush<TContract, TMemoryPool, TMemoryPool>()
                 .WithId(poolId);
 
             // Always make it non lazy by default in case the user sets an InitialSize

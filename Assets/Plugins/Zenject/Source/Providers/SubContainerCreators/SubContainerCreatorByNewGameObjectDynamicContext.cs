@@ -23,7 +23,7 @@ namespace Zenject
         protected override GameObject CreateGameObject(InjectContext context, out bool shouldMakeActive)
         {
             shouldMakeActive = true;
-            var gameObject = Container.CreateEmptyGameObject(_gameObjectBindInfo, null);
+            GameObject gameObject = Container.CreateEmptyGameObject(_gameObjectBindInfo, null);
             gameObject.SetActive(false);
             return gameObject;
         }
@@ -53,12 +53,12 @@ namespace Zenject
             context.AddNormalInstaller(
                 new ActionInstaller(subContainer =>
                     {
-                        var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+                        List<TypeValuePair> extraArgs = ZenPools.SpawnList<TypeValuePair>();
 
                         extraArgs.AllocFreeAddRange(_extraArgs);
                         extraArgs.AllocFreeAddRange(args);
 
-                        var installer = (InstallerBase)subContainer.InstantiateExplicit(
+                        InstallerBase installer = (InstallerBase)subContainer.InstantiateExplicit(
                             _installerType, extraArgs);
 
                         ZenPools.DespawnList(extraArgs);

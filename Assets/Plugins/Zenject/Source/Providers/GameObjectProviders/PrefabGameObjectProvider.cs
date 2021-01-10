@@ -35,7 +35,7 @@ namespace Zenject
         public void GetAllInstancesWithInjectSplit(
             InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
         {
-            var instance = _prefabCreator.Instantiate(context, args, out injectAction);
+            GameObject instance = _prefabCreator.Instantiate(context, args, out injectAction);
 
             buffer.Add(instance);
         }

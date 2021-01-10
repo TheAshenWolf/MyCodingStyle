@@ -51,7 +51,7 @@ namespace Flocking
             {
                 Vector3 fishPosition = transform.position + GetRandomPointInSpawnRadius();
                 
-                GameObject fishObject = GameObject.Instantiate(fishPrefab, fishPosition, Quaternion.identity);
+                GameObject fishObject = Instantiate(fishPrefab, fishPosition, Quaternion.identity);
                 fishObject.GetComponent<Fish>().flockManager = this;
 
                 fish[i] = fishObject;

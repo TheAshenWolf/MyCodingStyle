@@ -16,11 +16,11 @@ namespace Sirenix.OdinInspector.Editor.Drawers
         {
             return new InspectorPropertyInfo[]
             {
-                InspectorPropertyInfo.CreateValue("x", 0, this.Property.ValueEntry.SerializationBackend,
+                InspectorPropertyInfo.CreateValue("x", 0, Property.ValueEntry.SerializationBackend,
                     new GetterSetter<Vector2Int, int>(
                         getter: (ref Vector2Int vec) => vec.x,
                         setter: (ref Vector2Int vec, int value) => vec.x = value)),
-                InspectorPropertyInfo.CreateValue("y", 0, this.Property.ValueEntry.SerializationBackend,
+                InspectorPropertyInfo.CreateValue("y", 0, Property.ValueEntry.SerializationBackend,
                     new GetterSetter<Vector2Int, int>(
                         getter: (ref Vector2Int vec) => vec.y,
                         setter: (ref Vector2Int vec, int value) => vec.y = value)),
@@ -34,15 +34,15 @@ namespace Sirenix.OdinInspector.Editor.Drawers
         {
             return new InspectorPropertyInfo[]
             {
-                InspectorPropertyInfo.CreateValue("x", 0, this.Property.ValueEntry.SerializationBackend,
+                InspectorPropertyInfo.CreateValue("x", 0, Property.ValueEntry.SerializationBackend,
                     new GetterSetter<Vector3Int, int>(
                         getter: (ref Vector3Int vec) => vec.x,
                         setter: (ref Vector3Int vec, int value) => vec.x = value)),
-                InspectorPropertyInfo.CreateValue("y", 0, this.Property.ValueEntry.SerializationBackend,
+                InspectorPropertyInfo.CreateValue("y", 0, Property.ValueEntry.SerializationBackend,
                     new GetterSetter<Vector3Int, int>(
                         getter: (ref Vector3Int vec) => vec.y,
                         setter: (ref Vector3Int vec, int value) => vec.y = value)),
-                InspectorPropertyInfo.CreateValue("z", 0, this.Property.ValueEntry.SerializationBackend,
+                InspectorPropertyInfo.CreateValue("z", 0, Property.ValueEntry.SerializationBackend,
                     new GetterSetter<Vector3Int, int>(
                         getter: (ref Vector3Int vec) => vec.z,
                         setter: (ref Vector3Int vec, int value) => vec.z = value)),
