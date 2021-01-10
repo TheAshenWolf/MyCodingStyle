@@ -418,6 +418,7 @@
               <e p="Network.cs" t="Include" />
               <e p="Neuron.cs" t="Include" />
               <e p="NeuronLayer.cs" t="Include" />
+              <e p="NeuronLayerType.cs" t="Include" />
             </e>
             <e p="Perceptron" t="Include">
               <e p="Perceptron.cs" t="Include" />

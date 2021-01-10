@@ -72,7 +72,12 @@ namespace MachineLearning.NeuralNetwork
                     }
 
                     dotProduct -= _layers[layerIndex].neurons[neuronIndex].bias;
-                    _layers[layerIndex].neurons[neuronIndex].output = ActivationFunction(dotProduct);
+
+                    NeuronLayerType neuronLayerType = layerIndex == _amountOfHiddenLayers
+                        ? NeuronLayerType.Output
+                        : NeuronLayerType.Hidden;
+                    
+                    _layers[layerIndex].neurons[neuronIndex].output = ActivationFunction(dotProduct, neuronLayerType);
                     outputs.Add(_layers[layerIndex].neurons[neuronIndex].output);
                 }
             }
@@ -138,9 +143,14 @@ namespace MachineLearning.NeuralNetwork
             }
         }
 
-        private double ActivationFunction(double value)
+        private static double ActivationFunction(double value)
         {
             return ActivationFunctions.Sigmoid(value);
+        }
+        
+        private static double ActivationFunction(double value, NeuronLayerType layer)
+        {
+            return layer == NeuronLayerType.Output ? ActivationFunctions.Sigmoid(value) : ActivationFunctions.ReLu(value);
         }
 
         
