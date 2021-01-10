@@ -402,6 +402,10 @@
               <e p="Gene.cs" t="Include" />
               <e p="PopulationManager.cs" t="Include" />
             </e>
+            <e p="DodgeBall" t="Include">
+              <e p="ObjectThrower.cs" t="Include" />
+              <e p="Perceptron.cs" t="Include" />
+            </e>
             <e p="FlappyBird" t="Include">
               <e p="Brain.cs" t="Include" />
               <e p="Dna.cs" t="Include" />
@@ -551,6 +555,7 @@
             <e p="EmojiOne Attribution.txt" t="Include" />
           </e>
         </e>
+        <e p="weights.txt" t="Include" />
       </e>
       <e p="My Coding Style.sln" t="IncludeFlat" />
       <e p="Sirenix.OdinInspector.CompatibilityLayer.Editor.csproj" t="IncludeRecursive" />

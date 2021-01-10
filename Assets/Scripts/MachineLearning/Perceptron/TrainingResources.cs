@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace MachineLearning.Perceptron
+﻿namespace MachineLearning.Perceptron
 {
     public static class TrainingResources
     {
