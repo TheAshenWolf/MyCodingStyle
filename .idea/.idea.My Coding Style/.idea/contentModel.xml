@@ -412,6 +412,13 @@
               <e p="MovementType.cs" t="Include" />
               <e p="PopulationManager.cs" t="Include" />
             </e>
+            <e p="NeuralNetwork" t="Include">
+              <e p="ActivationFunctions.cs" t="Include" />
+              <e p="Brain.cs" t="Include" />
+              <e p="Network.cs" t="Include" />
+              <e p="Neuron.cs" t="Include" />
+              <e p="NeuronLayer.cs" t="Include" />
+            </e>
             <e p="Perceptron" t="Include">
               <e p="Perceptron.cs" t="Include" />
               <e p="SimpleGrapher.cs" t="Include" />
