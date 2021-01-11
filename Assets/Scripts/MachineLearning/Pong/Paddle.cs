@@ -12,6 +12,7 @@ namespace MachineLearning.Pong
         private float _yVelocity;
         private const float MAX_Y = 17.4f;
         private const float MIN_Y = 8.8f;
+        [SerializeField] private LayerMask _layerMask;
 
         private const float MAX_SPEED = 5;
         // private float _amountSaved = 0;
@@ -21,7 +22,7 @@ namespace MachineLearning.Pong
 
         private void Start()
         {
-            _network = new Network(6, 1, 1, 4, 0.01);
+            _network = new Network(6, 1, 1, 4, 0.001);
             _ballRigidBody = ball.GetComponent<Rigidbody2D>();
         }
 
@@ -46,16 +47,15 @@ namespace MachineLearning.Pong
             position = new Vector3(position.x, positionY, position.z);
 
             paddle.transform.position = position;
-
-            const int layerMask = 1 << 9;
-            RaycastHit2D hit = Physics2D.Raycast(ball.transform.position, _ballRigidBody.velocity, 1000, layerMask);
+            
+            RaycastHit2D hit = Physics2D.Raycast(ball.transform.position, _ballRigidBody.velocity, 1000, _layerMask);
 
             if (hit.collider != null)
             {
                 if (hit.collider.gameObject.CompareTag("tops"))
                 {
                     Vector3 reflection = Vector3.Reflect(_ballRigidBody.velocity, hit.normal);
-                    hit = Physics2D.Raycast(hit.point, reflection, 1000, layerMask);
+                    hit = Physics2D.Raycast(hit.point, reflection, 1000, _layerMask);
                 }
 
                 if (hit.collider != null && hit.collider.gameObject.CompareTag("backwall"))
