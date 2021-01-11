@@ -23,13 +23,13 @@ namespace MachineLearning.NeuralNetwork
 
             Debug.Log("SumSquareError: <b>" + _sumSquareError + "</b>");
 
-            List<double> result = Execute(1, 1, 0);
+            List<double> result = _network.Execute(1, 1, 0);
             Debug.Log("1, 1: " + result[0]);
-            result = Execute(1, 0, 1);
+            result = _network.Execute(1, 0, 1);
             Debug.Log("1, 0: " + result[0]);
-            result = Execute(0, 1, 1);
+            result = _network.Execute(0, 1, 1);
             Debug.Log("0, 1: " + result[0]);
-            result = Execute(0, 0, 0);
+            result = _network.Execute(0, 0, 0);
             Debug.Log("0, 0: " + result[0]);
         }
 
@@ -39,33 +39,11 @@ namespace MachineLearning.NeuralNetwork
             
             foreach (TrainingSet set in sets)
             {
-                List<double> result = Train(set.inputs[0], set.inputs[1], set.output);
+                List<double> result = _network.Train(set.inputs[0], set.inputs[1], set.output);
                 error =+ Mathf.Pow((float) result[0] - (float)set.output, 2);
             }
 
             return error;
-        }
-
-        private List<double> Train(double input1, double input2, double output)
-        {
-            return RunThroughNetwork(input1, input2, output, true);
-        }
-
-        private List<double> Execute(double input1, double input2, double output)
-        {
-            return RunThroughNetwork(input1, input2, output, false);
-        }
-
-        private List<double> RunThroughNetwork(double input1, double input2, double output, bool updateWeights)
-        {
-            List<double> inputs = new List<double>();
-            List<double> outputs = new List<double>();
-            
-            inputs.Add(input1);
-            inputs.Add(input2);
-            outputs.Add(output);
-
-            return _network.Run(inputs, outputs, updateWeights);
         }
     }
 }

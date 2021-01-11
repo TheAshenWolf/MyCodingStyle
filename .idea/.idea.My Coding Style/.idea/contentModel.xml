@@ -426,6 +426,11 @@
               <e p="TrainingResources.cs" t="Include" />
               <e p="TrainingSet.cs" t="Include" />
             </e>
+            <e p="Pong" t="Include">
+              <e p="MoveBall.cs" t="Include" />
+              <e p="Network.cs" t="Include" />
+              <e p="Paddle.cs" t="Include" />
+            </e>
             <e p="StayOnPlatform" t="Include">
               <e p="Brain.cs" t="Include" />
               <e p="Dna.cs" t="Include" />

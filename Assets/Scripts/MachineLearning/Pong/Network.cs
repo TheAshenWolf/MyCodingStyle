@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using MachineLearning.NeuralNetwork;
 using UnityEngine;
 
-namespace MachineLearning.NeuralNetwork
+namespace MachineLearning.Pong
 {
     public class Network
     {
@@ -150,31 +151,18 @@ namespace MachineLearning.NeuralNetwork
         
         private static double ActivationFunction(double value, NeuronLayerType layer)
         {
-            return layer == NeuronLayerType.Output ? ActivationFunctions.Sigmoid(value) : ActivationFunctions.ReLu(value);
+            return layer == NeuronLayerType.Output ? ActivationFunctions.TanH(value) : ActivationFunctions.TanH(value);
         }
-        
-        public List<double> Train(double input1, double input2, double output)
+
+        public List<double> Train(List<double> inputs, List<double> outputs)
         {
-            return RunThroughNetwork(input1, input2, output, true);
+            return Run(inputs, outputs, true);
         }
 
-        public List<double> Execute(double input1, double input2, double output)
+        public List<double> Execute(List<double> inputs, List<double> outputs)
         {
-            return RunThroughNetwork(input1, input2, output, false);
+            return Run(inputs, outputs, false);
         }
 
-        private List<double> RunThroughNetwork(double input1, double input2, double output, bool updateWeights)
-        {
-            List<double> inputs = new List<double>();
-            List<double> outputs = new List<double>();
-            
-            inputs.Add(input1);
-            inputs.Add(input2);
-            outputs.Add(output);
-
-            return Run(inputs, outputs, updateWeights);
-        }
-
-        
     }
 }

@@ -9,6 +9,9 @@ TagManager:
   - Obstacle
   - TopDead
   - DownDead
+  - tops
+  - ball
+  - backwall
   layers:
   - Default
   - TransparentFX
@@ -19,7 +22,7 @@ TagManager:
   - 
   - 
   - Bots
-  - 
+  - BackWall
   - 
   - 
   - 
