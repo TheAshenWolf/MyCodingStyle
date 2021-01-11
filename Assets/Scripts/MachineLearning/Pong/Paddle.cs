@@ -21,7 +21,7 @@ namespace MachineLearning.Pong
 
         private void Start()
         {
-            _network = new Network(6, 1, 1, 4, 0.11);
+            _network = new Network(6, 1, 1, 4, 0.01);
             _ballRigidBody = ball.GetComponent<Rigidbody2D>();
         }
 
@@ -58,7 +58,7 @@ namespace MachineLearning.Pong
                     hit = Physics2D.Raycast(hit.point, reflection, 1000, layerMask);
                 }
 
-                if (hit.collider.gameObject.CompareTag("backwall"))
+                if (hit.collider != null && hit.collider.gameObject.CompareTag("backwall"))
                 {
                     Vector3 paddlePosition = paddle.transform.position;
                     float differenceY = hit.point.y - paddlePosition.y;
