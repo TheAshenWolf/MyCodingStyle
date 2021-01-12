@@ -402,6 +402,11 @@
               <e p="Gene.cs" t="Include" />
               <e p="PopulationManager.cs" t="Include" />
             </e>
+            <e p="Cart Racing" t="Include">
+              <e p="Brain.cs" t="Include" />
+              <e p="CartEngine.cs" t="Include" />
+              <e p="Network.cs" t="Include" />
+            </e>
             <e p="DodgeBall" t="Include">
               <e p="ObjectThrower.cs" t="Include" />
               <e p="Perceptron.cs" t="Include" />
@@ -568,6 +573,7 @@
             <e p="EmojiOne Attribution.txt" t="Include" />
           </e>
         </e>
+        <e p="trainingData.txt" t="Include" />
         <e p="weights.txt" t="Include" />
       </e>
       <e p="My Coding Style.sln" t="IncludeFlat" />
