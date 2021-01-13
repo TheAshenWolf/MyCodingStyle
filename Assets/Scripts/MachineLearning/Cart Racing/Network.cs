@@ -9,7 +9,7 @@ namespace MachineLearning.Cart_Racing
     {
         private readonly int _amountOfInputs;
         private readonly int _amountOfHiddenLayers;
-        private readonly double _learningRate;
+        public readonly double learningRate;
 
         private readonly List<NeuronLayer> _layers = new List<NeuronLayer>();
 
@@ -20,7 +20,7 @@ namespace MachineLearning.Cart_Racing
             int amountOfOutputs1 = amountOfOutputs;
             _amountOfHiddenLayers = amountOfHiddenLayers;
             int neuronsPerHiddenLayer1 = neuronsPerHiddenLayer;
-            _learningRate = Mathf.Clamp01((float)learningRate);
+            this.learningRate = Mathf.Clamp01((float)learningRate);
 
             if (_amountOfHiddenLayers > 0)
             {
@@ -128,18 +128,18 @@ namespace MachineLearning.Cart_Racing
                         {
                             error = desiredOutputs[neuronIndex] - outputs[neuronIndex];
                             _layers[layerIndex].neurons[neuronIndex].weights[inputIndex] +=
-                                _learningRate * _layers[layerIndex].neurons[neuronIndex].inputs[inputIndex] * error;
+                                learningRate * _layers[layerIndex].neurons[neuronIndex].inputs[inputIndex] * error;
                         }
                         else
                         {
                             _layers[layerIndex].neurons[neuronIndex].weights[inputIndex] +=
-                                _learningRate * _layers[layerIndex].neurons[neuronIndex].inputs[inputIndex] *
+                                learningRate * _layers[layerIndex].neurons[neuronIndex].inputs[inputIndex] *
                                 _layers[layerIndex].neurons[neuronIndex].errorGradient;
                         }
                     }
 
                     _layers[layerIndex].neurons[neuronIndex].bias +=
-                        _learningRate * -1 * _layers[layerIndex].neurons[neuronIndex].errorGradient;
+                        learningRate * -1 * _layers[layerIndex].neurons[neuronIndex].errorGradient;
                 }
             }
         }
@@ -154,26 +154,14 @@ namespace MachineLearning.Cart_Racing
             return layer == NeuronLayerType.Output ? ActivationFunctions.Sigmoid(value) : ActivationFunctions.ReLu(value);
         }
         
-        public List<double> Train(double input1, double input2, double output)
+        public List<double> Train(List<double> inputs, List<double> outputs)
         {
-            return RunThroughNetwork(input1, input2, output, true);
+            return Run(inputs, outputs, true);
         }
 
-        public List<double> Execute(double input1, double input2, double output)
+        public List<double> Execute(List<double> inputs, List<double> outputs)
         {
-            return RunThroughNetwork(input1, input2, output, false);
-        }
-
-        private List<double> RunThroughNetwork(double input1, double input2, double output, bool updateWeights)
-        {
-            List<double> inputs = new List<double>();
-            List<double> outputs = new List<double>();
-            
-            inputs.Add(input1);
-            inputs.Add(input2);
-            outputs.Add(output);
-
-            return Run(inputs, outputs, updateWeights);
+            return Run(inputs, outputs, false);
         }
 
         

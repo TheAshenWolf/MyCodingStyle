@@ -7,9 +7,9 @@ namespace MachineLearning.Cart_Racing
 {
     public class CartEngine : MonoBehaviour
     {
-        public float speed = 50.0f;
-        public float rotationSpeed = 100.0f;
-        public float visibleDistance = 200;
+        public const float SPEED = 50.0f;
+        public const float ROTATION_SPEED = 100.0f;
+        public const float VISIBLE_DISTANCE = 200;
         private List<string> _collectedTrainingData = new List<string>();
         private StreamWriter _trainingDataFile;
 
@@ -45,17 +45,17 @@ namespace MachineLearning.Cart_Racing
             float translationInput = Input.GetAxis("Vertical");
             float rotationInput = Input.GetAxis("Horizontal");
 
-            float translation = Time.deltaTime * speed * translationInput;
-            float rotation = Time.deltaTime * rotationSpeed * rotationInput;
+            float translation = Time.deltaTime * SPEED * translationInput;
+            float rotation = Time.deltaTime * ROTATION_SPEED * rotationInput;
 
             _transform.Translate(0, 0, translation);
             _transform.Rotate(0, rotation, 0);
 
-            Debug.DrawRay(_position, _forward * visibleDistance, Color.red);
-            Debug.DrawRay(_position, -_right * visibleDistance, Color.red);
-            Debug.DrawRay(_position, _right * visibleDistance, Color.red);
-            Debug.DrawRay(_position, (_forward + _right) * visibleDistance, Color.red);
-            Debug.DrawRay(_position, (_forward - _right) * visibleDistance, Color.red);
+            Debug.DrawRay(_position, _forward * VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, -_right * VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, _right * VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, (_forward + _right) * VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, (_forward - _right) * VISIBLE_DISTANCE, Color.red);
 
             float frontDistance = 0;
             float leftDistance = 0;
@@ -63,16 +63,16 @@ namespace MachineLearning.Cart_Racing
             float frontLeftDistance = 0;
             float frontRightDistance = 0;
 
-            if (Physics.Raycast(_position, _forward, out RaycastHit hit, visibleDistance))
-                frontDistance = 1 - Round(hit.distance / visibleDistance);
-            if (Physics.Raycast(_position, -_right, out hit, visibleDistance))
-                leftDistance = 1 - Round(hit.distance / visibleDistance);
-            if (Physics.Raycast(_position, _right, out hit, visibleDistance))
-                rightDistance = 1 - Round(hit.distance / visibleDistance);
-            if (Physics.Raycast(_position, _forward + _right, out hit, visibleDistance))
-                frontLeftDistance = 1 - Round(hit.distance / visibleDistance);
-            if (Physics.Raycast(_position, _forward - _right, out hit, visibleDistance))
-                frontRightDistance = 1 - Round(hit.distance / visibleDistance);
+            if (Physics.Raycast(_position, _forward, out RaycastHit hit, VISIBLE_DISTANCE))
+                frontDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
+            if (Physics.Raycast(_position, -_right, out hit, VISIBLE_DISTANCE))
+                leftDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
+            if (Physics.Raycast(_position, _right, out hit, VISIBLE_DISTANCE))
+                rightDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
+            if (Physics.Raycast(_position, _forward + _right, out hit, VISIBLE_DISTANCE))
+                frontLeftDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
+            if (Physics.Raycast(_position, _forward - _right, out hit, VISIBLE_DISTANCE))
+                frontRightDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
 
             string values = frontDistance + "," + leftDistance + "," + rightDistance + "," + frontLeftDistance + "," +
                             frontRightDistance + "," + Round(translationInput) + "," + Round(rotationInput);

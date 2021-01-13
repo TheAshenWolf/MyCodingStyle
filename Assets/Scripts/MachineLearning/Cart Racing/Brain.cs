@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MachineLearning.Perceptron;
 using UnityEngine;
 
@@ -6,44 +10,88 @@ namespace MachineLearning.Cart_Racing
 {
     public class Brain : MonoBehaviour
     {
-        private const int TESTING_ITERATIONS = 1024;
         private Network _network;
-        private double _sumSquareError;
+        private const int TESTING_ITERATIONS = 1024;
+
+        private double _sumSquareError = 0;
+        private bool _trainingDone = false;
+        private float _trainingProgress = 0;
+        private double _lastSumSquareError = 1;
+
+        public float translation;
+        public float rotation;
+
 
         private void Start()
         {
-            _network = new Network(2, 1, 1, 2, 0.8);
-
-            for (int iteration = 0; iteration < TESTING_ITERATIONS; iteration++)
-            {
-                _sumSquareError = 0;
-
-                _sumSquareError = RunTwoToOneLearning(TrainingResources.xor);
-            }
-
-            Debug.Log("SumSquareError: <b>" + _sumSquareError + "</b>");
-
-            List<double> result = _network.Execute(1, 1, 0);
-            Debug.Log("1, 1: " + result[0]);
-            result = _network.Execute(1, 0, 1);
-            Debug.Log("1, 0: " + result[0]);
-            result = _network.Execute(0, 1, 1);
-            Debug.Log("0, 1: " + result[0]);
-            result = _network.Execute(0, 0, 0);
-            Debug.Log("0, 0: " + result[0]);
+            _network = new Network(5, 2, 1, 10, 0.5);
+            StartCoroutine(LoadTrainingSet());
         }
 
-        private double RunTwoToOneLearning(TrainingSet[] sets)
+        private void OnGUI()
         {
-            double error = 0;
-            
-            foreach (TrainingSet set in sets)
+            GUI.Label(new Rect(25, 25, 250, 30), "SSE: " + _lastSumSquareError);
+            GUI.Label(new Rect(25, 40, 250, 30), "Alpha: " + _network.learningRate);
+            GUI.Label(new Rect(25, 55, 250, 30), "Trained: " + _trainingProgress);
+        }
+
+        private IEnumerator LoadTrainingSet()
+        {
+            string path = Application.dataPath + "/trainingData.txt";
+            if (File.Exists(path))
             {
-                List<double> result = _network.Train(set.inputs[0], set.inputs[1], set.output);
-                error =+ Mathf.Pow((float) result[0] - (float)set.output, 2);
+                int lineCount = File.ReadAllLines(path).Length;
+                StreamReader streamReader = File.OpenText(path);
+                List<double> inputs = new List<double>();
+                List<double> outputs = new List<double>();
+
+                for (int epoch = 0; epoch < TESTING_ITERATIONS; epoch++)
+                {
+                    _sumSquareError = 0;
+                    streamReader.BaseStream.Position = 0;
+                    string line;
+                    while ((line = streamReader.ReadLine()) != null)
+                    {
+                        string[] data = line.Split(',');
+                        float thisError = 0;
+
+                        double[] doubleData = data.Select(Convert.ToDouble).ToArray();
+
+                        if (!Mathf.Approximately((float) Convert.ToDouble(data[5]), 0) &&
+                            !Mathf.Approximately((float) Convert.ToDouble(data[6]), 0))
+                        {
+                            inputs.Clear();
+                            outputs.Clear();
+                            inputs.AddRange(new[]
+                            {
+                                doubleData[0],
+                                doubleData[1],
+                                doubleData[2],
+                                doubleData[3],
+                                doubleData[4]
+                            });
+
+                            outputs.Add(TheAshenWolf.RepetitiveStatics.Map((float)doubleData[5], 0, 1, -1, 1));
+                            outputs.Add(TheAshenWolf.RepetitiveStatics.Map((float)doubleData[6], 0, 1, -1, 1));
+
+                            List<double> calculatedOutputs = _network.Train(inputs, outputs);
+                            thisError = (Mathf.Pow((float) (outputs[0] - calculatedOutputs[0]), 2) +
+                                         Mathf.Pow((float) (outputs[1] - calculatedOutputs[1]), 2)) / 2f;
+                        }
+
+                        _sumSquareError += thisError;
+
+                    }
+
+                    _trainingProgress = epoch / (float) TESTING_ITERATIONS;
+                    _sumSquareError /= lineCount;
+                    _lastSumSquareError = _sumSquareError;
+
+                    yield return null;
+                }
             }
 
-            return error;
+            _trainingDone = true;
         }
     }
 }
