@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MachineLearning.NeuralNetwork;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace MachineLearning.Cart_Racing
@@ -9,7 +11,7 @@ namespace MachineLearning.Cart_Racing
     {
         private readonly int _amountOfInputs;
         private readonly int _amountOfHiddenLayers;
-        public readonly double learningRate;
+        public double learningRate;
 
         private readonly List<NeuronLayer> _layers = new List<NeuronLayer>();
 
@@ -20,7 +22,7 @@ namespace MachineLearning.Cart_Racing
             int amountOfOutputs1 = amountOfOutputs;
             _amountOfHiddenLayers = amountOfHiddenLayers;
             int neuronsPerHiddenLayer1 = neuronsPerHiddenLayer;
-            this.learningRate = Mathf.Clamp01((float)learningRate);
+            this.learningRate = Mathf.Clamp01((float) learningRate);
 
             if (_amountOfHiddenLayers > 0)
             {
@@ -77,7 +79,7 @@ namespace MachineLearning.Cart_Racing
                     NeuronLayerType neuronLayerType = layerIndex == _amountOfHiddenLayers
                         ? NeuronLayerType.Output
                         : NeuronLayerType.Hidden;
-                    
+
                     _layers[layerIndex].neurons[neuronIndex].output = ActivationFunction(dotProduct, neuronLayerType);
                     outputs.Add(_layers[layerIndex].neurons[neuronIndex].output);
                 }
@@ -148,12 +150,14 @@ namespace MachineLearning.Cart_Racing
         {
             return ActivationFunctions.Sigmoid(value);
         }
-        
+
         private static double ActivationFunction(double value, NeuronLayerType layer)
         {
-            return layer == NeuronLayerType.Output ? ActivationFunctions.Sigmoid(value) : ActivationFunctions.ReLu(value);
+            return layer == NeuronLayerType.Output
+                ? ActivationFunctions.Sigmoid(value)
+                : ActivationFunctions.ReLu(value);
         }
-        
+
         public List<double> Train(List<double> inputs, List<double> outputs)
         {
             return Run(inputs, outputs, true);
@@ -164,6 +168,33 @@ namespace MachineLearning.Cart_Racing
             return Run(inputs, outputs, false);
         }
 
-        
+
+        public void LoadWeightsFromString(string currentWeights)
+        {
+            if(currentWeights == "") return;
+            string[] weightValues = currentWeights.Split(',');
+            int w = 0;
+            foreach (Neuron n in _layers.SelectMany(l => l.neurons))
+            {
+                for(int i = 0; i < n.weights.Count; i++)
+                {
+                    n.weights[i] = Convert.ToDouble(weightValues[w]);
+                    w++;
+                }
+                n.bias = Convert.ToDouble(weightValues[w]);
+                w++;
+            }
+        }
+
+        public string GetWeights()
+        {
+            string weightStr = "";
+            foreach (Neuron n in _layers.SelectMany(l => l.neurons))
+            {
+                weightStr = n.weights.Aggregate(weightStr, (current, w) => current + (w + ","));
+                weightStr += n.bias + ",";
+            }
+            return weightStr;
+        }
     }
 }

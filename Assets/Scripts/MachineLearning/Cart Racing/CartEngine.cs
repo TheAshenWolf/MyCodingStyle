@@ -69,9 +69,9 @@ namespace MachineLearning.Cart_Racing
                 leftDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
             if (Physics.Raycast(_position, _right, out hit, VISIBLE_DISTANCE))
                 rightDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
-            if (Physics.Raycast(_position, _forward + _right, out hit, VISIBLE_DISTANCE))
-                frontLeftDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
             if (Physics.Raycast(_position, _forward - _right, out hit, VISIBLE_DISTANCE))
+                frontLeftDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
+            if (Physics.Raycast(_position, _forward + _right, out hit, VISIBLE_DISTANCE))
                 frontRightDistance = 1 - Round(hit.distance / VISIBLE_DISTANCE);
 
             string values = frontDistance + "," + leftDistance + "," + rightDistance + "," + frontLeftDistance + "," +
@@ -80,7 +80,7 @@ namespace MachineLearning.Cart_Racing
             if (!_collectedTrainingData.Contains(values)) _collectedTrainingData.Add(values);
         }
 
-        private static float Round(float x)
+        public static float Round(float x)
         {
             return (float) Math.Round(x, MidpointRounding.AwayFromZero) / 2f;
         }
