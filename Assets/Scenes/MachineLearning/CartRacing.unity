@@ -1012,6 +1012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   translation: 0
   rotation: 0
+  loadFile: 0
 --- !u!4 &1121218721
 Transform:
   m_ObjectHideFlags: 0

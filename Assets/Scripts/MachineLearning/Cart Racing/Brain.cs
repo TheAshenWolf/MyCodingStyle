@@ -12,7 +12,7 @@ namespace MachineLearning.Cart_Racing
     public class Brain : MonoBehaviour
     {
         private Network _network;
-        private const int TESTING_ITERATIONS = 1024;
+        private const int TESTING_ITERATIONS = 4096;
 
         private double _sumSquareError = 0;
         private bool _trainingDone = false;
@@ -27,6 +27,8 @@ namespace MachineLearning.Cart_Racing
         private Vector3 _right;
         private Vector3 _forward;
 
+        [SerializeField] private bool loadFile;
+
         private void Start()
         {
             _transform = transform;
@@ -35,7 +37,8 @@ namespace MachineLearning.Cart_Racing
             _forward = _transform.forward;
             
             _network = new Network(5, 2, 1, 10, 0.5);
-            StartCoroutine(LoadTrainingSet());
+            if (loadFile) LoadWeightsFromFile();
+            else StartCoroutine(LoadTrainingSet());
         }
 
         private void OnGUI()
@@ -111,22 +114,34 @@ namespace MachineLearning.Cart_Racing
                         _lastSumSquareError = _sumSquareError;
                     }
 
-                    yield return null;
+                    if (epoch % 4 == 0) yield return null;
                 }
             }
 
             _trainingDone = true;
+            _trainingProgress = 1;
+            SaveWeightsToFile();
         }
 
         private void Update()
         {
             _position = _transform.position;
+            _right = _transform.right;
+            _forward = _transform.forward;
+            
+            Debug.DrawRay(_position, _forward * CartEngine.VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, -_right * CartEngine.VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, _right * CartEngine.VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, (_forward + _right) * CartEngine.VISIBLE_DISTANCE, Color.red);
+            Debug.DrawRay(_position, (_forward - _right) * CartEngine.VISIBLE_DISTANCE, Color.red);
+            
+            
             if (!_trainingDone) return;
 
             List<double> inputs = new List<double>();
             List<double> outputs = new List<double>();
 
-            float frontDistance = 0;
+            float frontDistance = 0; 
             float leftDistance = 0;
             float rightDistance = 0;
             float frontLeftDistance = 0;
@@ -146,12 +161,51 @@ namespace MachineLearning.Cart_Racing
             inputs.AddRange(new double[] {frontDistance, leftDistance, rightDistance, frontLeftDistance, frontRightDistance});
             outputs.AddRange(new double[] {0,0});
             List<double> calculatedOutputs = _network.Execute(inputs, outputs);
+            
             float translationInput = TheAshenWolf.RepetitiveStatics.Map((float) calculatedOutputs[0], 0, 1, -1, 1);
             float rotationInput = TheAshenWolf.RepetitiveStatics.Map((float) calculatedOutputs[1], 0, 1, -1, 1);
+            
             translation = translationInput * CartEngine.SPEED * Time.deltaTime;
             rotation = rotationInput * CartEngine.ROTATION_SPEED * Time.deltaTime;
+            
             _transform.Translate(0,0,translation);
             _transform.Rotate(0, rotation, 0);
+        }
+
+        private void SaveWeightsToFile()
+        {
+            string path = Application.dataPath + "/weightsKart.txt";
+            if (File.Exists(path))
+            {
+                StreamReader streamReader = File.OpenText(path);
+                string line = streamReader.ReadLine();
+                if (Convert.ToDouble(line) < _sumSquareError) return;
+                streamReader.Close();
+            }
+            
+            StreamWriter streamWriter = File.CreateText(path);
+            streamWriter.WriteLine(_sumSquareError);
+            streamWriter.WriteLine(_network.GetWeights());
+            streamWriter.Close();
+        }
+
+        private void LoadWeightsFromFile()
+        {
+            string path = Application.dataPath + "/weightsKart.txt";
+            StreamReader streamReader = File.OpenText(path);
+
+            if (File.Exists(path))
+            {
+                _sumSquareError = Convert.ToDouble(streamReader.ReadLine());
+                string line = streamReader.ReadLine();
+                _network.LoadWeightsFromString(line);
+                _trainingDone = true;
+                streamReader.Close();
+            }
+            else
+            {
+                throw new Exception("File does not exist.");
+            }
         }
     }
 }

@@ -42,6 +42,9 @@ namespace MachineLearning.Cart_Racing
         private void Update()
         {
             _position = _transform.position;
+            _right = _transform.right;
+            _forward = _transform.forward;
+            
             float translationInput = Input.GetAxis("Vertical");
             float rotationInput = Input.GetAxis("Horizontal");
 
@@ -82,7 +85,7 @@ namespace MachineLearning.Cart_Racing
 
         public static float Round(float x)
         {
-            return (float) Math.Round(x, MidpointRounding.AwayFromZero) / 2f;
+            return (float) Math.Round(x, MidpointRounding.AwayFromZero) / 10f;
         }
     }
 }

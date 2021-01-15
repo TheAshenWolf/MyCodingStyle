@@ -575,6 +575,7 @@
         </e>
         <e p="trainingData.txt" t="Include" />
         <e p="weights.txt" t="Include" />
+        <e p="weightsKart.txt" t="Include" />
       </e>
       <e p="My Coding Style.sln" t="IncludeFlat" />
       <e p="Sirenix.OdinInspector.CompatibilityLayer.Editor.csproj" t="IncludeRecursive" />
