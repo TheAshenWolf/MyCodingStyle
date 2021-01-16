@@ -431,6 +431,11 @@
               <e p="TrainingResources.cs" t="Include" />
               <e p="TrainingSet.cs" t="Include" />
             </e>
+            <e p="PlatformBalancing" t="Include">
+              <e p="BallState.cs" t="Include" />
+              <e p="PlatformBrain.cs" t="Include" />
+              <e p="QNetwork.cs" t="Include" />
+            </e>
             <e p="Pong" t="Include">
               <e p="MoveBall.cs" t="Include" />
               <e p="Network.cs" t="Include" />
