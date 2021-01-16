@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngineInternal;
+using UnityStandardAssets.Vehicles.Ball;
+using Random = UnityEngine.Random;
 
 namespace MachineLearning.PlatformBalancing
 {
-    public abstract class Memory
+    public class Memory
     {
         public List<double> states;
         public double reward;
@@ -37,8 +42,108 @@ namespace MachineLearning.PlatformBalancing
 
         private float _timer = 0;
         private float _maxBalanceTime = 0;
-        
-        
-        
+
+        private GUIStyle _guiStyle = new GUIStyle();
+
+
+        private void Start()
+        {
+            _qNetwork = new QNetwork(3, 2, 1, 6, 0.2f);
+            _ballStartPosition = ball.transform.position;
+            Time.timeScale = 5f;
+
+            _guiStyle.fontSize = 12;
+            _guiStyle.normal.textColor = Color.white;
+        }
+
+
+        private void OnGUI()
+        {
+            GUI.BeginGroup(new Rect(10, 10, 300, 150));
+            GUI.Box(new Rect(0, 0, 150, 150), "Stats", _guiStyle);
+            GUI.Label(new Rect(10, 25, 500, 30), "Fails: " + _failCount, _guiStyle);
+            GUI.Label(new Rect(10, 40, 500, 30), "Decay Rate: " + _exploreRate, _guiStyle);
+            GUI.Label(new Rect(10, 55, 500, 30), "Last Best Balance: " + _maxBalanceTime, _guiStyle);
+            GUI.Label(new Rect(10, 70, 500, 30), "This balance: " + _timer, _guiStyle);
+            GUI.EndGroup();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) ResetBall();
+        }
+
+        private void FixedUpdate()
+        {
+            _timer += Time.deltaTime;
+            List<double> states = new List<double>();
+            List<double> qualities = new List<double>();
+
+            states.Add(this.transform.rotation.x);
+            states.Add(ball.transform.position.z);
+            states.Add(ball.GetComponent<Rigidbody>().angularVelocity.x);
+
+            qualities = SoftMax(_qNetwork.CalcOutput(states));
+            double maxQuality = qualities.Max();
+            int maxQualityIndex = qualities.ToList().IndexOf(maxQuality);
+            _exploreRate = Mathf.Clamp(_exploreRate - _exploreDecay, _minExploreRate, _maxExploreRate);
+
+            if (Random.Range(0, 100) < _exploreRate)
+            {
+                maxQualityIndex = Random.Range(0, 2);
+            }
+
+            transform.Rotate(Vector3.right,
+                (maxQualityIndex == 0 ? _tiltSpeed : -_tiltSpeed) * (float) qualities[maxQualityIndex]);
+
+            _reward = ball.GetComponent<BallState>().isDropped ? -1 : 0.1f;
+            
+            Memory lastMemory = new Memory(transform.rotation.x, ball.transform.position.z, ball.GetComponent<Rigidbody>().angularVelocity.x, _reward);
+
+            if (_memories.Count > MEMORY_CAPACITY)
+            {
+                _memories.RemoveAt(0);
+            }
+            
+            _memories.Add(lastMemory);
+
+            if (ball.GetComponent<BallState>().isDropped)
+            {
+                for (int i = _memories.Count - 1; i >= 0; i--)
+                {
+                    List<double> outputsOld = new List<double>();
+                    List<double> outputsNew = new List<double>();
+                    outputsOld = SoftMax(_qNetwork.CalcOutput(_memories[i].states));
+
+                    double maxOldQuality = outputsOld.Max();
+                    int action = outputsOld.ToList().IndexOf(maxOldQuality);
+
+                    double feedback;
+                    if (i == _memories.Count - 1 || _memories[i].reward == -1) feedback = _memories[i].reward;
+                    else
+                    {
+                        outputsNew = SoftMax(_qNetwork.CalcOutput(_memories[i + 1].states));
+                        maxQuality = outputsNew.Max();
+                        feedback = _memories[i].reward + _discount * maxQuality;
+                    }
+
+                    outputsOld[action] = feedback;
+                    _qNetwork.Train(_memories[i].states, outputsOld);
+                }
+
+                if (_timer > _maxBalanceTime)
+                {
+                    _maxBalanceTime = _timer;
+                }
+
+                _timer = 0;
+
+                ball.GetComponent<BallState>().isDropped = false;
+                transform.rotation = Quaternion.identity;
+                ResetBall();
+                _memories.Clear();
+                _failCount++;
+            }
+        }
     }
 }
