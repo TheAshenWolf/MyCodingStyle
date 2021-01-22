@@ -30,15 +30,15 @@ namespace MachineLearning.PlatformBalancing
         private List<Memory> _memories = new List<Memory>();
         private const int MEMORY_CAPACITY = 10000;
 
-        private float _discount = 0.99f;
+        private const float DISCOUNT = 0.99f;
         private float _exploreRate = 100f;
-        private float _maxExploreRate = 100f;
-        private float _minExploreRate = 0.01f;
-        private float _exploreDecay = 0.0001f;
+        private const float MAX_EXPLORE_RATE = 100f;
+        private const float MIN_EXPLORE_RATE = 0.01f;
+        private const float EXPLORE_DECAY = 0.001f;
 
         private Vector3 _ballStartPosition;
         private int _failCount = 0;
-        private float _tiltSpeed = 0.5f;
+        private const float TILT_SPEED = 0.5f;
 
         private float _timer = 0;
         private float _maxBalanceTime = 0;
@@ -62,7 +62,7 @@ namespace MachineLearning.PlatformBalancing
             GUI.BeginGroup(new Rect(10, 10, 300, 150));
             GUI.Box(new Rect(0, 0, 150, 150), "Stats", _guiStyle);
             GUI.Label(new Rect(10, 25, 500, 30), "Fails: " + _failCount, _guiStyle);
-            GUI.Label(new Rect(10, 40, 500, 30), "Decay Rate: " + _exploreRate, _guiStyle);
+            GUI.Label(new Rect(10, 40, 500, 30), "Randomness chance: " + _exploreRate, _guiStyle);
             GUI.Label(new Rect(10, 55, 500, 30), "Last Best Balance: " + _maxBalanceTime, _guiStyle);
             GUI.Label(new Rect(10, 70, 500, 30), "This balance: " + _timer, _guiStyle);
             GUI.EndGroup();
@@ -86,7 +86,7 @@ namespace MachineLearning.PlatformBalancing
             qualities = SoftMax(_qNetwork.CalcOutput(states));
             double maxQuality = qualities.Max();
             int maxQualityIndex = qualities.ToList().IndexOf(maxQuality);
-            _exploreRate = Mathf.Clamp(_exploreRate - _exploreDecay, _minExploreRate, _maxExploreRate);
+            _exploreRate = Mathf.Clamp(_exploreRate - EXPLORE_DECAY, MIN_EXPLORE_RATE, MAX_EXPLORE_RATE);
 
             if (Random.Range(0, 100) < _exploreRate)
             {
@@ -94,7 +94,7 @@ namespace MachineLearning.PlatformBalancing
             }
 
             transform.Rotate(Vector3.right,
-                (maxQualityIndex == 0 ? _tiltSpeed : -_tiltSpeed) * (float) qualities[maxQualityIndex]);
+                (maxQualityIndex == 0 ? TILT_SPEED : -TILT_SPEED) * (float) qualities[maxQualityIndex]);
 
             _reward = ball.GetComponent<BallState>().isDropped ? -1 : 0.1f;
             
@@ -124,7 +124,7 @@ namespace MachineLearning.PlatformBalancing
                     {
                         outputsNew = SoftMax(_qNetwork.CalcOutput(_memories[i + 1].states));
                         maxQuality = outputsNew.Max();
-                        feedback = _memories[i].reward + _discount * maxQuality;
+                        feedback = _memories[i].reward + DISCOUNT * maxQuality;
                     }
 
                     outputsOld[action] = feedback;
@@ -144,6 +144,22 @@ namespace MachineLearning.PlatformBalancing
                 _memories.Clear();
                 _failCount++;
             }
+        }
+
+        private void ResetBall()
+        {
+            ball.transform.position = _ballStartPosition;
+            ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        }
+
+        private static List<double> SoftMax(List<double> values)
+        {
+            double max = values.Max();
+
+            float scale = values.Sum(t => Mathf.Exp((float) (t - max)));
+
+            return values.Select(t => Mathf.Exp((float) (t - max)) / scale).Select(dummy => (double) dummy).ToList();
         }
     }
 }
