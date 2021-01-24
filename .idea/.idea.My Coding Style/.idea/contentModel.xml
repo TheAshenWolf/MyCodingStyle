@@ -441,6 +441,10 @@
               <e p="Network.cs" t="Include" />
               <e p="Paddle.cs" t="Include" />
             </e>
+            <e p="QLearnFlappy" t="Include">
+              <e p="BirdBrain.cs" t="Include" />
+              <e p="BirdState.cs" t="Include" />
+            </e>
             <e p="StayOnPlatform" t="Include">
               <e p="Brain.cs" t="Include" />
               <e p="Dna.cs" t="Include" />
